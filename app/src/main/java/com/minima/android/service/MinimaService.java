@@ -222,6 +222,9 @@ public class MinimaService extends Service {
 
         vars.add("-noshutdownhook");
 
+        vars.add("-nop2p");
+        vars.add("-genesis");
+
         //vars.add("-genesis");
         //vars.add("-nop2p");
         //vars.add("-test");
