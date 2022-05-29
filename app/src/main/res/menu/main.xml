@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+<!--    <item-->
+<!--        android:id="@+id/action_settings"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="@string/action_settings"-->
+<!--        app:showAsAction="never" />-->
+
+    <item
+        android:id="@+id/action_battery"
+        android:orderInCategory="100"
+        android:title="Battery Optimisation"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_requestbattery"
+        android:orderInCategory="100"
+        android:title="Request Battery"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_shutdown"
+        android:orderInCategory="100"
+        android:title="ShutDown"
+        app:showAsAction="never" />
+
+</menu>
