@@ -9,6 +9,12 @@
 <!--        app:showAsAction="never" />-->
 
     <item
+        android:id="@+id/action_status"
+        android:orderInCategory="100"
+        android:title="Status"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_battery"
         android:orderInCategory="100"
         android:title="Battery Optimisation"

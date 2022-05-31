@@ -11,7 +11,11 @@ public class BootReceiver extends BroadcastReceiver {
         //MinimaLogger.log("MINIMA RECEIVER "+intent.getAction());
 
         if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction())) {
-            ServiceStarterJobService.enqueueWork(context, new Intent());
+
+            Intent serviceintent = new Intent(context, MinimaService.class);
+            context.startForegroundService(serviceintent);
+
+            //ServiceStarterJobService.enqueueWork(context, new Intent());
         }
     }
 

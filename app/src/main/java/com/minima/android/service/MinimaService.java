@@ -1,5 +1,6 @@
 package com.minima.android.service;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -45,6 +46,8 @@ import com.minima.android.MainActivity;
  * 23 April 2020
  * */
 public class MinimaService extends Service {
+
+    static boolean TEST_GENESIS = false;
 
     //Currently Binding doesn't work as we run in a separate process..
     public class MyBinder extends Binder {
@@ -134,6 +137,8 @@ public class MinimaService extends Service {
                     //Get the JSON..
                     JSONObject notify = (JSONObject) zMessage.getObject("notify");
 
+                    //MinimaLogger.log("NOTIFY : "+notify.toString());
+
                     //What is the Event..
                     String event    = (String) notify.get("event");
                     JSONObject data = (JSONObject) notify.get("data");
@@ -151,56 +156,6 @@ public class MinimaService extends Service {
                                 setMinimaNotification();
                             }
                         });
-
-                    }else if(event.equals("MAXIMA")){
-
-//                        //How big is the message
-//                        String datastr  = data.toString();
-//                        int datalen     = datastr.length();
-//                        int maxsize     = 50000;
-//
-//                        if(datalen < maxsize) {
-//
-//                            //Broadcast the Maxima Message ( Currently ONLY MaxChat / MaxWeb gets it.. can be configured )
-//                            Intent mchat= new Intent();
-//                            ComponentName cn = new ComponentName("com.minima.maxchat","com.minima.maxchat.MyBroadcastReceiver");
-//                            mchat.setComponent(cn);
-//                            mchat.setAction("com.minima.maxchat.MINIMA_MESSAGE");
-//                            mchat.putExtra("data", datastr);
-//                            sendBroadcast(mchat);
-//
-//                            Intent i2 = new Intent();
-//                            ComponentName cn2 = new ComponentName("com.minima.webtest", "com.minima.webtest.MyBroadcastReceiver");
-//                            i2.setComponent(cn2);
-//                            i2.setAction("com.minima.webtest.MINIMA_MESSAGE");
-//                            i2.putExtra("data", datastr);
-//                            sendBroadcast(i2);
-//
-//                        }else{
-//                            //Use a multi broadcast - otherwise Android plays up..:(
-//                            int numdivs = (int)Math.ceil ((double)datalen / (double)maxsize);
-//                            MinimaLogger.log("Multi Broadcast large message "+datalen+" "+numdivs);
-//
-//                            for(int i=0;i<numdivs;i++){
-//                                Intent i2 = new Intent();
-//                                ComponentName cn2 = new ComponentName("com.minima.webtest", "com.minima.webtest.MyBroadcastReceiver");
-//                                i2.setComponent(cn2);
-//                                i2.setAction("com.minima.webtest.MINIMA_MESSAGE");
-//                                i2.putExtra("multi", true);
-//                                i2.putExtra("multitotal", numdivs);
-//                                i2.putExtra("multinum", i);
-//
-//                                int start   = i*maxsize;
-//                                int end     = start + maxsize;
-//                                if(end>datalen){
-//                                    end = datalen;
-//                                }
-//                                String datadiv = datastr.substring(start,end);
-//                                i2.putExtra("data", datadiv);
-//
-//                                sendBroadcast(i2);
-//                            }
-//                        }
                     }
                 }
             }
@@ -222,8 +177,11 @@ public class MinimaService extends Service {
 
         vars.add("-noshutdownhook");
 
-        vars.add("-nop2p");
-        vars.add("-genesis");
+        if(TEST_GENESIS) {
+            vars.add("-nop2p");
+            vars.add("-test");
+            vars.add("-genesis");
+        }
 
         //vars.add("-genesis");
         //vars.add("-nop2p");
@@ -264,16 +222,16 @@ public class MinimaService extends Service {
         return mNotification;
     }
 
-    public void shutdownComplete(){
+    public void cancelAlarm(Activity zMainActivity){
         if(mAlarm!=null){
             mAlarm.cancelAlarm(this);
         }
-
-        stopSelf();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        MinimaLogger.log("onStartCommand "+intent.toString());
 
         //Set status Bar notification
         setMinimaNotification();
@@ -304,15 +262,12 @@ public class MinimaService extends Service {
 
         //QUIT nicely..
         String resp = mStart.runMinimaCMD("quit");
-        MinimaLogger.log(resp);
-
-        MinimaLogger.log("Minima Service onDestroy Quit finished..");
 
         //Not listening anymore..
         Main.setMinimaListener(null);
 
         //Shut the channel..
-        //mNotificationManager.deleteNotificationChannel(CHANNEL_ID);
+        mNotificationManager.deleteNotificationChannel(CHANNEL_ID);
 
         //Mention..
         Toast.makeText(this, "Minima Service Stopped", Toast.LENGTH_SHORT).show();

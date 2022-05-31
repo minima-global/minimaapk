@@ -5,6 +5,8 @@ import android.content.Intent;
 
 import androidx.core.app.JobIntentService;
 
+import org.minima.utils.MinimaLogger;
+
 public class ServiceStarterJobService extends JobIntentService {
 
     public static final int JOB_ID = 0x01;
@@ -16,7 +18,7 @@ public class ServiceStarterJobService extends JobIntentService {
 
     @Override
     protected void onHandleWork(Intent intent) {
-        //MinimaLogger.log("MINIMA HANDLEWORK");
+        MinimaLogger.log("MINIMA HANDLEWORK Start Minima Service");
 
         //Start the Main Service..
         Intent serviceintent = new Intent(getBaseContext(), MinimaService.class);

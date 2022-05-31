@@ -13,6 +13,7 @@ import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
@@ -28,7 +29,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.service.MinimaService;
 
+import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONArray;
+import org.minima.utils.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
@@ -59,7 +63,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         NavigationUI.setupWithNavController(navigationView, navController);
 
         //Start the Minima Service..
-        MinimaLogger.log("START SERVICE");
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
         startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
@@ -78,6 +81,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.action_status:
+
+                runStatus();
+
+                return true;
+
             case R.id.action_battery:
 
                 openBatteryOptimisation();
@@ -92,14 +101,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             case R.id.action_shutdown:
 
-                if(mMinima != null){
-                    mMinima.shutdownComplete();
-                }
-
-                unbindService(this);
+//                if(mMinima != null){
+//                    mMinima.shutdownComplete(this);
+//                }
+//
+                //unbindService(this);
 
                 Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
                 stopService(minimaintent);
+
+                finish();
 
                 return true;
 
@@ -126,6 +137,25 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public void onServiceDisconnected(ComponentName componentName) {
         MinimaLogger.log("DISCONNECTED TO SERVICE");
         mMinima = null;
+    }
+
+    public void runStatus(){
+
+        if(mMinima == null){
+            Toast.makeText(this,"Not connected yet",Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Run Status Command
+        String status = mMinima.getMinima().runMinimaCMD("status");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Minima Status")
+                .setMessage(status)
+                .setIcon(android.R.drawable.ic_dialog_info)
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+
     }
 
     /**
