@@ -14,6 +14,7 @@ import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -116,8 +117,18 @@ public class MinimaService extends Service {
         mNotificationManager.createNotificationChannel(serviceChannel);
 
         Intent NotificationIntent = new Intent(getBaseContext(), MainActivity.class);
-        mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
-                , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
+//                , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
+                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        }else {
+            mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
+                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        }
 
         //Set the Alarm..
         mAlarm = new Alarm();

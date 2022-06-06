@@ -14,11 +14,16 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.minima.android.MainActivity;
 import com.minima.android.R;
+
+import org.minima.utils.MinimaLogger;
 
 import java.util.ArrayList;
 
 public class MaximaFragment extends Fragment {
+
+    MainActivity mMain;
 
     ListView mMainList;
 
@@ -26,10 +31,14 @@ public class MaximaFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_maxima, container, false);
 
-        mMainList = root.findViewById(R.id.list_maxima);
+        mMainList = root.findViewById(R.id.maxima_list);
 
+        //Get the Main Activity
+        mMain = (MainActivity)getActivity();
+
+        //Run a Minima command..
         ArrayList<String> items = new ArrayList<>();
-        items.add("Hello");
+        items.add("Hello "+System.currentTimeMillis());
         items.add("You");
         items.add("There");
         String[] it = items.toArray(new String[0]);
@@ -61,6 +70,15 @@ public class MaximaFragment extends Fragment {
 //        maximaViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
 //        return root;
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MinimaLogger.log("MAXIMA onresume");
+
+    }
+
 
 //    @Override
 //    public void onDestroyView() {
