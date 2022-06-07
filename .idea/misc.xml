@@ -3,11 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_contact.xml" value="0.25769927536231885" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_mydetails.xml" value="0.25769927536231885" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/content_main.xml" value="0.2916666666666667" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_home.xml" value="0.2427536231884058" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_maxima.xml" value="0.1" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/nav_header_main.xml" value="0.2916666666666667" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/menu/contact_menu.xml" value="0.15" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/menu/main.xml" value="0.309375" />
       </map>
     </option>

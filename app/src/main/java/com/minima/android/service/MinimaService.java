@@ -48,7 +48,8 @@ import com.minima.android.MainActivity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST_GENESIS = false;
+    static boolean TEST     = true;
+    static boolean GENESIS  = false;
 
     //Currently Binding doesn't work as we run in a separate process..
     public class MyBinder extends Binder {
@@ -188,9 +189,12 @@ public class MinimaService extends Service {
 
         vars.add("-noshutdownhook");
 
-        if(TEST_GENESIS) {
+        if(TEST) {
             vars.add("-nop2p");
             vars.add("-test");
+        }
+
+        if(GENESIS) {
             vars.add("-genesis");
         }
 
@@ -231,12 +235,6 @@ public class MinimaService extends Service {
                 .build();
 
         return mNotification;
-    }
-
-    public void cancelAlarm(Activity zMainActivity){
-        if(mAlarm!=null){
-            mAlarm.cancelAlarm(this);
-        }
     }
 
     @Override

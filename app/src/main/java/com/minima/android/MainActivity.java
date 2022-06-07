@@ -28,7 +28,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.service.MinimaService;
+import com.minima.android.ui.maxima.MyDetailsActivity;
 
+import org.minima.Minima;
+import org.minima.system.Main;
+import org.minima.system.network.maxima.MaximaManager;
 import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
@@ -67,7 +71,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
-        requestBatteryCheck(false);
+//        requestBatteryCheck(false);
     }
 
     @Override
@@ -82,41 +86,58 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_status:
-
                 runStatus();
+                return true;
+
+            case R.id.action_maxima_identity:
+                //Wait for Maxima..
+                MaximaManager max = Main.getInstance().getMaxima();
+                if(max == null || !max.isInited()) {
+                    //Not ready yet..
+                    Toast.makeText(this,"Maxima not initialised yet..",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                //Show your details
+                Intent intent = new Intent(MainActivity.this, MyDetailsActivity.class);
+                startActivity(intent);
 
                 return true;
 
             case R.id.action_battery:
-
                 openBatteryOptimisation();
-
                 return true;
 
-            case R.id.action_requestbattery:
-
-                requestBatteryCheck(true);
-
-                return true;
-
-            case R.id.action_shutdown:
-
-//                if(mMinima != null){
-//                    mMinima.shutdownComplete(this);
-//                }
+//            case R.id.action_requestbattery:
+//                requestBatteryCheck(true);
+//                return true;
 //
-                //unbindService(this);
-
-                Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-                stopService(minimaintent);
-
-                finish();
-
-                return true;
+//            case R.id.action_shutdown:
+//
+////                if(mMinima != null){
+////                    mMinima.shutdownComplete(this);
+////                }
+////
+//                //unbindService(this);
+//
+//                Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+//                stopService(minimaintent);
+//
+//                finish();
+//
+//                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public Minima getMinima(){
+        if(mMinima == null){
+            return null;
+        }
+
+        return mMinima.getMinima();
     }
 
     @Override

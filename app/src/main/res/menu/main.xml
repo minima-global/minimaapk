@@ -15,21 +15,27 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_maxima_identity"
+        android:orderInCategory="100"
+        android:title="Maxima Details"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_battery"
         android:orderInCategory="100"
         android:title="Battery Optimisation"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_requestbattery"
-        android:orderInCategory="100"
-        android:title="Request Battery"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/action_requestbattery"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="Request Battery"-->
+<!--        app:showAsAction="never" />-->
 
-    <item
-        android:id="@+id/action_shutdown"
-        android:orderInCategory="100"
-        android:title="ShutDown"
-        app:showAsAction="never" />
+<!--    <item-->
+<!--        android:id="@+id/action_shutdown"-->
+<!--        android:orderInCategory="100"-->
+<!--        android:title="ShutDown"-->
+<!--        app:showAsAction="never" />-->
 
 </menu>

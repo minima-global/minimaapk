@@ -47,9 +47,20 @@
             </intent-filter>
         </activity>
 
+        <activity   android:name=".ui.maxima.MyDetailsActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Maxima Details"/>
+
+        <activity   android:name=".ui.maxima.ContactActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="Maxima Contact"/>
+
         <!-- SERVICES -->
         <service android:name="com.minima.android.service.MinimaService" android:enabled="true" android:exported="true"></service>
-        <service android:name="com.minima.android.service.ServiceStarterJobService" android:permission="android.permission.BIND_JOB_SERVICE"/>
 
         <!-- RECEIVERS -->
         <receiver android:name="com.minima.android.service.BootReceiver" android:exported="true">
