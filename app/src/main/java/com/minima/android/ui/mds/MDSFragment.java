@@ -1,9 +1,11 @@
 package com.minima.android.ui.mds;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +19,7 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.databinding.FragmentGalleryBinding;
 import com.minima.android.ui.maxima.Contact;
+import com.minima.android.ui.maxima.ContactActivity;
 import com.minima.android.ui.maxima.ContactAdapter;
 
 import org.minima.Minima;
@@ -49,6 +52,21 @@ public class MDSFragment extends Fragment {
 
         //If it's Empty
         mMainList.setEmptyView(root.findViewById(R.id.mds_empty_list_item));
+
+        mMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+
+                //Get the Selected MiniDAPP
+                JSONObject mds = mMDS[zPosition];
+
+                //Now open a Contact Activity
+                Intent intent = new Intent(mMain, MDSBrowser.class);
+                intent.putExtra("name", mds.getString("name"));
+                intent.putExtra("uid", mds.getString("uid"));
+                startActivity(intent);
+            }
+        });
 
         FloatingActionButton fab = root.findViewById(R.id.fab_mds);
         fab.setOnClickListener(new View.OnClickListener() {
