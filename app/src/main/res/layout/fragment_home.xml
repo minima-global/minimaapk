@@ -46,5 +46,48 @@
 
     </TableLayout>
 
+    <TextView
+        android:text="Maxima"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" android:textSize="28dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Contacts : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_contacts" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Same Chain : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_valid" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+    </TableLayout>
+
+    <TextView
+        android:text="MDS"
+        android:layout_marginTop="16dp"
+        android:textStyle="bold" android:textSize="28dp"
+        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Dapps : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_dapps" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="IP : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_ip" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+    </TableLayout>
 
 </LinearLayout>

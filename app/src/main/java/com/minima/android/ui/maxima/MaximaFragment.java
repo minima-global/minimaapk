@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,6 +28,8 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 
 import org.minima.Minima;
+import org.minima.system.Main;
+import org.minima.system.network.maxima.MaximaManager;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.RPCClient;
 import org.minima.utils.json.JSONArray;
@@ -45,6 +50,8 @@ public class MaximaFragment extends Fragment {
     private String mNewContactAddress = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_maxima, container, false);
 
@@ -84,6 +91,39 @@ public class MaximaFragment extends Fragment {
 
         return root;
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.maxima, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            case R.id.action_maxima_identity:
+                //Wait for Maxima..
+                MaximaManager max = Main.getInstance().getMaxima();
+                if(max == null || !max.isInited()) {
+                    //Not ready yet..
+                    Toast.makeText(mMain,"Maxima not initialised yet..",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
+                //Show your details
+                Intent intent = new Intent(mMain, MyDetailsActivity.class);
+                startActivity(intent);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
 
     public void showNewContactDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
@@ -166,13 +206,6 @@ public class MaximaFragment extends Fragment {
             Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
             return;
         }
-
-//                    //Are we refreshing out contacts
-//                    if(zRefrshAswell){
-//                        //Run maxima refresh - tell everyone where you are
-//                        String resp = RPCClient.sendGET(MINIMA_HOST+"maxima action:refresh");
-//                        MinimaLogger.log(resp);
-//                    }
 
         //Do the RPC call..
         String maxcontacts = minima.runMinimaCMD("maxcontacts",false);

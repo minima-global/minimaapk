@@ -13,7 +13,7 @@
             android:icon="@drawable/ic_menu_camera"
             android:title="@string/menu_maxima" />
         <item
-            android:id="@+id/nav_gallery"
+            android:id="@+id/nav_mds"
             android:icon="@drawable/ic_menu_gallery"
             android:title="@string/menu_gallery" />
     </group>
@@ -26,18 +26,10 @@
             android:title="@string/menu_archive" />
 
         <item
-            android:id="@+id/nav_terminal"
-            android:icon="@android:drawable/ic_dialog_info"
-            android:title="@string/menu_terminal" />
-    </group>
-
-    <group android:id="@+id/bottom_menu" android:checkableBehavior="single">
-
-        <item
             android:id="@+id/nav_help"
             android:icon="@android:drawable/ic_menu_help"
             android:title="@string/menu_help" />
-    </group>
 
+    </group>
 
 </menu>

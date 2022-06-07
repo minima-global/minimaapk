@@ -1,24 +1,29 @@
 package com.minima.android;
 
+import android.Manifest;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Menu;
 import android.widget.Toast;
 
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -33,10 +38,14 @@ import com.minima.android.ui.maxima.MyDetailsActivity;
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
-import org.minima.utils.MiniFormat;
+import org.minima.system.params.GeneralParams;
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.json.JSONArray;
-import org.minima.utils.json.JSONObject;
+
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
@@ -59,7 +68,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_maxima)
+                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -70,6 +79,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
         startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+
+//        File rootfile = getFilesDir();
+//        File[] files = rootfile.listFiles();
+//        MinimaLogger.log(getFilesDir().getAbsolutePath());
+//        MinimaLogger.log(GeneralParams.DATA_FOLDER);
+//        MinimaLogger.log(Arrays.toString(files));
 
 //        requestBatteryCheck(false);
     }
@@ -86,6 +101,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_status:
+                //openFile();
                 runStatus();
                 return true;
 
@@ -240,6 +256,129 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         //Unbind from the service..
         if(mMinima != null){
             unbindService(this);
+        }
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode,
+                                     int resultCode,
+                                     Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        MinimaLogger.log("RESULTCODE "+resultCode);
+        if(data == null){
+            return;
+        }
+
+        Uri fileuri = data.getData();
+
+        MinimaLogger.log("DATA "+data.getDataString());
+        MinimaLogger.log("File "+fileuri.getPath());
+
+        File file = new File(fileuri.getPath());//create path from uri
+        final String[] split = file.getPath().split(":");//split the path.
+        String filePath = split[1];
+
+        File ff = new File(filePath);
+        MinimaLogger.log("Path : "+ff.getAbsolutePath());
+        MinimaLogger.log("Exists : "+ff.exists());
+        MinimaLogger.log("Size   : "+ff.length());
+
+        if(mMinima != null){
+            //Load it..!
+            Runnable installer = new Runnable() {
+                @Override
+                public void run() {
+                    String result = mMinima.getMinima().runMinimaCMD("mds action:install file:\""+ff.getAbsolutePath()+"\"",false);
+
+                    MinimaLogger.log(result);
+
+                }
+            };
+
+            Thread inst = new Thread(installer);
+            inst.start();
+
+        }else{
+            Toast.makeText(this,"Minima not initialised yet..",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // Function to check and request permission
+    public boolean checkPermission(String permission, int requestCode){
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[] { permission }, requestCode);
+            return false;
+        }else {
+            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+//        if (requestCode == CAMERA_PERMISSION_CODE) {
+//
+//            // Checking whether user granted the permission or not.
+//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//
+//                // Showing the toast message
+//                Toast.makeText(MainActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                Toast.makeText(MainActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//        else if (requestCode == STORAGE_PERMISSION_CODE) {
+//            if (grantResults.length > 0
+//                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                Toast.makeText(MainActivity.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
+//            }
+//            else {
+//                Toast.makeText(MainActivity.this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+    }
+
+    public void openFile() {
+
+        //Ask for permission
+        if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 0)){
+            return;
+        }
+
+        String mimeType = "application/*";
+        //String[] mimetypes = {"application/zip", "application/minidapp"};
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType(mimeType);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+
+        // special intent for Samsung file manager
+        Intent sIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
+        // if you want any file type, you can skip next line
+        sIntent.putExtra("CONTENT_TYPE", mimeType);
+        sIntent.addCategory(Intent.CATEGORY_DEFAULT);
+
+        Intent chooserIntent;
+        if (getPackageManager().resolveActivity(sIntent, 0) != null){
+            // it is device with Samsung file manager
+            chooserIntent = Intent.createChooser(sIntent, "Open file");
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { intent});
+        } else {
+            chooserIntent = Intent.createChooser(intent, "Open file");
+        }
+
+        try {
+            startActivityForResult(chooserIntent, 99);
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getApplicationContext(), "No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
         }
     }
 }

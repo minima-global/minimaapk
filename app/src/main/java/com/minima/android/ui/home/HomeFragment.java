@@ -8,16 +8,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.databinding.FragmentHomeBinding;
 
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
 
@@ -86,8 +85,23 @@ public class HomeFragment extends Fragment {
                     }
 
                     JSONObject response = (JSONObject) json.get("response");
+                    updateMinimaUI(response);
 
-                    updateUI(response);
+                    //Now the Maxima details
+                    String maxcontacts = minima.runMinimaCMD("maxcontacts",false);
+
+                    //Make a JSON
+                    json        = (JSONObject) new JSONParser().parse(maxcontacts);
+                    response    = (JSONObject) json.get("response");
+                    updateMaximaUI(response);
+
+                    //Now the MDS details..
+                    String mds = minima.runMinimaCMD("mds",false);
+
+                    //Make a JSON
+                    json        = (JSONObject) new JSONParser().parse(mds);
+                    response    = (JSONObject) json.get("response");
+                    updateMDSUI(response);
 
                 }catch(Exception exc){
                     MinimaLogger.log("ERROR update status : "+exc);
@@ -100,14 +114,15 @@ public class HomeFragment extends Fragment {
         checker.start();
    }
 
-   public void updateUI(JSONObject zStatusJSON){
+   public void updateMinimaUI(JSONObject zStatusJSON){
         mMain.runOnUiThread(new Runnable() {
             @Override
             public void run() {
 
                 //Get the Header details..
-                JSONObject memory = (JSONObject)zStatusJSON.get("memory");
-                JSONObject chain  = (JSONObject)zStatusJSON.get("chain");
+                JSONObject memory   = (JSONObject)zStatusJSON.get("memory");
+                JSONObject chain    = (JSONObject)zStatusJSON.get("chain");
+                JSONObject network  = (JSONObject)zStatusJSON.get("network");
 
                 //Set it..
                 ((TextView)mRoot.findViewById(R.id.text_home_time)).setText(chain.getString("time"));
@@ -116,11 +131,52 @@ public class HomeFragment extends Fragment {
                 ((TextView)mRoot.findViewById(R.id.text_home_ram)).setText(memory.getString("ram"));
                 ((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
 
+                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText(network.getString("host"));
+            }
+        });
+   }
+
+    public void updateMaximaUI(JSONObject zMaxcontacts){
+        mMain.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Get the contacts
+                JSONArray contacts = (JSONArray) zMaxcontacts.get("contacts");
+
+                //How many are we in sync with
+                int valid = 0;
+                for(Object obj : contacts){
+                    JSONObject contact = (JSONObject) obj;
+                    boolean samechain = (boolean) contact.get("samechain");
+                    if(samechain){
+                        valid++;
+                    }
+                }
+
+                //Set it..
+                ((TextView)mRoot.findViewById(R.id.text_home_contacts)).setText(""+contacts.size());
+                ((TextView)mRoot.findViewById(R.id.text_home_valid)).setText(""+valid);
+            }
+        });
+    }
+
+    public void updateMDSUI(JSONObject zMDS){
+        mMain.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Get the contacts
+                JSONArray mdsapps = (JSONArray) zMDS.get("minidapps");
+
+                //Set it..
+                ((TextView)mRoot.findViewById(R.id.text_home_dapps)).setText(""+mdsapps.size());
+
                 //Finished the update
                 mRunningUpdate = false;
             }
         });
-   }
+    }
 
     @Override
     public void onResume() {

@@ -9,7 +9,7 @@
 
     <string name="menu_home">Minima</string>
     <string name="menu_maxima">Maxima</string>
-    <string name="menu_gallery">MiniDAPP</string>
+    <string name="menu_gallery">MDS</string>
 
     <string name="menu_archive">Backup / Restore</string>
     <string name="menu_terminal">Terminal</string>
