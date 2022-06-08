@@ -1,5 +1,6 @@
 package com.minima.android.ui.mds;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -67,6 +69,30 @@ public class MDSFragment extends Fragment {
             }
         });
 
+        //Delete Apps..
+        mMainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+
+                new AlertDialog.Builder(mMain)
+                        .setTitle("Delete MiniDAPP")
+                        .setMessage("Are you sure ?\n\nThis will remove all data..")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //Get the Selected MiniDAPP
+                                JSONObject mds = mMDS[zPosition];
+
+                                String uid = mds.getString("uid");
+
+                                deleteMiniDAPP(uid);
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+
+                return true;
+            }
+        });
+
         FloatingActionButton fab = root.findViewById(R.id.fab_mds);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +104,27 @@ public class MDSFragment extends Fragment {
         updateMDSList();
 
         return root;
+    }
+
+    public void deleteMiniDAPP(String zUID){
+        Runnable delete = new Runnable() {
+            @Override
+            public void run() {
+                //Delete the app
+                mMain.getMinima().runMinimaCMD("mds action:uninstall uid:"+zUID);
+
+                //Update the UI..
+                mMain.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateMDSList();
+                    }
+                });
+            }
+        };
+
+        Thread tt = new Thread(delete);
+        tt.start();
     }
 
     @Override

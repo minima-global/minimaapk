@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima)
+                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -84,13 +84,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
-//        File rootfile = getFilesDir();
-//        File[] files = rootfile.listFiles();
-//        MinimaLogger.log(getFilesDir().getAbsolutePath());
-//        MinimaLogger.log(GeneralParams.DATA_FOLDER);
-//        MinimaLogger.log(Arrays.toString(files));
-
-//        requestBatteryCheck(false);
+        requestBatteryCheck(false);
     }
 
     @Override
@@ -110,6 +104,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             case R.id.action_maxima_identity:
                 //Wait for Maxima..
+                if(Main.getInstance() == null){
+                    //Not ready yet..
+                    Toast.makeText(this,"Maxima not initialised yet..",Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+
                 MaximaManager max = Main.getInstance().getMaxima();
                 if(max == null || !max.isInited()) {
                     //Not ready yet..
@@ -344,6 +344,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void openFile() {
+
+        //Are we connected..
+        if(mMinima == null){
+            Toast.makeText(MainActivity.this, "Minima not initialised yet..", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         //Ask for permission
         if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 42)){

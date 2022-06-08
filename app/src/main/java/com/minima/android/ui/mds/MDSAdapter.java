@@ -47,11 +47,13 @@ public class MDSAdapter extends ArrayAdapter<JSONObject> {
 
         JSONObject mds = getItem(position);
 
-        TextView name        = v.findViewById(R.id.mds_name);
-        TextView description = v.findViewById(R.id.mds_description);
+        TextView name           = v.findViewById(R.id.mds_name);
+        TextView description    = v.findViewById(R.id.mds_description);
+        TextView version        = v.findViewById(R.id.mds_version);
 
         name.setText(mds.getString("name"));
         description.setText(mds.getString("description"));
+        version.setText(mds.getString("version"));
 
         //Now the image
         File rootfile  = mContext.getFilesDir();

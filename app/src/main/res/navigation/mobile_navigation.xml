@@ -23,4 +23,10 @@
         android:label="@string/menu_maxima"
         tools:layout="@layout/fragment_maxima" />
 
+    <fragment
+        android:id="@+id/nav_help"
+        android:name="com.minima.android.ui.help.HelpFragment"
+        android:label="Help"
+        tools:layout="@layout/fragment_help" />
+
 </navigation>

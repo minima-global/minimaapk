@@ -3,12 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/drawable/ic_launcher_foreground.xml" value="0.1" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/drawable/ic_menu_camera.xml" value="0.1" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/drawable/side_nav_bar.xml" value="0.15" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/drawable/white_box.xml" value="0.1" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_browser.xml" value="0.15" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_contact.xml" value="0.25769927536231885" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/activity_mydetails.xml" value="0.25769927536231885" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/app_bar_main.xml" value="0.15" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/contact_view.xml" value="0.15" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/content_main.xml" value="0.2916666666666667" />
+        <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_help.xml" value="0.15" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_home.xml" value="0.2427536231884058" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_maxima.xml" value="0.1" />
         <entry key="..\:/Users/spartacusrex/AndroidStudioProjects/minimaapk/app/src/main/res/layout/fragment_mds.xml" value="0.15" />

@@ -5,19 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="16dp"
+    android:background="@drawable/main_background"
     tools:context=".ui.home.HomeFragment">
 
-    <TextView
-        android:text="Minima"
-        android:textStyle="bold" android:textSize="28dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
-
     <TableLayout
+        android:background="@drawable/white_box"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <TableRow android:layout_marginLeft="20dp">
+
+            <TextView
+                android:text="Minima"
+                android:textColor="#317AFF"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+
+        </TableRow>
 
         <TableRow android:layout_marginLeft="20dp">
             <TextView android:text="Time : " android:gravity="right" android:textStyle="bold"/>
@@ -40,21 +49,41 @@
         </TableRow>
 
         <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Disk Space : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_diskspace" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
             <TextView android:text="Devices : " android:gravity="right" android:textStyle="bold"/>
             <TextView android:id="@+id/text_home_devices" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Connections : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_connections" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
     </TableLayout>
 
-    <TextView
-        android:text="Maxima"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold" android:textSize="28dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
-
     <TableLayout
+        android:background="@drawable/white_box"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
+        <TableRow android:layout_marginLeft="20dp">
+
+            <TextView
+                android:text="Maxima"
+                android:textColor="#317AFF"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+
+        </TableRow>
 
         <TableRow android:layout_marginLeft="20dp">
             <TextView android:text="Contacts : " android:gravity="right" android:textStyle="bold"/>
@@ -73,18 +102,28 @@
 
     </TableLayout>
 
-    <TextView
-        android:text="MDS"
-        android:layout_marginTop="16dp"
-        android:textStyle="bold" android:textSize="28dp"
-        android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="8dp"/>
-
     <TableLayout
+        android:background="@drawable/white_box"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TableRow android:layout_marginLeft="20dp">
-            <TextView android:text="Dapps : " android:gravity="right" android:textStyle="bold"/>
+
+            <TextView
+                android:text="MDS"
+                android:textColor="#317AFF"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Installed : " android:gravity="right" android:textStyle="bold"/>
             <TextView android:id="@+id/text_home_dapps" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 

@@ -6,45 +6,67 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginTop="16dp"
+    android:background="@drawable/main_background"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".ui.maxima.MyDetailsActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:text="Name : "/>
-
-    <EditText
-        android:id="@+id/mydetails_name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <Button
-        android:layout_gravity="right"
-        android:id="@+id/mydetails_updatename"
-        android:text="Update Name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
-
-    <TextView
+    <LinearLayout android:background="@drawable/white_box"
         android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:text="Contact : "/>
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/mydetails_contact"
-        android:textIsSelectable="true"
-        android:editable="false"
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Name : "/>
+
+        <EditText
+            android:id="@+id/mydetails_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:layout_gravity="right"
+            android:id="@+id/mydetails_updatename"
+            android:text="Update Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+    <LinearLayout android:background="@drawable/white_box"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:padding="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16dp"
-        android:text=""/>
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_marginBottom="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text="Contact : "/>
+
+        <TextView
+            android:id="@+id/mydetails_contact"
+            android:textIsSelectable="true"
+            android:editable="false"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="16dp"
+            android:text=""/>
+
+    </LinearLayout>
+
+
 
 </LinearLayout>

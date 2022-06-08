@@ -3,11 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="80dp"
-    android:layout_marginTop="4dp"
-    android:layout_marginBottom="4dp"
     android:layout_gravity="center"
     android:gravity="center"
+    android:background="@drawable/white_box"
     android:orientation="horizontal">
 
     <ImageView
@@ -25,7 +23,7 @@
 
         <TextView
             android:id="@+id/mds_name"
-            android:textSize="28dp"
+            android:textSize="24dp"
             android:textStyle="bold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
@@ -33,6 +31,14 @@
         <TextView
             android:id="@+id/mds_description"
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/mds_version"
+            android:textSize="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_width="match_parent"
+            android:gravity="right"
             android:layout_height="wrap_content"/>
 
     </LinearLayout>

@@ -121,7 +121,9 @@ public class HomeFragment extends Fragment {
                 ((TextView)mRoot.findViewById(R.id.text_home_block)).setText(""+chain.get("block"));
                 ((TextView)mRoot.findViewById(R.id.text_home_version)).setText(zStatusJSON.getString("version"));
                 ((TextView)mRoot.findViewById(R.id.text_home_ram)).setText(memory.getString("ram"));
+                ((TextView)mRoot.findViewById(R.id.text_home_diskspace)).setText(memory.getString("disk"));
                 ((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
+                ((TextView)mRoot.findViewById(R.id.text_home_connections)).setText(""+network.get("connected"));
 
                 ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("http://"+network.getString("host")+":9003");
             }
