@@ -34,11 +34,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.maxima.MyDetailsActivity;
+import com.minima.android.ui.mds.MDSFragment;
 
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
 import org.minima.system.params.GeneralParams;
+import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
 
 import java.io.DataInputStream;
@@ -50,6 +52,8 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
     MinimaService mMinima;
+
+    public MDSFragment mMDSFragment = null;
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -270,38 +274,49 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             return;
         }
 
-        Uri fileuri = data.getData();
+        final Uri fileuri = data.getData();
 
         MinimaLogger.log("DATA "+data.getDataString());
         MinimaLogger.log("File "+fileuri.getPath());
 
-        File file = new File(fileuri.getPath());//create path from uri
-        final String[] split = file.getPath().split(":");//split the path.
-        String filePath = split[1];
-
-        File ff = new File(filePath);
-        MinimaLogger.log("Path : "+ff.getAbsolutePath());
-        MinimaLogger.log("Exists : "+ff.exists());
-        MinimaLogger.log("Size   : "+ff.length());
-
-        if(mMinima != null){
-            //Load it..!
-            Runnable installer = new Runnable() {
+        Runnable installer = new Runnable() {
                 @Override
                 public void run() {
-                    String result = mMinima.getMinima().runMinimaCMD("mds action:install file:\""+ff.getAbsolutePath()+"\"",false);
+                    //Get the Input Stream..
+                    try {
+                        InputStream is = getContentResolver().openInputStream(fileuri);
+                        byte[] data = Utils.loadFile(is);
 
-                    MinimaLogger.log(result);
+                        //Get a file..
+                        File dapp = new File(getFilesDir(),"dapp.zip");
+                        if(dapp.exists()){
+                            dapp.delete();
+                        }
 
+                        //Now save to da file..
+                        MiniFile.writeDataToFile(dapp,data);
+
+                        //Now load that..
+                        String result = mMinima.getMinima().runMinimaCMD("mds action:install file:\""+dapp.getAbsolutePath()+"\"",false);
+                        MinimaLogger.log(result);
+
+                        if(mMDSFragment != null){
+                            runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mMDSFragment.updateMDSList();
+                                }
+                            });
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             };
 
             Thread inst = new Thread(installer);
             inst.start();
-
-        }else{
-            Toast.makeText(this,"Minima not initialised yet..",Toast.LENGTH_SHORT).show();
-        }
     }
 
     // Function to check and request permission
@@ -311,7 +326,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { permission }, requestCode);
             return false;
         }else {
-            Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
             return true;
         }
     }

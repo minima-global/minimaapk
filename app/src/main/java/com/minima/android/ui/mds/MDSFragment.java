@@ -49,6 +49,7 @@ public class MDSFragment extends Fragment {
 
         //Get the Main Activity
         mMain = (MainActivity)getActivity();
+        mMain.mMDSFragment = this;
 
         //If it's Empty
         mMainList.setEmptyView(root.findViewById(R.id.mds_empty_list_item));
@@ -79,6 +80,12 @@ public class MDSFragment extends Fragment {
         updateMDSList();
 
         return root;
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        mMain.mMDSFragment = null;
     }
 
     public void updateMDSList(){

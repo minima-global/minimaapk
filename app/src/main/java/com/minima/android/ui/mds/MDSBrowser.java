@@ -47,6 +47,10 @@ public class MDSBrowser extends AppCompatActivity {
         settings.setDomStorageEnabled(true);
         settings.setLoadsImagesAutomatically(true);
         settings.setLoadWithOverviewMode(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowContentAccess(true);
+
         //settings.setBuiltInZoomControls(true);
 
         mWebView.setWebViewClient(new WebViewClient() {

@@ -48,7 +48,7 @@ import com.minima.android.MainActivity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST     = true;
+    static boolean TEST     = false;
     static boolean GENESIS  = false;
 
     //Currently Binding doesn't work as we run in a separate process..
@@ -239,8 +239,6 @@ public class MinimaService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-        MinimaLogger.log("onStartCommand "+intent.toString());
 
         //Set status Bar notification
         setMinimaNotification();
