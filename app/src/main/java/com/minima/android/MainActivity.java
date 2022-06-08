@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        menu.clear();
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
@@ -105,7 +105,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_status:
-                //openFile();
                 runStatus();
                 return true;
 
@@ -269,15 +268,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                                      Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        MinimaLogger.log("RESULTCODE "+resultCode);
+        MinimaLogger.log("FILE OPEN RESULTCODE "+resultCode);
         if(data == null){
             return;
         }
 
+        //Get the file URI
         final Uri fileuri = data.getData();
-
-        MinimaLogger.log("DATA "+data.getDataString());
-        MinimaLogger.log("File "+fileuri.getPath());
+        MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
 
         Runnable installer = new Runnable() {
                 @Override
@@ -325,51 +323,34 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         if (ContextCompat.checkSelfPermission(MainActivity.this, permission) == PackageManager.PERMISSION_DENIED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[] { permission }, requestCode);
             return false;
-        }else {
-            //Toast.makeText(MainActivity.this, "Permission already granted", Toast.LENGTH_SHORT).show();
-            return true;
         }
+
+        return true;
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String[] permissions,
-                                           @NonNull int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-//        if (requestCode == CAMERA_PERMISSION_CODE) {
-//
-//            // Checking whether user granted the permission or not.
-//            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                // Showing the toast message
-//                Toast.makeText(MainActivity.this, "Camera Permission Granted", Toast.LENGTH_SHORT).show();
-//            }
-//            else {
-//                Toast.makeText(MainActivity.this, "Camera Permission Denied", Toast.LENGTH_SHORT).show();
-//            }
-//        }
-//        else if (requestCode == STORAGE_PERMISSION_CODE) {
-//            if (grantResults.length > 0
-//                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(MainActivity.this, "Storage Permission Granted", Toast.LENGTH_SHORT).show();
-//            }
-//            else {
-//                Toast.makeText(MainActivity.this, "Storage Permission Denied", Toast.LENGTH_SHORT).show();
-//            }
-//        }
+        //Was this from our MDS open File..
+        if(requestCode == 42){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                //Access granted Open the File manager..
+                openFile();
+            }else{
+                Toast.makeText(MainActivity.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     public void openFile() {
 
         //Ask for permission
-        if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 0)){
+        if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 42)){
             return;
         }
 
         String mimeType = "application/*";
-        //String[] mimetypes = {"application/zip", "application/minidapp"};
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType(mimeType);

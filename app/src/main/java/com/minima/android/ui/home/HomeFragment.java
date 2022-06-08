@@ -24,7 +24,6 @@ public class HomeFragment extends Fragment {
 
     MainActivity mMain;
     View mRoot;
-    boolean mRunningUpdate = false;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -36,17 +35,10 @@ public class HomeFragment extends Fragment {
 
         mRoot = root;
 
-        setStatus();
-
         return root;
     }
 
     public void setStatus(){
-
-        if(mRunningUpdate){
-            return;
-        }
-        mRunningUpdate = true;
 
         Runnable status = new Runnable() {
             @Override
@@ -131,7 +123,7 @@ public class HomeFragment extends Fragment {
                 ((TextView)mRoot.findViewById(R.id.text_home_ram)).setText(memory.getString("ram"));
                 ((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
 
-                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText(network.getString("host"));
+                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("http://"+network.getString("host")+":9003");
             }
         });
    }
@@ -145,18 +137,26 @@ public class HomeFragment extends Fragment {
                 JSONArray contacts = (JSONArray) zMaxcontacts.get("contacts");
 
                 //How many are we in sync with
-                int valid = 0;
+                long acceptable = System.currentTimeMillis() - (1000 * 60 * 30);
+                int valid   = 0;
+                int net     = 0;
                 for(Object obj : contacts){
                     JSONObject contact = (JSONObject) obj;
                     boolean samechain = (boolean) contact.get("samechain");
                     if(samechain){
                         valid++;
                     }
+
+                    long lastseen = (long) contact.get("lastseen");
+                    if(lastseen > acceptable){
+                        net++;
+                    }
                 }
 
                 //Set it..
                 ((TextView)mRoot.findViewById(R.id.text_home_contacts)).setText(""+contacts.size());
                 ((TextView)mRoot.findViewById(R.id.text_home_valid)).setText(""+valid);
+                ((TextView)mRoot.findViewById(R.id.text_home_net)).setText(""+net);
             }
         });
     }
@@ -171,9 +171,6 @@ public class HomeFragment extends Fragment {
 
                 //Set it..
                 ((TextView)mRoot.findViewById(R.id.text_home_dapps)).setText(""+mdsapps.size());
-
-                //Finished the update
-                mRunningUpdate = false;
             }
         });
     }

@@ -1,4 +1,4 @@
-package com.minima.android.ui.maxima;
+package com.minima.android.ui.maxima.contacts;
 
 import android.content.Context;
 import android.graphics.Color;

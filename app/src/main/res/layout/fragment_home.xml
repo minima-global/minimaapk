@@ -66,6 +66,11 @@
             <TextView android:id="@+id/text_home_valid" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Network OK : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_net" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
     </TableLayout>
 
     <TextView
@@ -84,7 +89,7 @@
         </TableRow>
 
         <TableRow android:layout_marginLeft="20dp">
-            <TextView android:text="IP : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:text="Desktop Connect : " android:gravity="right" android:textStyle="bold"/>
             <TextView android:id="@+id/text_home_ip" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 

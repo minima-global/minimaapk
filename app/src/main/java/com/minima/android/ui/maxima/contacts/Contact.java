@@ -1,4 +1,4 @@
-package com.minima.android.ui.maxima;
+package com.minima.android.ui.maxima.contacts;
 
 import org.minima.utils.json.JSONObject;
 

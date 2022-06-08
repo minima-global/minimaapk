@@ -53,7 +53,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="Maxima Details"/>
 
-        <activity   android:name=".ui.maxima.ContactActivity"
+        <activity   android:name=".ui.maxima.contacts.ContactActivity"
             android:exported="true"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"

@@ -5,7 +5,7 @@
     <item
         android:id="@+id/action_status"
         android:orderInCategory="100"
-        android:title="Status"
+        android:title="Full Status"
         app:showAsAction="never" />
 
     <item

@@ -3,24 +3,21 @@ package com.minima.android.ui.mds;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.databinding.FragmentGalleryBinding;
-import com.minima.android.ui.maxima.Contact;
-import com.minima.android.ui.maxima.ContactActivity;
-import com.minima.android.ui.maxima.ContactAdapter;
 
 import org.minima.Minima;
 import org.minima.utils.MinimaLogger;
@@ -29,7 +26,6 @@ import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
 import org.minima.utils.json.parser.ParseException;
 
-import java.io.File;
 import java.util.ArrayList;
 
 public class MDSFragment extends Fragment {
@@ -42,6 +38,8 @@ public class MDSFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        setHasOptionsMenu(true);
 
         View root = inflater.inflate(R.layout.fragment_mds, container, false);
 
@@ -107,6 +105,7 @@ public class MDSFragment extends Fragment {
         try {
             json = (JSONObject)new JSONParser().parse(mdscommand);
         } catch (ParseException e) {
+            Toast.makeText(mMain,"Error parsing mds function", Toast.LENGTH_SHORT).show();
             MinimaLogger.log(e);
             return;
         }
@@ -129,5 +128,26 @@ public class MDSFragment extends Fragment {
         //Create the custom arrayadapter
         MDSAdapter mdsadap = new MDSAdapter(mMain, R.layout.mds_view, allmds);
         mMainList.setAdapter(mdsadap);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        menu.clear();
+        inflater.inflate(R.menu.mds, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            case R.id.action_maxima_identity:
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

@@ -3,7 +3,6 @@ package com.minima.android.ui.mds;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,15 +13,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.minima.android.R;
-import com.minima.android.ui.maxima.Contact;
 
-import org.minima.utils.MinimaLogger;
-import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 public class MDSAdapter extends ArrayAdapter<JSONObject> {
@@ -64,9 +59,6 @@ public class MDSAdapter extends ArrayAdapter<JSONObject> {
         File webroot   = new File(mdsroot,"web");
         File dapproot  = new File(webroot,mds.getString("uid"));
         File image     = new File(dapproot,mds.getString("icon"));
-
-        MinimaLogger.log(image.getAbsolutePath());
-        MinimaLogger.log(mds.toString());
 
         ImageView iv = v.findViewById(R.id.mds_image);
 

@@ -1,4 +1,4 @@
-package com.minima.android.ui.maxima;
+package com.minima.android.ui.maxima.contacts;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -19,7 +19,6 @@ import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.RPCClient;
 
 import java.util.Date;
 
