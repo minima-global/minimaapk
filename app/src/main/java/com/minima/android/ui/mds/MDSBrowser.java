@@ -1,6 +1,7 @@
 package com.minima.android.ui.mds;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -66,15 +67,8 @@ public class MDSBrowser extends AppCompatActivity {
 
     public void loadInit(){
         mWebView.clearHistory();
-
-        //Now the image
-        File rootfile   = getFilesDir();
-        File mdsroot    = new File(rootfile,"mds");
-        File webroot    = new File(mdsroot,"web");
-        File dapproot   = new File(webroot,mUID);
-        File index      = new File(dapproot,"index.html");
-
-        mWebView.loadUrl("file://"+index.getAbsolutePath());
+        mWebView.clearCache(true);
+        mWebView.loadUrl("http://127.0.0.1:9003/"+mUID+"/index.html");
     }
 
     @Override
@@ -98,6 +92,19 @@ public class MDSBrowser extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_mdsrefresh:
                 loadInit();
+                return true;
+
+            case R.id.action_mdsexit:
+                finish();
+                return true;
+
+            case R.id.action_mdsopen:
+
+                String url = "http://127.0.0.1:9003/"+mUID+"/index.html";
+                Intent browser = new Intent(Intent.ACTION_VIEW);
+                browser.setData(Uri.parse(url));
+                startActivity(browser);
+
                 return true;
 
             default:

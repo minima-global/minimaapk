@@ -12,5 +12,10 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+
+        <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/manroperegular</item>
+        <item name="android:textColor">#606060</item>
+
     </style>
 </resources>

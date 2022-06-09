@@ -48,7 +48,7 @@ import com.minima.android.MainActivity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST     = false;
+    static boolean TEST     = true;
     static boolean GENESIS  = false;
 
     //Currently Binding doesn't work as we run in a separate process..
