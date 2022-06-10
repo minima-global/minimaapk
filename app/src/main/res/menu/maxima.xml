@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_maxima_refresh"
+        android:orderInCategory="100"
+        android:title="Refresh Contacts"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_maxima_identity"
         android:orderInCategory="100"
         android:title="Maxima Details"

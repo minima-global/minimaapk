@@ -102,6 +102,10 @@ public class MaximaFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
 
+            case R.id.action_maxima_refresh:
+                updateContactList(false);
+                return true;
+
             case R.id.action_maxima_identity:
                 //Wait for Maxima..
                 MaximaManager max = Main.getInstance().getMaxima();
