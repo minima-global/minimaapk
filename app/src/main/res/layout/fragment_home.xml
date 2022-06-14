@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/main_background"
+    android:scaleType="centerCrop"
     tools:context=".ui.home.HomeFragment">
 
     <TableLayout
