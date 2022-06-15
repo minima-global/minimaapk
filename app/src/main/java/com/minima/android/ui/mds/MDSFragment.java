@@ -97,7 +97,7 @@ public class MDSFragment extends Fragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mMain.openFile();
+                mMain.openFile(MainActivity.REQUEST_INSTALLMINI);
             }
         });
 

@@ -46,6 +46,14 @@ public class BackupFragment extends Fragment {
             }
         });
 
+        Button restore = root.findViewById(R.id.backup_restore);
+        restore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMain.openFile(MainActivity.REQUEST_RESTORE);
+            }
+        });
+
         return root;
     }
 
@@ -73,7 +81,7 @@ public class BackupFragment extends Fragment {
 
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                    intentShareFile.setType("application/zip");
+                    intentShareFile.setType("application/*");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
                     intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima backup");
                     intentShareFile.putExtra(Intent.EXTRA_TEXT, "Here is my Minima backup");

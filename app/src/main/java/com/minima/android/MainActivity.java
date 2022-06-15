@@ -32,6 +32,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.minima.android.databinding.ActivityMainBinding;
+import com.minima.android.files.InstallMiniDAPP;
+import com.minima.android.files.RestoreBackup;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 import com.minima.android.ui.mds.MDSFragment;
@@ -51,8 +53,20 @@ import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
+    /**
+     * Open File operations
+     */
+    public static int REQUEST_INSTALLMINI   = 42;
+    public static int REQUEST_RESTORE       = 43;
+
+    /**
+     * Main Minmia Service
+     */
     MinimaService mMinima;
 
+    /**
+     * Update this when mindapp installed
+     */
     public MDSFragment mMDSFragment = null;
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -99,6 +113,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_status:
+//                shutdown();
                 runStatus();
                 return true;
 
@@ -149,6 +164,29 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void shutdown(){
+
+        Runnable close = new Runnable() {
+            @Override
+            public void run() {
+                if(mMinima != null){
+                    String res = mMinima.getMinima().runMinimaCMD("quit");
+                    MinimaLogger.log(res);
+                }
+
+                //Stop the service
+                Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+                stopService(minimaintent);
+
+                //Shut this down..
+                finish();
+            }
+        };
+
+        Thread closer = new Thread(close);
+        closer.start();
     }
 
     public Minima getMinima(){
@@ -240,15 +278,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
     public void openBatteryOptimisation(){
         Intent intent = new Intent();
-//        String packageName = getPackageName();
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        //if (pm.isIgnoringBatteryOptimizations(packageName))
         intent.setAction(Settings.ACTION_IGNORE_BATTERY_OPTIMIZATION_SETTINGS);
-//        else {
-//            intent.setAction(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS);
-//            intent.setData(Uri.parse("package:" + packageName));
-//        }
-
         startActivity(intent);
     }
 
@@ -268,53 +299,28 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                                      Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        MinimaLogger.log("FILE OPEN RESULTCODE "+resultCode);
+        //Was anything returned
         if(data == null){
             return;
         }
 
         //Get the file URI
-        final Uri fileuri = data.getData();
+        Uri fileuri = data.getData();
         MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
 
-        Runnable installer = new Runnable() {
-                @Override
-                public void run() {
-                    //Get the Input Stream..
-                    try {
-                        InputStream is = getContentResolver().openInputStream(fileuri);
-                        byte[] data = Utils.loadFile(is);
+        if(requestCode == REQUEST_INSTALLMINI){
+            //Create an Installer Handler
+            InstallMiniDAPP install = new InstallMiniDAPP(fileuri,this);
 
-                        //Get a file..
-                        File dapp = new File(getFilesDir(),"dapp.zip");
-                        if(dapp.exists()){
-                            dapp.delete();
-                        }
-
-                        //Now save to da file..
-                        MiniFile.writeDataToFile(dapp,data);
-
-                        //Now load that..
-                        String result = mMinima.getMinima().runMinimaCMD("mds action:install file:\""+dapp.getAbsolutePath()+"\"",false);
-                        MinimaLogger.log(result);
-
-                        if(mMDSFragment != null){
-                            runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mMDSFragment.updateMDSList();
-                                }
-                            });
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            };
-
-            Thread inst = new Thread(installer);
+            Thread inst = new Thread(install);
             inst.start();
+        }else if(requestCode == REQUEST_RESTORE){
+            //Create an Installer Handler
+            RestoreBackup restore = new RestoreBackup(fileuri,this);
+
+            Thread inst = new Thread(restore);
+            inst.start();
+        }
     }
 
     // Function to check and request permission
@@ -333,17 +339,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         //Was this from our MDS open File..
-        if(requestCode == 42){
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                //Access granted Open the File manager..
-                openFile();
-            }else{
-                Toast.makeText(MainActivity.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
-            }
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //Access granted Open the File manager..
+            openFile(requestCode);
+        }else{
+            Toast.makeText(MainActivity.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
         }
     }
 
-    public void openFile() {
+    public void openFile(int zRequest) {
 
         //Are we connected..
         if(mMinima == null){
@@ -351,11 +355,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             return;
         }
 
-        //Ask for permission
-        if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, 42)){
+        //Check for permission
+        if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, zRequest)){
             return;
         }
 
+        //The type of file we are looking for
         String mimeType = "application/*";
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -364,7 +369,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         // special intent for Samsung file manager
         Intent sIntent = new Intent("com.sec.android.app.myfiles.PICK_DATA");
-        // if you want any file type, you can skip next line
         sIntent.putExtra("CONTENT_TYPE", mimeType);
         sIntent.addCategory(Intent.CATEGORY_DEFAULT);
 
@@ -378,7 +382,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         }
 
         try {
-            startActivityForResult(chooserIntent, 99);
+            startActivityForResult(chooserIntent, zRequest);
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getApplicationContext(), "No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
         }
