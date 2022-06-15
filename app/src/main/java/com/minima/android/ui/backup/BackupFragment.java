@@ -42,6 +42,7 @@ public class BackupFragment extends Fragment {
         backup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
                 makeBackup();
             }
         });
@@ -50,6 +51,7 @@ public class BackupFragment extends Fragment {
         restore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
                 mMain.openFile(MainActivity.REQUEST_RESTORE);
             }
         });
@@ -81,7 +83,7 @@ public class BackupFragment extends Fragment {
 
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                    intentShareFile.setType("application/*");
+                    intentShareFile.setType("application/zip");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
                     intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima backup");
                     intentShareFile.putExtra(Intent.EXTRA_TEXT, "Here is my Minima backup");
@@ -91,7 +93,7 @@ public class BackupFragment extends Fragment {
                     mMain.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(mMain,"Error cretaing backup..",Toast.LENGTH_LONG).show();
+                            Toast.makeText(mMain,"Error creating backup..",Toast.LENGTH_LONG).show();
                         }
                     });
                 }

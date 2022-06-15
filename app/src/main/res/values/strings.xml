@@ -38,7 +38,7 @@ The Minima Team</string>
         \n
         On Minima you are the only one who looks after your coins.\n
         \n
-        Currently - Backups are only valid for 1 month.\n
+        Currently - backups are only valid for 1-2 months.\n
         \n
         The files are about 500Kb.. so not very big.
     </string>
@@ -46,7 +46,7 @@ The Minima Team</string>
     <string name="minima_restore">
         You can easily restore from a backup.\n
         \n
-        Once you have restored from a file Minima will shutdown.\n
+        Once you have restored Minima will shutdown.\n
         \n
         Please re-open Minima and your data will have been restored.
     </string>

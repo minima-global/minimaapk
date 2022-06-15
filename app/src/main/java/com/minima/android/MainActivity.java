@@ -107,15 +107,24 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         BroadcastReceiver receiver = new BroadcastReceiver() {
             public void onReceive(Context context, Intent intent) {
                 int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-                if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
+                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
                     // on AC power
                     MinimaLogger.log("BATTERY PLUGGED IN");
-                } else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-                    // on USB power
-                    MinimaLogger.log("BATTERY USB PLUGGED IN");
+
+                    //Set PoW to regular
+                    if(mMinima != null){
+                        mMinima.getMinima().getMain().setNormalAutoMineSpeed();
+                    }
+
                 } else if (plugged == 0) {
                     // on battery power
                     MinimaLogger.log("BATTERY NOT PLUGGED IN");
+
+                    //Set PoW to regular
+                    if(mMinima != null){
+                        mMinima.getMinima().getMain().setLowPowAutoMineSpeed();
+                    }
+
                 } else {
                     // intent didnt include extra info
                     MinimaLogger.log("BATTERY NO EXTRA INFO");
