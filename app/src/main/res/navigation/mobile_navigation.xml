@@ -24,6 +24,12 @@
         tools:layout="@layout/fragment_maxima" />
 
     <fragment
+        android:id="@+id/nav_backup"
+        android:name="com.minima.android.ui.backup.BackupFragment"
+        android:label="Backup / Restore"
+        tools:layout="@layout/fragment_backup" />
+
+    <fragment
         android:id="@+id/nav_help"
         android:name="com.minima.android.ui.help.HelpFragment"
         android:label="Help"

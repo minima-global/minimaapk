@@ -20,10 +20,10 @@
 
     <group android:id="@+id/middle_menu" android:checkableBehavior="single">
 
-<!--        <item-->
-<!--            android:id="@+id/nav_archive"-->
-<!--            android:icon="@android:drawable/ic_popup_disk_full"-->
-<!--            android:title="@string/menu_archive" />-->
+        <item
+            android:id="@+id/nav_backup"
+            android:icon="@android:drawable/ic_popup_disk_full"
+            android:title="Backup / Restore" />
 
         <item
             android:id="@+id/nav_help"

@@ -33,4 +33,16 @@ We are still working hard to fit all the pieces together but we hope you enjoy t
 \n
 The Minima Team</string>
 
+    <string name="minima_backup">
+        Making a backup of your Minima node is VERY important.\n
+        \n
+        On Minima you are the only one who looks after your coins - and so the responsibility lies with you.
+    </string>
+
+    <string name="minima_restore">
+        You can easily restore from a backup.\n
+        \n
+        Backups are only valid for up to 2 months.
+    </string>
+
 </resources>
