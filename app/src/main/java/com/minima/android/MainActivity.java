@@ -3,13 +3,16 @@ package com.minima.android;
 import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -99,6 +102,28 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
         requestBatteryCheck(false);
+
+        //Listen for Battery Events..
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+                if (plugged == BatteryManager.BATTERY_PLUGGED_AC) {
+                    // on AC power
+                    MinimaLogger.log("BATTERY PLUGGED IN");
+                } else if (plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                    // on USB power
+                    MinimaLogger.log("BATTERY USB PLUGGED IN");
+                } else if (plugged == 0) {
+                    // on battery power
+                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
+                } else {
+                    // intent didnt include extra info
+                    MinimaLogger.log("BATTERY NO EXTRA INFO");
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(receiver, filter);
     }
 
     @Override
