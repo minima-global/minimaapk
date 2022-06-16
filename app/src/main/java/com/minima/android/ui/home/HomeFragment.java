@@ -32,13 +32,18 @@ public class HomeFragment extends Fragment {
 
         //Get the Main Activity
         mMain = (MainActivity)getActivity();
+        mMain.mHomeFragment = this;
 
         mRoot = root;
 
         return root;
     }
 
-    public void setStatus(){
+    public void updateUI(){
+
+        if(mMain.getMinima() == null){
+            return;
+        }
 
         Runnable status = new Runnable() {
             @Override
@@ -47,35 +52,12 @@ public class HomeFragment extends Fragment {
                 try{
                     //Get Minima
                     Minima minima = mMain.getMinima();
-                    while(minima == null){
-                        Thread.sleep(1000);
-                        minima = mMain.getMinima();
-                    }
-
-                    //Wait for Maxima..
-                    MaximaManager max = Main.getInstance().getMaxima();
-                    while(max == null || !max.isInited()) {
-                        Thread.sleep(1000);
-                        max = Main.getInstance().getMaxima();
-                    }
 
                     //Run Status..
                     String status = minima.runMinimaCMD("status",false);
 
                     //Make a JSON
                     JSONObject json = (JSONObject) new JSONParser().parse(status);
-
-                    //Get the status..
-                    while(!(boolean)json.get("status")){
-                        Thread.sleep(1000);
-
-                        //Run Status..
-                        status = minima.runMinimaCMD("status");
-
-                        //Make a JSON
-                        json = (JSONObject) new JSONParser().parse(status);
-                    }
-
                     JSONObject response = (JSONObject) json.get("response");
                     updateMinimaUI(response);
 
@@ -180,6 +162,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setStatus();
+        updateUI();
     }
 }

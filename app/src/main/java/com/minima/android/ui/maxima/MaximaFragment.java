@@ -57,6 +57,7 @@ public class MaximaFragment extends Fragment {
 
         //Get the Main Activity
         mMain = (MainActivity)getActivity();
+        mMain.mMaximaFragment = this;
 
         //If it's Empty
         mMainList.setEmptyView(root.findViewById(R.id.empty_list_item));
@@ -84,9 +85,6 @@ public class MaximaFragment extends Fragment {
             }
         });
 
-        //And Update the List
-        updateContactList(false);
-
         return root;
     }
 
@@ -103,18 +101,10 @@ public class MaximaFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.action_maxima_refresh:
-                updateContactList(false);
+                updateUI();
                 return true;
 
             case R.id.action_maxima_identity:
-                //Wait for Maxima..
-                MaximaManager max = Main.getInstance().getMaxima();
-                if(max == null || !max.isInited()) {
-                    //Not ready yet..
-                    Toast.makeText(mMain,"Maxima not initialised yet..",Toast.LENGTH_SHORT).show();
-                    return true;
-                }
-
                 //Show your details
                 Intent intent = new Intent(mMain, MyDetailsActivity.class);
                 startActivity(intent);
@@ -125,7 +115,6 @@ public class MaximaFragment extends Fragment {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     public void showNewContactDialog(){
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
@@ -168,13 +157,7 @@ public class MaximaFragment extends Fragment {
             public void run() {
                 //Tell Minima..
                 try{
-                    //Get Minima..
-                    Minima minima = mMain.getMinima();
-                    if(minima == null){
-                        return;
-                    }
-
-                    String result = minima.runMinimaCMD("maxcontacts action:add contact:"+mNewContactAddress,false);
+                    String result = mMain.getMinima().runMinimaCMD("maxcontacts action:add contact:"+mNewContactAddress,false);
                     MinimaLogger.log(result);
 
                     //Small pause..
@@ -184,7 +167,7 @@ public class MaximaFragment extends Fragment {
                     mMain.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            updateContactList(false);
+                            updateUI();
                         }
                     });
 
@@ -198,7 +181,7 @@ public class MaximaFragment extends Fragment {
         tt.start();
     }
 
-    public void updateContactList(boolean zRefrshAswell){
+    public void updateUI(){
 
         ArrayList<Contact> contacts = new ArrayList<>();
 
@@ -262,6 +245,6 @@ public class MaximaFragment extends Fragment {
         super.onResume();
 
         //And Update the List
-        updateContactList(false);
+        updateUI();
     }
 }

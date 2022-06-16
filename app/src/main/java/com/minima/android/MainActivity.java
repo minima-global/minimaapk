@@ -3,6 +3,7 @@ package com.minima.android;
 import android.Manifest;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -38,6 +39,8 @@ import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.service.MinimaService;
+import com.minima.android.ui.home.HomeFragment;
+import com.minima.android.ui.maxima.MaximaFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 import com.minima.android.ui.mds.MDSFragment;
 
@@ -47,6 +50,8 @@ import org.minima.system.network.maxima.MaximaManager;
 import org.minima.system.params.GeneralParams;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONObject;
+import org.minima.utils.json.parser.JSONParser;
 
 import java.io.DataInputStream;
 import java.io.File;
@@ -68,9 +73,19 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     MinimaService mMinima;
 
     /**
+     * Current Battery Status
+     */
+    int mBatteryStaus = -1;
+
+    /**
      * Update this when mindapp installed
      */
-    public MDSFragment mMDSFragment = null;
+    public MDSFragment mMDSFragment         = null;
+    public HomeFragment mHomeFragment       = null;
+    public MaximaFragment mMaximaFragment   = null;
+
+    //Loader while connecting to Minima
+    ProgressDialog mLoader = null;
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -101,38 +116,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
-        requestBatteryCheck(false);
-
-        //Listen for Battery Events..
-        BroadcastReceiver receiver = new BroadcastReceiver() {
-            public void onReceive(Context context, Intent intent) {
-                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-                    // on AC power
-                    MinimaLogger.log("BATTERY PLUGGED IN");
-
-                    //Set PoW to regular
-                    if(mMinima != null){
-                        mMinima.getMinima().getMain().setNormalAutoMineSpeed();
-                    }
-
-                } else if (plugged == 0) {
-                    // on battery power
-                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
-
-                    //Set PoW to regular
-                    if(mMinima != null){
-                        mMinima.getMinima().getMain().setLowPowAutoMineSpeed();
-                    }
-
-                } else {
-                    // intent didnt include extra info
-                    MinimaLogger.log("BATTERY NO EXTRA INFO");
-                }
-            }
-        };
-        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        registerReceiver(receiver, filter);
+        //Wait for Minima to fully start up..
+        mLoader = new ProgressDialog(this);
+        mLoader.setTitle("Connecting to Minima");
+        mLoader.setMessage("Please wait..");
+        mLoader.setCanceledOnTouchOutside(false);
+        mLoader.show();
     }
 
     @Override
@@ -234,8 +223,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
-                || super.onSupportNavigateUp();
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
     }
 
     @Override
@@ -243,6 +231,111 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         MinimaLogger.log("CONNECTED TO SERVICE");
         MinimaService.MyBinder binder = (MinimaService.MyBinder)iBinder;
         mMinima = binder.getService();
+
+        waitForMinimaToStartUp();
+    }
+
+    public void waitForMinimaToStartUp(){
+        Runnable checker = new Runnable() {
+            @Override
+            public void run() {
+                try{
+                    //Wait for Maxima..
+                    MaximaManager max = Main.getInstance().getMaxima();
+                    while(max == null || !max.isInited()) {
+                        Thread.sleep(500);
+                        max = Main.getInstance().getMaxima();
+                    }
+
+                    //Run Status..
+                    String status = mMinima.getMinima().runMinimaCMD("status",false);
+
+                    //Make a JSON
+                    JSONObject json = (JSONObject) new JSONParser().parse(status);
+
+                    //Get the status..
+                    while(!(boolean)json.get("status")){
+                        Thread.sleep(500);
+
+                        //Run Status..
+                        status = mMinima.getMinima().runMinimaCMD("status");
+
+                        //Make a JSON
+                        json = (JSONObject) new JSONParser().parse(status);
+                    }
+
+                    //Add the Battery Listener..
+                    addBatteryListener();
+
+                    //OK - Status returned OK..
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //Hide the Loader
+                            if(mLoader != null){
+                                mLoader.cancel();
+                            }
+
+                            //Update the Home
+                            if(mHomeFragment != null){
+                                mHomeFragment.updateUI();
+                            }
+
+                            //And check for Battery..
+                            requestBatteryCheck();
+                        }
+                    });
+
+                }catch(Exception exc) {
+                    MinimaLogger.log(exc);
+                }
+            }
+        };
+
+        Thread tt = new Thread(checker);
+        tt.start();
+    }
+
+    public void addBatteryListener(){
+        //Listen for Battery Events..
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+
+                //Is this a new setting
+                if(mBatteryStaus == plugged) {
+                    //No change..
+                    return;
+                }
+                mBatteryStaus = plugged;
+
+                //What Happened..
+                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                    // on AC power
+                    MinimaLogger.log("BATTERY PLUGGED IN");
+
+                    //Set PoW to regular
+                    if(mMinima != null){
+                        mMinima.getMinima().getMain().setNormalAutoMineSpeed();
+                    }
+
+                } else if (plugged == 0) {
+                    // on battery power
+                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
+
+                    //Set PoW to regular
+                    if(mMinima != null){
+                        mMinima.getMinima().getMain().setLowPowAutoMineSpeed();
+                    }
+
+                } else {
+                    // intent didnt include extra info
+                    MinimaLogger.log("BATTERY NO EXTRA INFO");
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(receiver, filter);
     }
 
     @Override
@@ -273,12 +366,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     /**
      * Show a messgae requesting access to battery settings
      */
-    public void requestBatteryCheck(boolean zForce){
+    public boolean requestBatteryCheck(){
         String packageName = getPackageName();
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         boolean ignoring = pm.isIgnoringBatteryOptimizations(packageName);
         MinimaLogger.log("Battery Is Ignored : "+ignoring);
-        if (!ignoring || zForce) {
+        if (!ignoring) {
             new AlertDialog.Builder(this)
                     .setTitle("Battery Optimise")
                     .setMessage("Minima needs to run in the background to validate and secure your coins.\n\n" +
@@ -295,7 +388,11 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 //                    .setNegativeButton(android.R.string.no, null)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .show();
+
+            return true;
         }
+
+        return false;
     }
 
     public void checkBatteryOptimisation(){

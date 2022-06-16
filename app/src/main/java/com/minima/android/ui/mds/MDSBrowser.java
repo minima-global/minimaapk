@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -68,7 +69,7 @@ public class MDSBrowser extends AppCompatActivity {
     public void loadInit(){
         mWebView.clearHistory();
         mWebView.clearCache(true);
-        mWebView.loadUrl("http://127.0.0.1:9003/"+mUID+"/index.html");
+        mWebView.loadUrl("http://127.0.0.1:9003/"+mUID+"/index.html?uid="+mUID);
     }
 
     @Override
@@ -100,7 +101,7 @@ public class MDSBrowser extends AppCompatActivity {
 
             case R.id.action_mdsopen:
 
-                String url = "http://127.0.0.1:9003/"+mUID+"/index.html";
+                String url = "http://127.0.0.1:9003/"+mUID+"/index.html?uid="+mUID;
                 Intent browser = new Intent(Intent.ACTION_VIEW);
                 browser.setData(Uri.parse(url));
                 startActivity(browser);
