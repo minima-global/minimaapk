@@ -277,8 +277,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             //Update the Home
-                            if(mHomeFragment != null){
-                                mHomeFragment.updateUI();
+                            if(mMDSFragment != null){
+                                mMDSFragment.updateMDSList();
                             }
 
                             //And check for Battery..

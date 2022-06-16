@@ -45,6 +45,7 @@ public class MaximaFragment extends Fragment {
 
     ArrayList<Contact> mContacts = new ArrayList<>();
 
+    private String mMyContactAddress = "";
     private String mNewContactAddress = "";
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -60,7 +61,7 @@ public class MaximaFragment extends Fragment {
         mMain.mMaximaFragment = this;
 
         //If it's Empty
-        mMainList.setEmptyView(root.findViewById(R.id.empty_list_item));
+        //mMainList.setEmptyView(root.findViewById(R.id.empty_list_item));
 
         //What happens on click
         mMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,7 +86,27 @@ public class MaximaFragment extends Fragment {
             }
         });
 
+        //What are your Maxima contact details
+        getDetails();
+
         return root;
+    }
+
+    public void getDetails(){
+
+        //Call Maxima..
+        try{
+            //Do the RPC call..
+            String maxdetails = mMain.getMinima().runMinimaCMD("maxima",false);
+
+            JSONObject json         = (JSONObject)new JSONParser().parse(maxdetails);
+            JSONObject response     = (JSONObject)json.get("response");
+
+            mMyContactAddress          = (String) response.get("contact");
+
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+        }
     }
 
     @Override
@@ -99,6 +120,16 @@ public class MaximaFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+
+            case R.id.action_maxima_share:
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, mMyContactAddress);
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
 
             case R.id.action_maxima_refresh:
                 updateUI();
@@ -188,7 +219,7 @@ public class MaximaFragment extends Fragment {
         //Get Minima..
         Minima minima = mMain.getMinima();
         if(minima == null){
-            Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -237,7 +268,6 @@ public class MaximaFragment extends Fragment {
         ContactAdapter adapter = new ContactAdapter(mMain, R.layout.contact_view, allcontacts);
 
         mMainList.setAdapter(adapter);
-
     }
 
     @Override

@@ -5,17 +5,20 @@
 
     <group android:id="@+id/top_menu" android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_minima"
-            android:title="@string/menu_home" />
+            android:id="@+id/nav_mds"
+            android:icon="@drawable/ic_menu_gallery"
+            android:title="Home" />
+
         <item
             android:id="@+id/nav_maxima"
             android:icon="@drawable/network"
-            android:title="@string/menu_maxima" />
+            android:title="Contacts" />
+
         <item
-            android:id="@+id/nav_mds"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="@string/menu_gallery" />
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_minima"
+            android:title="Health" />
+
     </group>
 
     <group android:id="@+id/middle_menu" android:checkableBehavior="single">

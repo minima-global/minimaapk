@@ -2,7 +2,9 @@ package com.minima.android.ui.mds;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Browser;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -62,10 +64,22 @@ public class MDSFragment extends Fragment {
                 JSONObject mds = mMDS[zPosition];
 
                 //Now open a Contact Activity
-                Intent intent = new Intent(mMain, MDSBrowser.class);
-                intent.putExtra("name", mds.getString("name"));
-                intent.putExtra("uid", mds.getString("uid"));
-                startActivity(intent);
+//                Intent intent = new Intent(mMain, MDSBrowser.class);
+//                intent.putExtra("name", mds.getString("name"));
+//                intent.putExtra("uid", mds.getString("uid"));
+//                startActivity(intent);
+
+                //The MiniDAPP UID
+                String uid = mds.getString("uid");
+
+                //The URL page
+                Uri minipage = Uri.parse("http://127.0.0.1:9003/"+uid+"/index.html?uid="+uid);
+
+                //Start the browser
+                Intent browser = new Intent(Intent.ACTION_VIEW);
+                browser.putExtra(Browser.EXTRA_APPLICATION_ID, "MiniDAPP_"+uid);
+                browser.setData(minipage);
+                startActivity(browser);
             }
         });
 
@@ -140,7 +154,7 @@ public class MDSFragment extends Fragment {
         //Get Minima..
         Minima minima = mMain.getMinima();
         if(minima == null){
-            Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
             return;
         }
 
