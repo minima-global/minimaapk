@@ -18,7 +18,6 @@ public class Utils {
                 baos.write(data,0,l);
             }
 
-            MinimaLogger.log("File read size "+total);
         }catch(Exception exc){
             MinimaLogger.log("Load file : "+exc);
         }
