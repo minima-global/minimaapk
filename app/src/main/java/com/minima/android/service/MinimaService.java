@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -198,29 +199,18 @@ public class MinimaService extends Service {
             vars.add("-genesis");
         }
 
-        //vars.add("-genesis");
-        //vars.add("-nop2p");
-        //vars.add("-test");
-
         //vars.add("-connect");
         //vars.add("35.228.18.150:9001");
-
-////        //Test Values
-//        vars.add("-test");
-//        vars.add("-clean");
-//        vars.add("-nop2p");
-
-//        vars.add("-connect");
-//        vars.add("10.0.2.2:9001");
-
-//        vars.add("-genesis");
-//        vars.add("-automine");
+        //vars.add("10.0.2.2:9001");
 
         mStart.mainStarter(vars.toArray(new String[0]));
 
         //Notify User service is now running!
         Toast.makeText(this, "Minima Service Started", Toast.LENGTH_SHORT).show();
-    }
+
+        //Listen to Battery Events
+//        addBatteryListener();
+   }
 
     public Minima getMinima(){
         return mStart;
@@ -300,5 +290,45 @@ public class MinimaService extends Service {
         return isPlugged;
     }
 
+    int mBatteryStaus = -1;
+    public void addBatteryListener(){
+        //Listen for Battery Events..
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            public void onReceive(Context context, Intent intent) {
+                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+
+                //Is this a new setting
+                if(mBatteryStaus == plugged) {
+                    //No change..
+                    return;
+                }
+                mBatteryStaus = plugged;
+
+                //What Happened..
+                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                    // on AC power
+                    MinimaLogger.log("BATTERY PLUGGED IN");
+
+                    //Set PoW to regular
+                    getMinima().getMain().setNormalAutoMineSpeed();
+
+                } else if (plugged == 0) {
+
+                    // on battery power
+                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
+
+                    //Set PoW to regular
+                    getMinima().getMain().setLowPowAutoMineSpeed();
+
+
+                } else {
+                    // intent didnt include extra info
+                    MinimaLogger.log("BATTERY NO EXTRA INFO");
+                }
+            }
+        };
+        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        registerReceiver(receiver, filter);
+    }
 }
 
