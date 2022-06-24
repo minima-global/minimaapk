@@ -6,5 +6,6 @@
         android:orderInCategory="100"
         android:title="Delete"
         android:icon="@android:drawable/ic_delete"
+        android:iconTint="@color/coreBlackContrast"
         app:showAsAction="always" />
 </menu>
