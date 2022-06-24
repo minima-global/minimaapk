@@ -1,27 +1,58 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.MinimaAndroid" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.MinimaAndroid" parent="Theme.MaterialComponents.Light.DarkActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
         <!-- Secondary brand color. -->
-        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondary">@color/coreBlackContrast</item>
         <item name="colorSecondaryVariant">@color/teal_700</item>
         <item name="colorOnSecondary">@color/black</item>
 
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+        <item name="android:statusBarColor">@color/coreGrey5</item>
+        <item name="android:windowLightStatusBar">true</item>
 
         <!-- Customize your theme here. -->
         <item name="android:fontFamily">@font/manroperegular</item>
 
+        <item name="drawerArrowStyle">@style/MinimaActionBar.CoreBlackContrastIconStyle</item>
     </style>
 
     <style name="MyActionBar" parent="Theme.MaterialComponents.DayNight.NoActionBar">
 <!--        <item name="android:background">#317AFF</item>-->
         <item name="android:background">@color/black</item>-->
         <item name="android:textColor">#FF0000</item>
+    </style>
+
+    <style name="MinimaActionBar" parent="Widget.AppCompat.Toolbar">
+        <item name="android:background">@color/coreGrey5</item>
+        <item name="titleTextColor">@color/coreBlackContrast</item>
+        <item name="titleTextAppearance">@style/MinimaActionBar.TitleTextStyle</item>
+        <item name="android:textColorSecondary">#333333</item>
+    </style>
+
+    <style name="MinimaActionBar.DrawerIconColour" parent="Theme.AppCompat.NoActionBar">
+        <item name="drawerArrowStyle">@style/MinimaActionBar.CoreBlackContrastIconStyle</item>
+    </style>
+
+    <style name="MinimaActionBar.TitleTextStyle" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@color/coreBlackContrast</item>
+        <item name="android:fontFamily">@font/manropebold</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:height">200dp</item>
+        <item name="height">200dp</item>
+        <item name="android:layout_height">200dp</item>
+        <item name="android:layout_width">200dp</item>
+        <item name="lineHeight">200dp</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="android:paddingTop">20dp</item>
+        <item name="android:layout_marginTop">20dp</item>
+    </style>
+
+    <style name="MinimaActionBar.CoreBlackContrastIconStyle" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/coreBlackContrast</item>
     </style>
 
     <style name="Theme.MinimaAndroid.NoActionBar">
@@ -31,5 +62,5 @@
 
     <style name="Theme.MinimaAndroid.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.MinimaAndroid.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.MinimaAndroid.PopupOverlay" parent="ThemeOverlay.AppCompat" />
 </resources>

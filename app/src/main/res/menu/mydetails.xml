@@ -4,9 +4,11 @@
 
     <item
         android:id="@+id/menu_share"
+        android:icon="@android:drawable/ic_menu_share"
+        android:iconTint="@color/coreBlackContrast"
         android:orderInCategory="100"
         android:title="Share"
-        android:icon="@android:drawable/ic_menu_share"
+        app:iconTint="@color/coreBlackContrast"
         app:showAsAction="always" />
 
 </menu>

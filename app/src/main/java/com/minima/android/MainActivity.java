@@ -1,8 +1,6 @@
 package com.minima.android;
 
 import android.Manifest;
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -12,29 +10,31 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
-import android.view.MenuItem;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Toast;
-
-import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.navigation.NavigationView;
 import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
@@ -47,17 +47,9 @@ import com.minima.android.ui.mds.MDSFragment;
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
-import org.minima.system.params.GeneralParams;
-import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
-
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
@@ -109,6 +101,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        changeNavigationIcons();
         NavigationUI.setupWithNavController(navigationView, navController);
 
         //Start the Minima Service..
@@ -122,6 +115,23 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         mLoader.setMessage("Please wait..");
         mLoader.setCanceledOnTouchOutside(false);
         mLoader.show();
+    }
+
+    private void changeNavigationIcons() {
+        // Menu button
+        Drawable existingNavigationIcon = binding.appBarMain.toolbar.getNavigationIcon();
+        if (existingNavigationIcon != null) {
+            existingNavigationIcon = existingNavigationIcon.mutate();
+            existingNavigationIcon.setTint(Color.RED);
+        }
+
+        binding.appBarMain.toolbar.setNavigationIcon(existingNavigationIcon);
+
+        // Overflow button
+        Drawable overflowButton = binding.appBarMain.toolbar.getOverflowIcon();
+        if (overflowButton != null) {
+            overflowButton.setColorFilter(getColor(R.color.coreBlackContrast), PorterDuff.Mode.SRC_ATOP);
+        }
     }
 
     @Override
@@ -354,7 +364,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         new AlertDialog.Builder(this)
                 .setTitle("Minima Status")
                 .setMessage(status)
-                .setIcon(android.R.drawable.ic_dialog_info)
+                .setIcon(R.drawable.outline_info_24)
                 .setNegativeButton(android.R.string.no, null)
                 .show();
 

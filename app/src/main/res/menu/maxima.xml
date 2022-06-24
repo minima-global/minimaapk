@@ -7,6 +7,9 @@
         android:orderInCategory="100"
         android:title="Share"
         android:icon="@android:drawable/ic_menu_share"
+        android:iconTint="@color/coreBlackContrast"
+        app:iconTint="@color/coreBlackContrast"
+        android:iconTintMode="src_atop"
         app:showAsAction="always"/>
 
     <item
