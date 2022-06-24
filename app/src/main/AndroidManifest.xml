@@ -52,6 +52,7 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Maxima Details"/>
 
         <activity   android:name=".ui.maxima.contacts.ContactActivity"

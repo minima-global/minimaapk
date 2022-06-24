@@ -11,6 +11,14 @@
     android:focusableInTouchMode="true"
     tools:context=".ui.maxima.MyDetailsActivity">
 
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/MinimaActionBar"
+        android:theme="@style/MinimaActionBar.DrawerIconColour"
+        app:title="Maxima Details" />
+
     <LinearLayout android:background="@drawable/white_box"
         android:layout_marginTop="16dp"
         android:layout_marginLeft="8dp"
@@ -31,10 +39,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:layout_gravity="right"
             android:id="@+id/mydetails_updatename"
             android:text="Update Name"
+            android:textColor="@color/coreGrey5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
