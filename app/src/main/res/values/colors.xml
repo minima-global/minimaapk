@@ -10,4 +10,7 @@
 
     <color name="coreGrey5">#F9F9FA</color>
     <color name="coreBlackContrast">#363A3F</color>
+
+    <color name="coreWhite">#FFFFFF</color>
+
 </resources>
