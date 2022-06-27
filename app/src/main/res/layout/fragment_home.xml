@@ -133,6 +133,11 @@
             <TextView android:id="@+id/text_home_ip" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Password : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_mds_password" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
     </TableLayout>
 
 </LinearLayout>

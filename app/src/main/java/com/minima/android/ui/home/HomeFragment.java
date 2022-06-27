@@ -153,8 +153,11 @@ public class HomeFragment extends Fragment {
                 //Get the contacts
                 JSONArray mdsapps = (JSONArray) zMDS.get("minidapps");
 
+                String password   = zMDS.getString("password");
+
                 //Set it..
                 ((TextView)mRoot.findViewById(R.id.text_home_dapps)).setText(""+mdsapps.size());
+                ((TextView)mRoot.findViewById(R.id.text_mds_password)).setText(password);
             }
         });
     }
