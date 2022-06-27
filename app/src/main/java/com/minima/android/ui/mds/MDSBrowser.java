@@ -2,9 +2,12 @@ package com.minima.android.ui.mds;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.net.http.SslCertificate;
+import android.net.http.SslError;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -28,6 +31,7 @@ public class MDSBrowser extends AppCompatActivity {
     WebView mWebView;
 
     String mUID;
+    String mSessionID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +40,8 @@ public class MDSBrowser extends AppCompatActivity {
         setContentView(R.layout.activity_browser);
 
         String name = getIntent().getStringExtra("name");
-        mUID  = getIntent().getStringExtra("uid");
+        mUID        = getIntent().getStringExtra("uid");
+        mSessionID  = Main.getInstance().getMDSManager().convertMiniDAPPID(mUID);
 
         setTitle(name);
 
@@ -61,15 +66,32 @@ public class MDSBrowser extends AppCompatActivity {
                 view.loadUrl(request.getUrl().toString());
                 return false;
             }
+
+            @Override
+            public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+
+                // Checks Embedded certificates
+                SslCertificate serverCertificate = error.getCertificate();
+
+                //Check it..
+                String sslCertificate = serverCertificate.toString();
+//                String mySslCertificate = new SslCertificate(cert).toString();
+
+                handler.proceed();
+            }
         });
 
         loadInit();
     }
 
+    public String getIndexURL(){
+        return "https://127.0.0.1:9003/"+mUID+"/index.html?uid="+mSessionID;
+    }
+
     public void loadInit(){
         mWebView.clearHistory();
         mWebView.clearCache(true);
-        mWebView.loadUrl("http://127.0.0.1:9003/"+mUID+"/index.html?uid="+mUID);
+        mWebView.loadUrl(getIndexURL());
     }
 
     @Override
@@ -77,8 +99,14 @@ public class MDSBrowser extends AppCompatActivity {
         if(mWebView.canGoBack()) {
             mWebView.goBack();
         } else {
+            mWebView.loadUrl("");
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
     }
 
     @Override
@@ -101,7 +129,7 @@ public class MDSBrowser extends AppCompatActivity {
 
             case R.id.action_mdsopen:
 
-                String url = "http://127.0.0.1:9003/"+mUID+"/index.html?uid="+mUID;
+                String url = getIndexURL();
                 Intent browser = new Intent(Intent.ACTION_VIEW);
                 browser.setData(Uri.parse(url));
                 startActivity(browser);

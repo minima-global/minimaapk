@@ -59,12 +59,14 @@
             android:exported="true"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Maxima Contact"/>
 
         <activity   android:name=".ui.mds.MDSBrowser"
             android:exported="true"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="MiniDAPP"/>
 
         <!-- SERVICES -->

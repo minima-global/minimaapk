@@ -61,25 +61,37 @@ public class MDSFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
 
                 //Get the Selected MiniDAPP
-                JSONObject mds = mMDS[zPosition];
-
-                //Now open a Contact Activity
-//                Intent intent = new Intent(mMain, MDSBrowser.class);
-//                intent.putExtra("name", mds.getString("name"));
-//                intent.putExtra("uid", mds.getString("uid"));
-//                startActivity(intent);
+                JSONObject mds  = mMDS[zPosition];
+                JSONObject conf = (JSONObject) mds.get("conf");
 
                 //The MiniDAPP UID
                 String uid = mds.getString("uid");
 
-                //The URL page
-                Uri minipage = Uri.parse("http://127.0.0.1:9003/"+uid+"/index.html?uid="+uid);
+                //Get the sessionid
+                String sessionid = mMain.getMinima().getMain().getMDSManager().convertMiniDAPPID(uid);
 
-                //Start the browser
-                Intent browser = new Intent(Intent.ACTION_VIEW);
-                browser.putExtra(Browser.EXTRA_APPLICATION_ID, "MiniDAPP_"+uid);
-                browser.setData(minipage);
-                startActivity(browser);
+                //Is this an internal or external MiniDAPP..
+                String browsertype = conf.getString("browser","internal");
+
+               if(browsertype.equals("internal")){
+
+                   //Open internally..
+                   Intent intent = new Intent(mMain, MDSBrowser.class);
+                   intent.putExtra("name", conf.getString("name"));
+                   intent.putExtra("uid", uid);
+                   startActivity(intent);
+
+               }else{
+
+                   //The URL page
+                   Uri minipage = Uri.parse("https://127.0.0.1:9003/"+uid+"/index.html?uid="+sessionid);
+
+                   //Start the browser
+                   Intent browser = new Intent(Intent.ACTION_VIEW);
+                   browser.putExtra(Browser.EXTRA_APPLICATION_ID, "MiniDAPP_"+uid);
+                   browser.setData(minipage);
+                   startActivity(browser);
+               }
             }
         });
 

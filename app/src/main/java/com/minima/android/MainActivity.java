@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     //Wait for Maxima..
                     MaximaManager max = Main.getInstance().getMaxima();
                     while(max == null || !max.isInited()) {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                         max = Main.getInstance().getMaxima();
                     }
 
@@ -265,13 +265,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                     //Get the status..
                     while(!(boolean)json.get("status")){
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
 
                         //Run Status..
                         status = mMinima.getMinima().runMinimaCMD("status");
 
                         //Make a JSON
                         json = (JSONObject) new JSONParser().parse(status);
+
+                        MinimaLogger.log("Waiting for Status .. "+json.toString());
                     }
 
                     //OK - Status returned OK..
