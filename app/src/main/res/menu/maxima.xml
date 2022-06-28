@@ -21,7 +21,7 @@
     <item
         android:id="@+id/action_maxima_identity"
         android:orderInCategory="100"
-        android:title="Maxima Details"
+        android:title="My Profile"
         app:showAsAction="never" />
 
 </menu>
