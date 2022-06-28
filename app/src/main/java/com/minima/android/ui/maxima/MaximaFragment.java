@@ -214,14 +214,14 @@ public class MaximaFragment extends Fragment {
 
     public void updateUI(){
 
-        ArrayList<Contact> contacts = new ArrayList<>();
-
-        //Get Minima..
+        //Check we are connected..
         Minima minima = mMain.getMinima();
         if(minima == null){
-            //Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        ArrayList<Contact> contacts = new ArrayList<>();
 
         //Do the RPC call..
         String maxcontacts = minima.runMinimaCMD("maxcontacts",false);
@@ -266,7 +266,6 @@ public class MaximaFragment extends Fragment {
 
         //Create the custom arrayadapter
         ContactAdapter adapter = new ContactAdapter(mMain, R.layout.contact_view, allcontacts);
-
         mMainList.setAdapter(adapter);
     }
 

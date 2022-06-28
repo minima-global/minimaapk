@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -36,6 +37,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.minima.android.databinding.ActivityMainBinding;
+import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.service.MinimaService;
@@ -276,6 +278,9 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         MinimaLogger.log("Waiting for Status .. "+json.toString());
                     }
 
+                    //Install the MiniDApps..
+                    installMiniDAPPs();
+
                     //OK - Status returned OK..
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
@@ -285,9 +290,17 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                                 mLoader.cancel();
                             }
 
-                            //Update the Home
+                            //Update fragments
                             if(mMDSFragment != null){
                                 mMDSFragment.updateMDSList();
+                            }
+
+                            if(mHomeFragment != null){
+                                mHomeFragment.updateUI();
+                            }
+
+                            if(mMaximaFragment != null){
+                                mMaximaFragment.updateUI();
                             }
 
                             //And check for Battery..
@@ -303,6 +316,28 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         Thread tt = new Thread(checker);
         tt.start();
+    }
+
+    public void installMiniDAPPs(){
+        //Do we need to install apps..
+        SharedPreferences pref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
+        if(!pref.getBoolean("minidapps_installed",false)){
+
+            //Install them..
+            new InstallAssetMiniDAPP("block-0.1.4.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("wallet-1.4.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("terminal-1.9.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("maxsolo-1.8.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("helpdocs-1.0.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("incentive-1.1.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("scriptide-1.6.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("2048-3.mds.zip", MainActivity.this).run();
+
+            //And that's that
+            SharedPreferences.Editor edit = pref.edit();
+            edit.putBoolean("minidapps_installed", true);
+            edit.apply();
+        }
     }
 
 //    public void addBatteryListener(){
