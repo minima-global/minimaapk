@@ -16,6 +16,7 @@ import android.webkit.WebViewClient;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.minima.android.MainActivity;
 import com.minima.android.R;
@@ -38,6 +39,9 @@ public class MDSBrowser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_browser);
+
+//        Toolbar tb  = findViewById(R.id.minidapp_toolbar);
+//        setSupportActionBar(tb);
 
         String name = getIntent().getStringExtra("name");
         mUID        = getIntent().getStringExtra("uid");

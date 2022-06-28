@@ -1,32 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<ScrollView
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
     android:background="@drawable/main_background"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".ui.maxima.contacts.ContactActivity">
 
-    <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp">
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/contact_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/MinimaActionBar"
+        android:theme="@style/MinimaActionBar.DrawerIconColour"
+        app:title="Contact Details" />
 
-        <TextView
-            android:id="@+id/cname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="@drawable/main_background">
+
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp">
+
+            <TextView
+                android:id="@+id/cname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/white_box"
+                android:padding="8dp"
+                android:textSize="32dp"
+                android:textColor="@color/black"
+                android:text=""/>
+
+            <LinearLayout
+                android:background="@drawable/white_box"
+                android:padding="8dp"
+                android:orientation="vertical"
+                android:layout_marginBottom="16dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="16dp"
+                    android:layout_marginBottom="8dp"
+                    android:text="Public Key : "/>
+
+                <TextView
+                    android:id="@+id/cpublickey"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="12dp"
+                    android:text=""/>
+
+            </LinearLayout>
+
+        <LinearLayout
             android:background="@drawable/white_box"
             android:padding="8dp"
-            android:textSize="32dp"
-            android:textColor="@color/black"
-            android:text=""/>
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:layout_marginBottom="8dp"
+                android:text="Current Address : "/>
+
+            <TextView
+                android:id="@+id/caddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="12dp"
+                android:textIsSelectable="true"
+                android:text=""/>
+
+        </LinearLayout>
 
         <LinearLayout
             android:background="@drawable/white_box"
@@ -41,104 +107,56 @@
                 android:layout_height="wrap_content"
                 android:textSize="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="Public Key : "/>
+                android:text="My Address : "/>
 
             <TextView
-                android:id="@+id/cpublickey"
+                android:id="@+id/cmyaddress"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="12dp"
+                android:textIsSelectable="true"
                 android:text=""/>
 
         </LinearLayout>
 
-    <LinearLayout
-        android:background="@drawable/white_box"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="Current Address : "/>
-
-        <TextView
-            android:id="@+id/caddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:textIsSelectable="true"
-            android:text=""/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:background="@drawable/white_box"
-        android:padding="8dp"
-        android:orientation="vertical"
-        android:layout_marginBottom="16dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:layout_marginBottom="8dp"
-            android:text="My Address : "/>
-
-        <TextView
-            android:id="@+id/cmyaddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12dp"
-            android:textIsSelectable="true"
-            android:text=""/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:background="@drawable/white_box"
-        android:padding="8dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:text="Last Seen : "/>
-
-        <TextView
-            android:id="@+id/clastseen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:background="@drawable/white_box"
+            android:padding="8dp"
             android:layout_marginBottom="16dp"
-            android:textSize="20dp"
-            android:text=""/>
-
-        <TextView
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="16dp"
-            android:text="Same Chain : "/>
+            android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/csamechain"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text=""/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Last Seen : "/>
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/clastseen"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:textSize="20dp"
+                android:text=""/>
 
-    </LinearLayout>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16dp"
+                android:text="Same Chain : "/>
 
-</ScrollView>
+            <TextView
+                android:id="@+id/csamechain"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text=""/>
+
+        </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+</LinearLayout>

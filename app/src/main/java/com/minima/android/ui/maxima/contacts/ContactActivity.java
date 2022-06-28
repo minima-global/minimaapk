@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
@@ -34,6 +35,9 @@ public class ContactActivity extends AppCompatActivity implements ServiceConnect
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contact);
+
+        Toolbar tb  = findViewById(R.id.contact_toolbar);
+        setSupportActionBar(tb);
 
         //Get the contact
         mContact = (Contact) getIntent().getSerializableExtra("contact");

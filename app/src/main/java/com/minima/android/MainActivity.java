@@ -329,7 +329,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             new InstallAssetMiniDAPP("terminal-1.9.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("maxsolo-1.8.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("helpdocs-1.0.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("incentive-1.1.mds.zip", MainActivity.this).run();
+//            new InstallAssetMiniDAPP("incentive-1.1.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("scriptide-1.6.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("2048-3.mds.zip", MainActivity.this).run();
 

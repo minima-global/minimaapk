@@ -12,7 +12,7 @@
     tools:context=".ui.maxima.MyDetailsActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+        android:id="@+id/maxima_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MinimaActionBar"

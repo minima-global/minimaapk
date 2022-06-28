@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
@@ -43,6 +44,9 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
         setContentView(R.layout.activity_mydetails);
 
         mName       = findViewById(R.id.mydetails_name);
+
+        Toolbar tb  = findViewById(R.id.maxima_toolbar);
+        setSupportActionBar(tb);
 
         Button updatename     = findViewById(R.id.mydetails_updatename);
         updatename.setOnClickListener(new View.OnClickListener() {
