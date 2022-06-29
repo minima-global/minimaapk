@@ -324,13 +324,13 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         if(!pref.getBoolean("minidapps_installed",false)){
 
             //Install them..
-            new InstallAssetMiniDAPP("block-0.1.4.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("wallet-1.4.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("terminal-1.9.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("maxsolo-1.8.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("helpdocs-1.0.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("wallet-0.1.5.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("terminal-1.91.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("maxsolo-1.81.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("helpdocs-0.1.1.mds.zip", MainActivity.this).run();
 //            new InstallAssetMiniDAPP("incentive-1.1.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("scriptide-1.6.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("scriptide-1.7.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("2048-3.mds.zip", MainActivity.this).run();
 
             //And that's that
