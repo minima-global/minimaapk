@@ -9,16 +9,21 @@
     android:scaleType="centerCrop"
     tools:context=".ui.home.HomeFragment">
 
-    <TextView
-        android:id="@+id/text_help"
-        android:text=""
-        android:background="@drawable/white_box"
-        android:padding="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+    <WebView
+        android:id="@+id/help_webview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
+
+<!--    <TextView-->
+<!--        android:id="@+id/text_help"-->
+<!--        android:text=""-->
+<!--        android:background="@drawable/white_box"-->
+<!--        android:padding="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
 </LinearLayout>

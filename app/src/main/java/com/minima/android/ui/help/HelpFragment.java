@@ -8,6 +8,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,7 +37,7 @@ import java.util.ArrayList;
 
 public class HelpFragment extends Fragment {
 
-    MainActivity mMain;
+    WebView mHelpWeb;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -42,8 +46,28 @@ public class HelpFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_help, container, false);
 
-        TextView tv = root.findViewById(R.id.text_help);
-        tv.setText(R.string.minima_help);
+        mHelpWeb = root.findViewById(R.id.help_webview);
+
+        WebSettings settings = mHelpWeb.getSettings();
+        settings.setJavaScriptEnabled(true);
+        settings.setDomStorageEnabled(true);
+        settings.setJavaScriptCanOpenWindowsAutomatically(true);
+        settings.setDomStorageEnabled(true);
+        settings.setLoadsImagesAutomatically(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setAllowFileAccess(true);
+        settings.setAllowFileAccessFromFileURLs(true);
+        settings.setAllowContentAccess(true);
+
+        mHelpWeb.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                view.loadUrl(request.getUrl().toString());
+                return false;
+            }
+        });
+
+        mHelpWeb.loadUrl("file:///android_asset/help/index.html");
 
         return root;
     }
@@ -55,17 +79,4 @@ public class HelpFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-
-            case R.id.action_maxima_identity:
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 }
