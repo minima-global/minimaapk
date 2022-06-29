@@ -1,9 +1,13 @@
 package com.minima.android.ui.mds;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.net.http.SslCertificate;
 import android.net.http.SslError;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +19,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
@@ -22,10 +27,16 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 
+import org.minima.objects.base.MiniData;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
+import org.minima.utils.MinimaLogger;
+import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
+import java.security.KeyStoreException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
 
 public class MDSBrowser extends AppCompatActivity {
 
@@ -34,20 +45,35 @@ public class MDSBrowser extends AppCompatActivity {
     String mUID;
     String mSessionID;
 
+    boolean mHaveCheckedSSL = false;
+
+    Certificate mMinimaSSLCert;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_browser);
 
-//        Toolbar tb  = findViewById(R.id.minidapp_toolbar);
-//        setSupportActionBar(tb);
+        Toolbar tb  = findViewById(R.id.minidapp_toolbar);
+        setSupportActionBar(tb);
 
         String name = getIntent().getStringExtra("name");
         mUID        = getIntent().getStringExtra("uid");
         mSessionID  = Main.getInstance().getMDSManager().convertMiniDAPPID(mUID);
 
         setTitle(name);
+
+        //Check the Shared Prefs..
+        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
+        mHaveCheckedSSL         = prefs.getBoolean("have_checked_ssl",false);
+
+        //Get Our SSL Cert
+        try {
+            mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
+        } catch (KeyStoreException e) {
+            MinimaLogger.log(e);
+        }
 
         mWebView = (WebView) findViewById(R.id.mds_webview);
 
@@ -74,14 +100,77 @@ public class MDSBrowser extends AppCompatActivity {
             @Override
             public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
 
-                // Checks Embedded certificates
+                // Get the Certificate
                 SslCertificate serverCertificate = error.getCertificate();
 
-                //Check it..
-                String sslCertificate = serverCertificate.toString();
-//                String mySslCertificate = new SslCertificate(cert).toString();
+                //Are we able to check properly
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    //Get the X509 Cert in full
+                    X509Certificate cert = serverCertificate.getX509Certificate();
 
-                handler.proceed();
+                    //Check they are the same..
+                    MiniData cert1 = new MiniData(cert.getPublicKey().getEncoded());
+                    MiniData cert2 = new MiniData(mMinimaSSLCert.getPublicKey().getEncoded());
+
+                    if(cert1.isEqual(cert2)){
+                        //All good
+                        handler.proceed();
+                    }else{
+                        handler.cancel();
+                    }
+
+                }else{
+
+                    //We have asked already
+                    if(mHaveCheckedSSL) {
+
+                        //Ask the User if they are ok
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(MDSBrowser.this);
+                        String message = "";
+                        //                    switch (error.getPrimaryError()) {
+                        //                        case SslError.SSL_UNTRUSTED:
+                        //                            message = "The certificate authority is not trusted.";
+                        //                            break;
+                        //                        case SslError.SSL_EXPIRED:
+                        //                            message = "The certificate has expired.";
+                        //                            break;
+                        //                        case SslError.SSL_IDMISMATCH:
+                        //                            message = "The certificate Hostname mismatch.";
+                        //                            break;
+                        //                        case SslError.SSL_NOTYETVALID:
+                        //                            message = "The certificate is not yet valid.";
+                        //                            break;
+                        //                    }
+                        message += "Minima uses a self-signed certificate.\n\nDo you wish to continue anyway?";
+
+                        builder.setTitle("SSL Certificate Error");
+                        builder.setMessage(message);
+                        builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                //Store this
+                                SharedPreferences.Editor edit = getPreferences(Context.MODE_PRIVATE).edit();
+                                edit.putBoolean("have_checked_ssl", true);
+                                mHaveCheckedSSL = true;
+
+                                //Proceed
+                                handler.proceed();
+                            }
+                        });
+                        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                handler.cancel();
+                            }
+                        });
+                        final AlertDialog dialog = builder.create();
+                        dialog.show();
+                    }else{
+                        //Already checked..
+                        handler.proceed();
+                    }
+                }
             }
         });
 

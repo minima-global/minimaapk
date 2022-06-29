@@ -7,13 +7,12 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/minidapp_toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            style="@style/MinimaActionBar"-->
-<!--            android:theme="@style/MinimaActionBar.DrawerIconColour"-->
-<!--            tools:title="This is the title"/>-->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/minidapp_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/MinimaActionBar"
+            tools:title="This is the title"/>
 
         <WebView
             android:id="@+id/mds_webview"
