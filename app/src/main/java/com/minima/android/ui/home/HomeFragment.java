@@ -111,7 +111,7 @@ public class HomeFragment extends Fragment {
                 ((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
                 ((TextView)mRoot.findViewById(R.id.text_home_connections)).setText(""+network.get("connected"));
 
-                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("http://"+network.getString("host")+":9003");
+                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("https://"+network.getString("host")+":9003");
             }
         });
    }
