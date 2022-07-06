@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_backup, R.id.nav_help)
+                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_store, R.id.nav_backup, R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -286,8 +286,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         @Override
                         public void run() {
                             //Hide the Loader
-                            if(mLoader != null){
-                                mLoader.cancel();
+                            try{
+                                if(mLoader != null && mLoader.isShowing()){
+                                    mLoader.cancel();
+                                }
+                            }catch(Exception exc){
+                                MinimaLogger.log(exc);
                             }
 
                             //Update fragments

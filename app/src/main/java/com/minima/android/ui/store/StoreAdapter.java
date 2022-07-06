@@ -1,4 +1,4 @@
-package com.minima.android.ui.mds;
+package com.minima.android.ui.store;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,27 +13,30 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 
 import com.minima.android.R;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.minima.system.params.GlobalParams;
-import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
-public class MDSAdapter extends ArrayAdapter<JSONObject> {
+import jp.wasabeef.picasso.transformations.RoundedCornersTransformation;
+
+public class StoreAdapter extends ArrayAdapter<JSONObject> {
 
     Context mContext;
 
-    JSONObject[] mMDS;
+    JSONObject[] mStores;
 
     public static final SimpleDateFormat DATEFORMAT = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss", Locale.ENGLISH );
 
-    public MDSAdapter(@NonNull Context zContext, int resource, @NonNull JSONObject[] objects) {
+    public StoreAdapter(@NonNull Context zContext, int resource, @NonNull JSONObject[] objects) {
         super(zContext, resource, objects);
         mContext    = zContext;
-        mMDS        = objects;
+        mStores     = objects;
     }
 
     @Override
@@ -44,34 +47,30 @@ public class MDSAdapter extends ArrayAdapter<JSONObject> {
         if (v == null) {
             LayoutInflater vi;
             vi = LayoutInflater.from(mContext);
-            v = vi.inflate(R.layout.mds_view, null);
+            v = vi.inflate(R.layout.store_view, null);
         }
 
-        JSONObject mds  = getItem(position);
-        JSONObject conf = (JSONObject) mds.get("conf");
+        JSONObject store    = getItem(position);
 
         TextView name           = v.findViewById(R.id.mds_name);
         TextView description    = v.findViewById(R.id.mds_description);
         TextView version        = v.findViewById(R.id.mds_version);
 
-        name.setText(conf.getString("name"));
-        description.setText(conf.getString("description"));
-        version.setText(conf.getString("version"));
+        name.setText(store.getString("name"));
+        description.setText(store.getString("description"));
+        version.setText(store.getString("version"));
 
-        //Now the image
-        File rootfile   = mContext.getFilesDir();
-        File rootminima = new File(rootfile, GlobalParams.MINIMA_BASE_VERSION);
-        File mdsroot    = new File(rootminima,"mds");
-        File webroot    = new File(mdsroot,"web");
-        File dapproot   = new File(webroot,mds.getString("uid"));
-        File image      = new File(dapproot,conf.getString("icon"));
-
+        //The Image..
         ImageView iv = v.findViewById(R.id.mds_image);
 
-        if(image.exists()){
-            Bitmap myBitmap = BitmapFactory.decodeFile(image.getAbsolutePath());
-            iv.setImageBitmap(myBitmap);
-        }
+        final Transformation transformation = new RoundedCornersTransformation(20, 0);
+
+        Picasso.get()
+                .load(store.getString("icon"))
+                .resize(200, 200)
+                .transform(transformation)
+                .centerCrop()
+                .into(iv);
 
         return v;
     }

@@ -24,6 +24,11 @@
     <group android:id="@+id/middle_menu" android:checkableBehavior="single">
 
         <item
+            android:id="@+id/nav_store"
+            android:icon="@android:drawable/btn_radio"
+            android:title="DAPP Store" />
+
+        <item
             android:id="@+id/nav_backup"
             android:icon="@drawable/ic_drawer_backup_restore"
             android:title="Backup / Restore" />

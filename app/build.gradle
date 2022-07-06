@@ -35,6 +35,10 @@ dependencies {
     // Dependency on local binaries
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
+    //Picasso Image Library
+    implementation 'com.squareup.picasso:picasso:2.8'
+    implementation 'jp.wasabeef:picasso-transformations:2.4.0'
+
     //Minima requirements
     implementation 'com.h2database:h2:1.4.200'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
