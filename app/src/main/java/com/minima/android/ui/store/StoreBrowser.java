@@ -4,10 +4,13 @@ import android.Manifest;
 import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -43,6 +46,8 @@ public class StoreBrowser extends AppCompatActivity {
 
     String mFileDownload;
 
+    String mStoreURL;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,9 @@ public class StoreBrowser extends AppCompatActivity {
 
         Toolbar tb  = findViewById(R.id.storebrowser_toolbar);
         setSupportActionBar(tb);
+
+        //What is the URL for this store..
+        mStoreURL = getIntent().getStringExtra("store_url");
 
         //Get the complete stroe..
         String storestr = getIntent().getStringExtra("store");
@@ -163,6 +171,34 @@ public class StoreBrowser extends AppCompatActivity {
             downloadFile(mFileDownload);
         }else{
             Toast.makeText(StoreBrowser.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.storebrowser, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_store_share:
+
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, mStoreURL);
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 }

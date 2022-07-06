@@ -1,7 +1,11 @@
 package com.minima.android.ui.store;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,10 +17,12 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -36,6 +42,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 public class StoreFragment extends Fragment {
 
@@ -52,7 +59,11 @@ public class StoreFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_store, container, false);
 
+        //Get the Main Activity
+        mMain = (MainActivity)getActivity();
+
         mMainList = root.findViewById(R.id.store_list);
+        mMainList.setEmptyView(root.findViewById(R.id.store_empty_list_item));
 
         //Click Listener..
         mMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -68,24 +79,104 @@ public class StoreFragment extends Fragment {
                 //Open internally..
                 Intent intent = new Intent(mMain, StoreBrowser.class);
                 intent.putExtra("store", jsonstr);
+                intent.putExtra("store_url", store.getString("store_url"));
                 startActivity(intent);
             }
         });
 
-        //Get the Main Activity
-        mMain = (MainActivity)getActivity();
+        //Delete Apps..
+        mMainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+
+                new AlertDialog.Builder(mMain)
+                        .setTitle("Delete Store")
+                        .setMessage("Are you sure you wish to remove this store ?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //Get the Selected MiniDAPP
+                                JSONObject store = mAllStores[zPosition];
+
+                                //Which URL
+                                String url = store.getString("store_url");
+
+                                //Get the Prefs..
+                                SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
+                                Set<String> allstores = prefs.getStringSet("allstores", new HashSet<>());
+                                allstores.remove(url);
+
+                                //And save
+                                SharedPreferences.Editor edit = prefs.edit();
+                                edit.putStringSet("allstores", allstores);
+                                edit.apply();
+
+                                Toast.makeText(mMain,"Store removed", Toast.LENGTH_SHORT).show();
+
+                                loadStores();
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+
+                return true;
+            }
+        });
 
         FloatingActionButton fab = root.findViewById(R.id.fab_store);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mMain, "HELLO!", Toast.LENGTH_SHORT).show();
+                addStore();
             }
         });
 
         loadStores();
 
         return root;
+    }
+
+    public void addStore(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
+        builder.setTitle("Add MiniDAPP Store");
+
+        // Set up the input
+        final EditText input = new EditText(mMain);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //Get the store..
+                String store = input.getText().toString().trim();
+
+                //Get the Prefs..
+                SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
+                Set<String> allstores = prefs.getStringSet("allstores", new HashSet<>());
+
+                //Add this store..
+                allstores.add(store);
+
+                //And save
+                SharedPreferences.Editor edit = prefs.edit();
+                edit.putStringSet("allstores", allstores);
+                edit.apply();
+
+                Toast.makeText(mMain,"Store added", Toast.LENGTH_SHORT).show();
+
+                loadStores();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 
     @Override
@@ -110,13 +201,13 @@ public class StoreFragment extends Fragment {
         }
     }
 
-    HashSet<String> allstores = new HashSet<>();
+    //http://10.0.2.2/mysites/dappstore/dappstore.txt
+    Set<String> mStoreSet = null;
     public void loadStores(){
 
-        //Load the list from the Preferences..
-        allstores.clear();
-        allstores.add("http://10.0.2.2/mysites/dappstore/dappstore.txt");
-        allstores.add("http://10.0.2.2/mysites/dappstore/dappstore.txt2");
+        //Get the stores..
+        SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
+        mStoreSet = prefs.getStringSet("allstores", new HashSet<>());
 
         Runnable rr = new Runnable() {
             @Override
@@ -126,16 +217,16 @@ public class StoreFragment extends Fragment {
                 ArrayList<JSONObject> jsonstores = new ArrayList<>();
 
                 //First load ther store..
-                Iterator<String> stores = allstores.iterator();
+                Iterator<String> stores = mStoreSet.iterator();
                 while(stores.hasNext()){
-                    String store = stores.next();
+                    String storeurl = stores.next();
 
                     //Load it..
                     String storedata = null;
                     try {
-                        storedata = RPCClient.sendGET(store);
+                        storedata = RPCClient.sendGET(storeurl);
                     } catch (IOException e) {
-                        MinimaLogger.log("Could not download store : "+store+" "+e);
+                        MinimaLogger.log("Could not download store : "+storeurl+" "+e);
                         storedata = "";
                     }
 
@@ -152,6 +243,10 @@ public class StoreFragment extends Fragment {
 
                         //Did it work..
                         if(jsonstore != null){
+
+                            //Add the URL
+                            jsonstore.put("store_url", storeurl);
+
                             jsonstores.add(jsonstore);
                         }
                     }
