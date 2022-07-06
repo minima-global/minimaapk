@@ -1,5 +1,6 @@
 package com.minima.android.ui.store;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -11,6 +12,7 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -21,6 +23,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.ui.mds.MDSAdapter;
+import com.minima.android.ui.mds.MDSBrowser;
 
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.RPCClient;
@@ -50,6 +53,24 @@ public class StoreFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_store, container, false);
 
         mMainList = root.findViewById(R.id.store_list);
+
+        //Click Listener..
+        mMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+
+                //Get the Store..
+                JSONObject store = mAllStores[zPosition];
+
+                //Convert to String..
+                String jsonstr  = store.toString();
+
+                //Open internally..
+                Intent intent = new Intent(mMain, StoreBrowser.class);
+                intent.putExtra("store", jsonstr);
+                startActivity(intent);
+            }
+        });
 
         //Get the Main Activity
         mMain = (MainActivity)getActivity();
@@ -95,6 +116,7 @@ public class StoreFragment extends Fragment {
         //Load the list from the Preferences..
         allstores.clear();
         allstores.add("http://10.0.2.2/mysites/dappstore/dappstore.txt");
+        allstores.add("http://10.0.2.2/mysites/dappstore/dappstore.txt2");
 
         Runnable rr = new Runnable() {
             @Override

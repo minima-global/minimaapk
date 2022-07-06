@@ -1,230 +1,168 @@
 package com.minima.android.ui.store;
 
+import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
-import android.net.http.SslCertificate;
-import android.net.http.SslError;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.os.Environment;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import com.minima.android.MainActivity;
 import com.minima.android.R;
 
-import org.minima.objects.base.MiniData;
-import org.minima.system.Main;
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.ssl.SSLManager;
+import org.minima.utils.json.JSONArray;
+import org.minima.utils.json.JSONObject;
+import org.minima.utils.json.parser.JSONParser;
+import org.minima.utils.json.parser.ParseException;
 
-import java.security.KeyStoreException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
+import java.io.File;
+import java.sql.Array;
+import java.util.ArrayList;
 
 public class StoreBrowser extends AppCompatActivity {
 
-    WebView mWebView;
+    ListView mDAppList;
 
-    String mUID;
-    String mSessionID;
+    JSONObject mStoreJSON;
 
-    boolean mHaveCheckedSSL = false;
+    JSONObject[] mAllDapps;
 
-    Certificate mMinimaSSLCert;
+    String mFileDownload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_browser);
+        setContentView(R.layout.activity_storebrowser);
 
-        Toolbar tb  = findViewById(R.id.minidapp_toolbar);
+        Toolbar tb  = findViewById(R.id.storebrowser_toolbar);
         setSupportActionBar(tb);
 
-        String name = getIntent().getStringExtra("name");
-        mUID        = getIntent().getStringExtra("uid");
-        mSessionID  = Main.getInstance().getMDSManager().convertMiniDAPPID(mUID);
+        //Get the complete stroe..
+        String storestr = getIntent().getStringExtra("store");
 
-        setTitle(name);
-
-        //Check the Shared Prefs..
-        SharedPreferences prefs = getPreferences(Context.MODE_PRIVATE);
-        mHaveCheckedSSL         = prefs.getBoolean("have_checked_ssl",false);
-
-        //Get Our SSL Cert
+        //Convert to JSON
         try {
-            mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
-        } catch (KeyStoreException e) {
-            MinimaLogger.log(e);
+            mStoreJSON = (JSONObject) new JSONParser().parse(storestr);
+        } catch (ParseException e) {
+            MinimaLogger.log("Could not parse store : "+storestr+" "+e);
+            finish();
+            return;
         }
 
-        mWebView = (WebView) findViewById(R.id.mds_webview);
+        //Set the Title
+        tb.setTitle(mStoreJSON.getString("name"));
 
-        WebSettings settings = mWebView.getSettings();
-        settings.setJavaScriptEnabled(true);
-        settings.setDomStorageEnabled(true);
-        settings.setJavaScriptCanOpenWindowsAutomatically(true);
-        settings.setDomStorageEnabled(true);
-        settings.setLoadsImagesAutomatically(true);
-        settings.setLoadWithOverviewMode(true);
-        settings.setAllowFileAccess(true);
-        settings.setAllowFileAccessFromFileURLs(true);
-        settings.setAllowContentAccess(true);
-
-        //settings.setBuiltInZoomControls(true);
-
-        mWebView.setWebViewClient(new WebViewClient() {
+        //Get the List
+        mDAppList = findViewById(R.id.storebrowser_list);
+        mDAppList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                view.loadUrl(request.getUrl().toString());
-                return false;
-            }
+            public void onItemClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
 
-            @Override
-            public void onReceivedSslError(WebView view, final SslErrorHandler handler, SslError error) {
+                //Get the JSON
+                JSONObject dapp = mAllDapps[zPosition];
 
-                // Get the Certificate
-                SslCertificate serverCertificate = error.getCertificate();
-
-                //Are we able to check properly
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    //Get the X509 Cert in full
-                    X509Certificate cert = serverCertificate.getX509Certificate();
-
-                    //Check they are the same..
-                    MiniData cert1 = new MiniData(cert.getPublicKey().getEncoded());
-                    MiniData cert2 = new MiniData(mMinimaSSLCert.getPublicKey().getEncoded());
-
-                    if(cert1.isEqual(cert2)){
-                        //All good
-                        handler.proceed();
-                    }else{
-                        handler.cancel();
-                    }
-
-                }else{
-
-                    //We have asked already
-                    if(mHaveCheckedSSL) {
-
-                        //Ask the User if they are ok
-                        final AlertDialog.Builder builder = new AlertDialog.Builder(StoreBrowser.this);
-                        String message = "";
-                        //                    switch (error.getPrimaryError()) {
-                        //                        case SslError.SSL_UNTRUSTED:
-                        //                            message = "The certificate authority is not trusted.";
-                        //                            break;
-                        //                        case SslError.SSL_EXPIRED:
-                        //                            message = "The certificate has expired.";
-                        //                            break;
-                        //                        case SslError.SSL_IDMISMATCH:
-                        //                            message = "The certificate Hostname mismatch.";
-                        //                            break;
-                        //                        case SslError.SSL_NOTYETVALID:
-                        //                            message = "The certificate is not yet valid.";
-                        //                            break;
-                        //                    }
-                        message += "Minima uses a self-signed certificate.\n\nDo you wish to continue anyway?";
-
-                        builder.setTitle("SSL Certificate Warning");
-                        builder.setMessage(message);
-                        builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                //Store this
-                                SharedPreferences.Editor edit = getPreferences(Context.MODE_PRIVATE).edit();
-                                edit.putBoolean("have_checked_ssl", true);
-                                mHaveCheckedSSL = true;
-
-                                //Proceed
-                                handler.proceed();
-                            }
-                        });
-                        builder.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                handler.cancel();
-                            }
-                        });
-                        final AlertDialog dialog = builder.create();
-                        dialog.show();
-                    }else{
-                        //Already checked..
-                        handler.proceed();
-                    }
-                }
+                new AlertDialog.Builder(StoreBrowser.this)
+                        .setTitle("Store DAPP")
+                        .setMessage("Would you like to download this dapp ?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //Get the Selected MiniDAPP
+                                JSONObject dapp = mAllDapps[zPosition];
+                                downloadFile(dapp.getString("file"));
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
             }
         });
 
-        loadInit();
+        loadDAPPS();
     }
 
-    public String getIndexURL(){
-        return "https://127.0.0.1:9003/"+mUID+"/index.html?uid="+mSessionID;
+    public void loadDAPPS(){
+
+        //Get the DAPPs
+        JSONArray dapps = (JSONArray) mStoreJSON.get("dapps");
+
+        //Now cycle through and add them to the
+        ArrayList<JSONObject> alldapps = new ArrayList<>();
+        for(Object dappobj : dapps) {
+            //Get the DAPP
+            alldapps.add((JSONObject) dappobj);
+        }
+
+        //Now convert to an array..
+        mAllDapps = alldapps.toArray(new JSONObject[0]);
+
+        StoreAdapter stadap = new StoreAdapter(StoreBrowser.this, R.layout.mds_view, mAllDapps);
+        mDAppList.setAdapter(stadap);
     }
 
-    public void loadInit(){
-        mWebView.clearHistory();
-        mWebView.clearCache(true);
-        mWebView.loadUrl(getIndexURL());
-    }
+    public void downloadFile(String zFile){
+        mFileDownload = zFile;
 
-    @Override
-    public void onBackPressed() {
-        if(mWebView.canGoBack()) {
-            mWebView.goBack();
-        } else {
-            mWebView.loadUrl("");
-            super.onBackPressed();
+        //Check Permission
+        if(!checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,88)){
+            return;
+        }
+
+        //Get the file name
+        Uri uri = Uri.parse(zFile);
+        File file   = new File(uri.getPath());
+        String name = file.getName();
+        try{
+            DownloadManager.Request request = new DownloadManager.Request(uri);
+            request.setTitle(name);
+            request.setDescription("Downloading");
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            request.setVisibleInDownloadsUi(true);
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, name);
+
+            //And Download..
+            DownloadManager downloadmanager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+            downloadmanager.enqueue(request);
+
+        }catch (Exception exc){
+            MinimaLogger.log(exc);
+            Toast.makeText(StoreBrowser.this, "Invalid file..", Toast.LENGTH_SHORT).show();
         }
     }
 
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-    }
+    // Function to check and request permission
+    public boolean checkPermission(String permission, int requestCode){
+        // Checking if permission is not granted
+        if (ContextCompat.checkSelfPermission(StoreBrowser.this, permission) == PackageManager.PERMISSION_DENIED) {
+            ActivityCompat.requestPermissions(StoreBrowser.this, new String[] { permission }, requestCode);
+            return false;
+        }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mdsbrowser, menu);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_mdsrefresh:
-                loadInit();
-                return true;
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            case R.id.action_mdsexit:
-                finish();
-                return true;
-
-            case R.id.action_mdsopen:
-
-                String url = getIndexURL();
-                Intent browser = new Intent(Intent.ACTION_VIEW);
-                browser.setData(Uri.parse(url));
-                startActivity(browser);
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        //Was this from our MDS open File..
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            //Access granted Open the File manager..
+            downloadFile(mFileDownload);
+        }else{
+            Toast.makeText(StoreBrowser.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
         }
     }
 }
