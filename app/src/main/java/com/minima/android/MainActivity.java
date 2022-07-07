@@ -49,6 +49,7 @@ import com.minima.android.ui.mds.MDSFragment;
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
+import org.minima.system.params.GlobalParams;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
@@ -336,9 +337,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void installMiniDAPPs(){
+        //Which setting is it..
+        String minidapppref = "minidapps_installed_"+ GlobalParams.MINIMA_BASE_VERSION;
+
         //Do we need to install apps..
         SharedPreferences pref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        if(!pref.getBoolean("minidapps_installed",false)){
+        if(!pref.getBoolean(minidapppref,false)){
 
             //Install them..
             new InstallAssetMiniDAPP("news-1.0.mds.zip", MainActivity.this).run();
@@ -353,7 +357,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             //And that's that
             SharedPreferences.Editor edit = pref.edit();
-            edit.putBoolean("minidapps_installed", true);
+            edit.putBoolean(minidapppref, true);
             edit.apply();
         }
     }
