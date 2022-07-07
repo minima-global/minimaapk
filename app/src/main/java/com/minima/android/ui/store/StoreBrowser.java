@@ -26,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
 
+import org.minima.Minima;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
@@ -125,10 +126,13 @@ public class StoreBrowser extends AppCompatActivity {
 
         //Check Permission
         if(!checkPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE,88)){
+            MinimaLogger.log("Missing Write Permissions.. asking..");
             return;
         }
 
         //Get the file name
+        MinimaLogger.log("Attempt download.. "+zFile);
+
         Uri uri = Uri.parse(zFile);
         File file   = new File(uri.getPath());
         String name = file.getName();

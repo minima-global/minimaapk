@@ -1,6 +1,5 @@
 package com.minima.android.ui.store;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,10 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -28,18 +23,19 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.ui.mds.MDSAdapter;
-import com.minima.android.ui.mds.MDSBrowser;
 
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.RPCClient;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
 import org.minima.utils.json.parser.ParseException;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -50,7 +46,7 @@ public class StoreFragment extends Fragment {
 
     ListView mMainList;
 
-    JSONObject[] mAllStores;
+    Set<String> mPrefsStoreSet = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -63,7 +59,7 @@ public class StoreFragment extends Fragment {
         mMain = (MainActivity)getActivity();
 
         mMainList = root.findViewById(R.id.store_list);
-        mMainList.setEmptyView(root.findViewById(R.id.store_empty_list_item));
+        //mMainList.setEmptyView(root.findViewById(R.id.store_empty_list_item));
 
         //Click Listener..
         mMainList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -71,7 +67,14 @@ public class StoreFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
 
                 //Get the Store..
-                JSONObject store = mAllStores[zPosition];
+                JSONObject store = mMain.getDappStores()[zPosition];
+
+                //Is it valid..
+                boolean errorload = (boolean)store.get("error_load");
+                if(errorload){
+                    Toast.makeText(mMain, "Invalid Store - Try Refreshing", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 //Convert to String..
                 String jsonstr  = store.toString();
@@ -96,24 +99,26 @@ public class StoreFragment extends Fragment {
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
                                 //Get the Selected MiniDAPP
-                                JSONObject store = mAllStores[zPosition];
+                                JSONObject store = mMain.getDappStores()[zPosition];
 
                                 //Which URL
                                 String url = store.getString("store_url");
 
                                 //Get the Prefs..
-                                SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
+                                SharedPreferences prefs = mMain.getApplicationContext().getSharedPreferences("stores", 0);
                                 Set<String> allstores = prefs.getStringSet("allstores", new HashSet<>());
                                 allstores.remove(url);
 
-                                //And save
+                                //And save - Bug in Android
                                 SharedPreferences.Editor edit = prefs.edit();
+                                edit.remove("allstores");
+                                edit.apply();
                                 edit.putStringSet("allstores", allstores);
                                 edit.apply();
 
                                 Toast.makeText(mMain,"Store removed", Toast.LENGTH_SHORT).show();
 
-                                loadStores();
+                                loadStores(true);
                             }})
                         .setNegativeButton(android.R.string.no, null).show();
 
@@ -129,7 +134,7 @@ public class StoreFragment extends Fragment {
             }
         });
 
-        loadStores();
+        loadStores(false);
 
         return root;
     }
@@ -153,20 +158,22 @@ public class StoreFragment extends Fragment {
                 String store = input.getText().toString().trim();
 
                 //Get the Prefs..
-                SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
-                Set<String> allstores = prefs.getStringSet("allstores", new HashSet<>());
+                SharedPreferences prefs = mMain.getApplicationContext().getSharedPreferences("stores", 0);
+                Set<String> allstores   = prefs.getStringSet("allstores", new HashSet<>());
 
                 //Add this store..
                 allstores.add(store);
 
-                //And save
+                //And save - Bug in Android..
                 SharedPreferences.Editor edit = prefs.edit();
+                edit.remove("allstores");
+                edit.apply();
                 edit.putStringSet("allstores", allstores);
                 edit.apply();
 
                 Toast.makeText(mMain,"Store added", Toast.LENGTH_SHORT).show();
 
-                loadStores();
+                loadStores(true);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -192,8 +199,7 @@ public class StoreFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.action_store_refresh:
-                loadStores();
-                Toast.makeText(mMain,"Reloading Stores",Toast.LENGTH_SHORT).show();
+                loadStores(true);
                 return true;
 
             default:
@@ -202,63 +208,93 @@ public class StoreFragment extends Fragment {
     }
 
     //http://10.0.2.2/mysites/dappstore/dappstore.txt
-    Set<String> mStoreSet = null;
-    public void loadStores(){
+    public void loadStores(boolean zForceRefresh){
 
         //Get the stores..
-        SharedPreferences prefs = mMain.getPreferences(Context.MODE_PRIVATE);
-        mStoreSet = prefs.getStringSet("allstores", new HashSet<>());
+        SharedPreferences prefs = mMain.getApplicationContext().getSharedPreferences("stores", 0);
+        mPrefsStoreSet = prefs.getStringSet("allstores", new HashSet<>());
+
+        MinimaLogger.log("Store set size :"+ mPrefsStoreSet.size());
+        if(mPrefsStoreSet.size() == 0){
+            mPrefsStoreSet.add("https://raw.githubusercontent.com/minima-global/Minima/dev-spartacus/mds/store/dapps.json");
+        }
+
+        //Are we refreshing..
+        if(mMain.getDappStores() == null || zForceRefresh) {
+            //Little Message
+            Toast.makeText(mMain,"Refreshing Stores",Toast.LENGTH_SHORT).show();
+        }
 
         Runnable rr = new Runnable() {
             @Override
             public void run() {
 
-                //The final list
-                ArrayList<JSONObject> jsonstores = new ArrayList<>();
+                //Are we refreshing..
+                if(mMain.getDappStores() == null || zForceRefresh) {
 
-                //First load ther store..
-                Iterator<String> stores = mStoreSet.iterator();
-                while(stores.hasNext()){
-                    String storeurl = stores.next();
+                    //The final list
+                    ArrayList<JSONObject> jsonstores = new ArrayList<>();
 
-                    //Load it..
-                    String storedata = null;
-                    try {
-                        storedata = RPCClient.sendGET(storeurl);
-                    } catch (IOException e) {
-                        MinimaLogger.log("Could not download store : "+storeurl+" "+e);
-                        storedata = "";
-                    }
+                    //First load ther store..
+                    Iterator<String> stores = mPrefsStoreSet.iterator();
+                    while (stores.hasNext()) {
+                        String storeurl = stores.next();
 
-                    //Did it work..
-                    if(!storedata.equals("")){
-
-                        //Convert to JSON
-                        JSONObject jsonstore = null;
+                        //Load it..
+                        String storedata = null;
                         try {
-                            jsonstore = (JSONObject) new JSONParser().parse(storedata);
-                        } catch (ParseException e) {
-                            MinimaLogger.log("Could not parse store : "+storedata+" "+e);
+                            storedata = sendGET(storeurl);
+
+                            MinimaLogger.log("Store loaded : " + storeurl + " " + storedata);
+
+                        } catch (IOException e) {
+                            MinimaLogger.log("Could not download store : " + storeurl + " " + e);
+                            storedata = "";
                         }
 
                         //Did it work..
-                        if(jsonstore != null){
+                        if (!storedata.equals("")) {
 
-                            //Add the URL
-                            jsonstore.put("store_url", storeurl);
+                            //Convert to JSON
+                            JSONObject jsonstore = null;
+                            try {
+                                jsonstore = (JSONObject) new JSONParser().parse(storedata);
+                            } catch (ParseException e) {
+                                MinimaLogger.log("Could not parse store : " + storedata + " " + e);
+                            }
 
-                            jsonstores.add(jsonstore);
+                            //Did it work..
+                            if (jsonstore != null) {
+
+                                //Add the URL
+                                jsonstore.put("error_load", false);
+                                jsonstore.put("store_url", storeurl);
+
+                                jsonstores.add(jsonstore);
+                            }
+                        } else {
+                            //Add a filed Store..
+                            JSONObject failedstore = new JSONObject();
+                            failedstore.put("error_load", true);
+                            failedstore.put("store_url", storeurl);
+
+                            failedstore.put("name", "Error Loading..");
+                            failedstore.put("description", storeurl);
+                            failedstore.put("icon", "");
+                            failedstore.put("version", "");
+                            jsonstores.add(failedstore);
                         }
                     }
-               }
 
-                //Convert to a JSON array
-                mAllStores = jsonstores.toArray(new JSONObject[0]);
+                    //And set..
+                    mMain.setDappStores(jsonstores.toArray(new JSONObject[0]));
+                }
 
+                //Load the List
                 mMain.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        StoreAdapter stadap = new StoreAdapter(mMain, R.layout.mds_view, mAllStores);
+                        StoreAdapter stadap = new StoreAdapter(mMain, R.layout.mds_view, mMain.getDappStores());
                         mMainList.setAdapter(stadap);
                     }
                 });
@@ -269,4 +305,31 @@ public class StoreFragment extends Fragment {
         tt.start();
     }
 
+    private String sendGET(String zHost) throws IOException {
+        URL obj = new URL(zHost);
+        HttpURLConnection con = (HttpURLConnection)obj.openConnection();
+        con.setConnectTimeout(5000);
+        con.setRequestMethod("GET");
+        con.setRequestProperty("User-Agent", "MinimaAndroid/1.0");
+        con.setRequestProperty("Connection", "close");
+
+        int responseCode = con.getResponseCode();
+        StringBuffer response = new StringBuffer();
+        if (responseCode == 200) {
+            InputStream is = con.getInputStream();
+            BufferedReader in = new BufferedReader(new InputStreamReader(is));
+
+            String inputLine;
+            while((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+
+            in.close();
+            is.close();
+        } else {
+            System.out.println("GET request not HTTP_OK resp:" + responseCode + " @ " + zHost);
+        }
+
+        return response.toString();
+    }
 }

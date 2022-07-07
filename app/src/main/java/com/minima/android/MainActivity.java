@@ -78,6 +78,11 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public HomeFragment mHomeFragment       = null;
     public MaximaFragment mMaximaFragment   = null;
 
+    /**
+     * The DAPP Stores..
+     */
+    JSONObject[] mAllDappStores = null;
+
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
 
@@ -222,6 +227,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         Thread closer = new Thread(close);
         closer.start();
+    }
+
+    public JSONObject[] getDappStores(){
+        return mAllDappStores;
+    }
+
+    public void setDappStores(JSONObject[] zStores){
+        mAllDappStores = zStores;
     }
 
     public Minima getMinima(){

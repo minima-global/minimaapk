@@ -17,6 +17,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import org.minima.system.params.GlobalParams;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
 import java.io.File;
@@ -56,21 +57,27 @@ public class StoreAdapter extends ArrayAdapter<JSONObject> {
         TextView description    = v.findViewById(R.id.mds_description);
         TextView version        = v.findViewById(R.id.mds_version);
 
-        name.setText(store.getString("name"));
-        description.setText(store.getString("description"));
-        version.setText(store.getString("version"));
+        name.setText(store.getString("name","noname"));
+        description.setText(store.getString("description","no description"));
+        version.setText(store.getString("version",""));
 
         //The Image..
         ImageView iv = v.findViewById(R.id.mds_image);
 
         final Transformation transformation = new RoundedCornersTransformation(20, 0);
 
-        Picasso.get()
-                .load(store.getString("icon"))
-                .resize(200, 200)
-                .transform(transformation)
-                .centerCrop()
-                .into(iv);
+        String icon = store.getString("icon");
+
+        if(!icon.equals("")){
+            Picasso.get()
+                    .load(icon)
+                    .resize(200, 200)
+                    .transform(transformation)
+                    .centerCrop()
+                    .into(iv);
+        }else{
+            iv.setVisibility(View.GONE);
+        }
 
         return v;
     }

@@ -115,7 +115,7 @@
         <TableRow android:layout_marginLeft="20dp">
 
             <TextView
-                android:text="MDS"
+                android:text="MiniDAPP System"
                 android:textColor="#317AFF"
                 android:textStyle="bold"
                 android:textSize="18dp"
