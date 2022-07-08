@@ -36,6 +36,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -212,12 +214,10 @@ public class StoreFragment extends Fragment {
 
         //Get the stores..
         SharedPreferences prefs = mMain.getApplicationContext().getSharedPreferences("stores", 0);
-        mPrefsStoreSet = prefs.getStringSet("allstores", new HashSet<>());
+        mPrefsStoreSet          = prefs.getStringSet("allstores", new HashSet<>());
 
-        MinimaLogger.log("Store set size :"+ mPrefsStoreSet.size());
-        if(mPrefsStoreSet.size() == 0){
-            mPrefsStoreSet.add("https://raw.githubusercontent.com/minima-global/Minima/dev-spartacus/mds/store/dapps.json");
-        }
+        //Always add the Main One..
+        mPrefsStoreSet.add("https://raw.githubusercontent.com/minima-global/Minima/dev-spartacus/mds/store/dapps.json");
 
         //Are we refreshing..
         if(mMain.getDappStores() == null || zForceRefresh) {
@@ -285,6 +285,16 @@ public class StoreFragment extends Fragment {
                             jsonstores.add(failedstore);
                         }
                     }
+
+                    //Order the Store Alphabetically..
+                    Collections.sort(jsonstores, new Comparator<JSONObject>() {
+                        @Override
+                        public int compare(JSONObject zStore1, JSONObject zStore2) {
+                            String name1 = zStore1.getString("name","noname");
+                            String name2 = zStore2.getString("name","noname");
+                            return name1.compareTo(name2);
+                        }
+                    });
 
                     //And set..
                     mMain.setDappStores(jsonstores.toArray(new JSONObject[0]));
