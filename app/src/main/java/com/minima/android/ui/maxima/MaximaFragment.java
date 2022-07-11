@@ -192,7 +192,7 @@ public class MaximaFragment extends Fragment {
                     MinimaLogger.log(result);
 
                     //Small pause..
-                    Thread.sleep(10000);
+                    Thread.sleep(5000);
 
                     //And Update the List
                     mMain.runOnUiThread(new Runnable() {
