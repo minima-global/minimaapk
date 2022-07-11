@@ -15,7 +15,7 @@
     <item
         android:id="@+id/action_maxima_refresh"
         android:orderInCategory="100"
-        android:title="Refresh Contacts"
+        android:title="Refresh Maxima"
         app:showAsAction="never" />
 
     <item
