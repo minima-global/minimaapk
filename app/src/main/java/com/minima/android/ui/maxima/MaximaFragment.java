@@ -225,6 +225,14 @@ public class MaximaFragment extends Fragment {
                     String result = mMain.getMinima().runMinimaCMD("maxima action:refresh",false);
                     MinimaLogger.log(result);
 
+                    //And Update the List
+                    mMain.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateUI();
+                        }
+                    });
+
                 }catch(Exception exc){
                     MinimaLogger.log(exc);
                 }
