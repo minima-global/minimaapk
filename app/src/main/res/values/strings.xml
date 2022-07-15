@@ -51,4 +51,10 @@ The Minima Team</string>
         Please re-open Minima and your data will have been restored.
     </string>
 
+    <string name="minima_gdrive_backup_explanation_not_signed_in">This is the text that shows when the user has not signe in with Google Drive yet</string>
+    <string name="minima_gdrive_backup_button_not_signed_in">Button user has not signed in</string>
+
+    <string name="minima_gdrive_backup_explanation_signed_in">This is the text Explanation when the user has signed in. Backups automatically done blablabla.\nEmail:(%s)</string>
+    <string name="minima_gdrive_backup_button_signed_in">Back up now</string>
+
 </resources>

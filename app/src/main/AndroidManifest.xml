@@ -26,6 +26,7 @@
         android:largeHeap="true"
         android:persistent="true"
 
+        android:name=".MinimaApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@drawable/ic_minima"
@@ -87,6 +88,10 @@
         </receiver>
 
         <receiver android:name="com.minima.android.service.Alarm" android:exported="true">
+
+        </receiver>
+
+        <receiver android:name=".dependencies.backupSync.recurring.BackupRecurringAlarmManager" android:exported="false">
 
         </receiver>
 
