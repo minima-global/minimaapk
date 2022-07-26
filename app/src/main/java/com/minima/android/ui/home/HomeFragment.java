@@ -101,6 +101,7 @@ public class HomeFragment extends Fragment {
                 JSONObject memory   = (JSONObject)zStatusJSON.get("memory");
                 JSONObject chain    = (JSONObject)zStatusJSON.get("chain");
                 JSONObject network  = (JSONObject)zStatusJSON.get("network");
+                JSONObject traffic  = (JSONObject)network.get("traffic");
 
                 //Set it..
                 ((TextView)mRoot.findViewById(R.id.text_home_time)).setText(chain.getString("time"));
@@ -110,6 +111,13 @@ public class HomeFragment extends Fragment {
                 ((TextView)mRoot.findViewById(R.id.text_home_diskspace)).setText(memory.getString("disk"));
                 ((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
                 ((TextView)mRoot.findViewById(R.id.text_home_connections)).setText(""+network.get("connected"));
+
+                //Network Stats
+                ((TextView)mRoot.findViewById(R.id.text_home_traffic_from)).setText(traffic.getString("from"));
+                ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalread)).setText(traffic.getString("totalread"));
+                ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalwrite)).setText(traffic.getString("totalwrite"));
+                ((TextView)mRoot.findViewById(R.id.text_home_read)).setText(traffic.getString("read"));
+                ((TextView)mRoot.findViewById(R.id.text_home_write)).setText(traffic.getString("write"));
 
                 ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("https://"+network.getString("host")+":9003");
             }
