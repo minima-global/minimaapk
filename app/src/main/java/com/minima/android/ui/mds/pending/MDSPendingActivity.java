@@ -112,7 +112,8 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
 
     public void acceptCommand(String zUID){
 
-        Toast.makeText(this, "Running command..", Toast.LENGTH_SHORT).show();
+        //Show a little message
+        Toast.makeText(this, "Running command.. Please wait", Toast.LENGTH_SHORT).show();
 
         Runnable rr = new Runnable() {
             @Override
