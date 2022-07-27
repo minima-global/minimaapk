@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
+import com.minima.android.ui.mds.pending.MDSPendingActivity;
 
 import org.minima.Minima;
 import org.minima.utils.MinimaLogger;
@@ -215,7 +216,11 @@ public class MDSFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
 
-            case R.id.action_maxima_identity:
+            case R.id.action_mds_pending:
+
+                //Show your details
+                Intent intent = new Intent(mMain, MDSPendingActivity.class);
+                startActivity(intent);
 
                 return true;
 
