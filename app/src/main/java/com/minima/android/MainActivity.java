@@ -381,9 +381,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 .setTitle("Minima Status")
                 .setMessage(status)
                 .setIcon(R.drawable.outline_info_24)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton("Close", null)
                 .show();
-
     }
 
     /**

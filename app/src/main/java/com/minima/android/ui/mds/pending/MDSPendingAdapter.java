@@ -67,8 +67,6 @@ public class MDSPendingAdapter extends ArrayAdapter<JSONObject> {
         File dapproot   = new File(webroot,minidapp.getString("uid"));
         File image      = new File(dapproot,conf.getString("icon",""));
 
-        MinimaLogger.log("IMAGE FILE "+image.getAbsolutePath());
-
         ImageView iv = v.findViewById(R.id.mds_image);
 
         if(image.exists()){
