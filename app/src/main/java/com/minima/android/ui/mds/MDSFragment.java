@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -204,10 +205,26 @@ public class MDSFragment extends Fragment {
         mMainList.setAdapter(mdsadap);
     }
 
+    static Button notifCount;
+    static int mNotifCount = 2;
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.mds, menu);
+
+        MenuItem item   = menu.findItem(R.id.action_mds_badge);
+        View count      = item.getActionView();
+        notifCount = (Button) count.findViewById(R.id.notif_count);
+        notifCount.setText(String.valueOf(mNotifCount));
+        notifCount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mMain, MDSPendingActivity.class);
+                startActivity(intent);
+            }
+        });
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -215,14 +232,6 @@ public class MDSFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-
-            case R.id.action_mds_pending:
-
-                //Show your details
-                Intent intent = new Intent(mMain, MDSPendingActivity.class);
-                startActivity(intent);
-
-                return true;
 
             default:
                 return super.onOptionsItemSelected(item);
