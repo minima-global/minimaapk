@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import com.minima.android.R;
 
 import org.minima.system.params.GlobalParams;
+import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
 import java.io.File;
@@ -63,8 +64,10 @@ public class MDSPendingAdapter extends ArrayAdapter<JSONObject> {
         File rootminima = new File(rootfile, GlobalParams.MINIMA_BASE_VERSION);
         File mdsroot    = new File(rootminima,"mds");
         File webroot    = new File(mdsroot,"web");
-        File dapproot   = new File(webroot,mds.getString("uid"));
+        File dapproot   = new File(webroot,minidapp.getString("uid"));
         File image      = new File(dapproot,conf.getString("icon",""));
+
+        MinimaLogger.log("IMAGE FILE "+image.getAbsolutePath());
 
         ImageView iv = v.findViewById(R.id.mds_image);
 

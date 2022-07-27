@@ -161,6 +161,13 @@ public class MDSFragment extends Fragment {
         mMain.mMDSFragment = null;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        MinimaLogger.log("RESUME");
+    }
+
     public void updateMDSList(){
 
         ArrayList<JSONObject> mds = new ArrayList<>();
@@ -205,26 +212,10 @@ public class MDSFragment extends Fragment {
         mMainList.setAdapter(mdsadap);
     }
 
-    static Button notifCount;
-    static int mNotifCount = 2;
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.mds, menu);
-
-        MenuItem item   = menu.findItem(R.id.action_mds_badge);
-        View count      = item.getActionView();
-        notifCount = (Button) count.findViewById(R.id.notif_count);
-        notifCount.setText(String.valueOf(mNotifCount));
-        notifCount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mMain, MDSPendingActivity.class);
-                startActivity(intent);
-            }
-        });
-
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -233,6 +224,9 @@ public class MDSFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
 
+            case R.id.action_mds_pending:
+                Intent intent = new Intent(mMain, MDSPendingActivity.class);
+                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

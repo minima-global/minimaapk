@@ -7,8 +7,11 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,6 +41,8 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
 
     ListView mMainList;
 
+    JSONObject[] mAllPending = new JSONObject[0];
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,9 +56,90 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
         //If it's Empty
         mMainList.setEmptyView(findViewById(R.id.mds_empty_list_item));
 
+        //Register for Context menu
+        registerForContextMenu(mMainList);
+
         //Bind to the Minima Service..
         Intent minimaintent = new Intent(this, MinimaService.class);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add("Accept");
+        menu.add("Deny");
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        //Get menu item info
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        //Get the Pending Item..
+        JSONObject pendingitem = mAllPending[info.position];
+
+        //What is the UID
+        String uid = pendingitem.getString("uid");
+
+        boolean accept = false;
+        if(item.getTitle().equals("Accept")){
+            accept = true;
+        }
+
+        if(accept){
+            new AlertDialog.Builder(this)
+                    .setTitle("Accept Command")
+                    .setMessage("Are you sure ?\n\nThis will run the command..\n\n"+pendingitem.getString("command"))
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            acceptCommand(uid);
+                        }})
+                    .setNegativeButton(android.R.string.no, null).show();
+        }else{
+
+            //Delete this Command
+            String commandstr = mMinima.getMinima().runMinimaCMD("mds action:deny uid:"+uid,true);
+
+            //And reset the list
+            updateList();
+        }
+
+        return true;
+    }
+
+    public void acceptCommand(String zUID){
+
+        Toast.makeText(this, "Running command..", Toast.LENGTH_SHORT).show();
+
+        Runnable rr = new Runnable() {
+            @Override
+            public void run() {
+                //Run the command..
+                String commandstr = mMinima.getMinima().runMinimaCMD("mds action:accept uid:"+zUID,true);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        //Show the results
+                        new AlertDialog.Builder(MDSPendingActivity.this)
+                                .setTitle("Command Output")
+                                .setMessage(commandstr)
+                                .setIcon(R.drawable.ic_minima)
+                                .setNegativeButton("Close", null)
+                                .show();
+
+                        //And reset the list
+                        updateList();
+                    }
+                });
+            }
+        };
+
+        Thread runner = new Thread(rr);
+        runner.start();
     }
 
     public void updateList(){
@@ -62,44 +148,8 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
         String pendingstr = mMinima.getMinima().runMinimaCMD("mds action:pending",false);
 
         try {
-            String fake = "{" +
-                    "  \"command\":\"mds\"," +
-                    "  \"params\":{" +
-                    "    \"action\":\"pending\"" +
-                    "  }," +
-                    "  \"status\":true," +
-                    "  \"pending\":false," +
-                    "  \"response\":{" +
-                    "    \"pending\":[{" +
-                    "      \"uid\":\"0x192ED8B39A685B6F624BAFC4BE961241\"," +
-                    "      \"minidapp\":{\n" +
-                    "        \"uid\":\"0xF78972A572162F8BDF322EF8D9C6488B\"," +
-                    "        \"conf\":{" +
-                    "          \"name\":\"Terminal\"," +
-                    "          \"icon\":\"terminal.png\"," +
-                    "          \"version\":\"1.91\"," +
-                    "          \"description\":\"Terminal CLI for Minima\"" +
-                    "        }" +
-                    "      }," +
-                    "      \"command\":\"send amount:1 adress:0xFF\"" +
-                    "    }," +
-                    "    {" +
-                    "      \"uid\":\"0x42EF1DE453183BEB87C7DCD32B33A94B\"," +
-                    "      \"minidapp\":{" +
-                    "        \"uid\":\"0xF78972A572162F8BDF322EF8D9C6488B\"," +
-                    "        \"conf\":{" +
-                    "          \"name\":\"Terminal\"," +
-                    "          \"icon\":\"terminal.png\"," +
-                    "          \"version\":\"1.91\"," +
-                    "          \"description\":\"Terminal CLI for Minima\"" +
-                    "        }" +
-                    "      }," +
-                    "      \"command\":\"send amount:2 adress:0xFF\"" +
-                    "    }]" +
-                    "  }" +
-                    "}";
 
-            JSONObject json     = (JSONObject)new JSONParser().parse(fake);
+            JSONObject json     = (JSONObject)new JSONParser().parse(pendingstr);
             JSONObject response = (JSONObject)json.get("response");
             JSONArray pending   = (JSONArray) response.get("pending");
 
@@ -112,13 +162,10 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
             }
 
             //Get the array list
-            JSONObject[] allmds = mdspending.toArray(new JSONObject[0]);
-
-//            //Keep for later
-//            mMDS = allmds;
+            mAllPending = mdspending.toArray(new JSONObject[0]);
 
             //Create the custom arrayadapter
-            MDSPendingAdapter mdsadap = new MDSPendingAdapter(this, R.layout.mds_view, allmds);
+            MDSPendingAdapter mdsadap = new MDSPendingAdapter(this, R.layout.mds_view, mAllPending);
             mMainList.setAdapter(mdsadap);
 
         } catch (ParseException e) {

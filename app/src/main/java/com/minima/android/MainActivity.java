@@ -361,48 +361,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         }
     }
 
-//    public void addBatteryListener(){
-//        //Listen for Battery Events..
-//        BroadcastReceiver receiver = new BroadcastReceiver() {
-//            public void onReceive(Context context, Intent intent) {
-//                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-//
-//                //Is this a new setting
-//                if(mBatteryStaus == plugged) {
-//                    //No change..
-//                    return;
-//                }
-//                mBatteryStaus = plugged;
-//
-//                //What Happened..
-//                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-//                    // on AC power
-//                    MinimaLogger.log("BATTERY PLUGGED IN");
-//
-//                    //Set PoW to regular
-//                    if(mMinima != null){
-//                        mMinima.getMinima().getMain().setNormalAutoMineSpeed();
-//                    }
-//
-//                } else if (plugged == 0) {
-//                    // on battery power
-//                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
-//
-//                    //Set PoW to regular
-//                    if(mMinima != null){
-//                        mMinima.getMinima().getMain().setLowPowAutoMineSpeed();
-//                    }
-//
-//                } else {
-//                    // intent didnt include extra info
-//                    MinimaLogger.log("BATTERY NO EXTRA INFO");
-//                }
-//            }
-//        };
-//        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//        registerReceiver(receiver, filter);
-//    }
-
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         MinimaLogger.log("DISCONNECTED TO SERVICE");
