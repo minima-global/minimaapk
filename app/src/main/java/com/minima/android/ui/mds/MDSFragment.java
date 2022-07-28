@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +28,7 @@ import com.minima.android.R;
 import com.minima.android.ui.mds.pending.MDSPendingActivity;
 
 import org.minima.Minima;
+import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
@@ -33,6 +36,8 @@ import org.minima.utils.json.parser.JSONParser;
 import org.minima.utils.json.parser.ParseException;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class MDSFragment extends Fragment {
 
@@ -97,29 +102,32 @@ public class MDSFragment extends Fragment {
             }
         });
 
-        //Delete Apps..
-        mMainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+        //Register for Context menu
+        registerForContextMenu(mMainList);
 
-                new AlertDialog.Builder(mMain)
-                        .setTitle("Delete MiniDAPP")
-                        .setMessage("Are you sure ?\n\nThis will remove all data..")
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                //Get the Selected MiniDAPP
-                                JSONObject mds = mMDS[zPosition];
-
-                                String uid = mds.getString("uid");
-
-                                deleteMiniDAPP(uid);
-                            }})
-                        .setNegativeButton(android.R.string.no, null).show();
-
-                return true;
-            }
-        });
+//        //Delete Apps..
+//        mMainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+//            @Override
+//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
+//
+//                new AlertDialog.Builder(mMain)
+//                        .setTitle("Delete MiniDAPP")
+//                        .setMessage("Are you sure ?\n\nThis will remove all data..")
+//                        .setIcon(android.R.drawable.ic_dialog_alert)
+//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface dialog, int whichButton) {
+//                                //Get the Selected MiniDAPP
+//                                JSONObject mds = mMDS[zPosition];
+//
+//                                String uid = mds.getString("uid");
+//
+//                                deleteMiniDAPP(uid);
+//                            }})
+//                        .setNegativeButton(android.R.string.no, null).show();
+//
+//                return true;
+//            }
+//        });
 
         FloatingActionButton fab = root.findViewById(R.id.fab_mds);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -132,6 +140,85 @@ public class MDSFragment extends Fragment {
         updateMDSList();
 
         return root;
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+
+        menu.add("Info");
+
+        SubMenu sub =  menu.addSubMenu("Permission");
+            sub.add("READ");
+            sub.add("WRITE");
+
+        menu.add("Delete");
+    }
+
+    int mPreviousPos=0;
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        //Get menu item info
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+
+        if(info != null){
+            mPreviousPos = info.position;
+        }
+
+        //Is it a simple delete
+        if(item.getTitle().equals("Info")){
+
+            new AlertDialog.Builder(mMain)
+                    .setTitle("MiniDAPP")
+                    .setMessage(MiniFormat.JSONPretty(mMDS[mPreviousPos]))
+                    .setIcon(R.drawable.ic_minima)
+                    .setNegativeButton("Close", null)
+                    .show();
+
+        }else if(item.getTitle().equals("Delete")){
+
+            new AlertDialog.Builder(mMain)
+                        .setTitle("Delete MiniDAPP")
+                        .setMessage("Are you sure ?\n\nThis will remove all data..")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int whichButton) {
+                                //Get the MiniDAPP
+                                JSONObject mindapp = mMDS[mPreviousPos];
+
+                                //What is the UID
+                                String uid = mindapp.getString("uid");
+
+                                //Get the Selected MiniDAPP
+                                deleteMiniDAPP(uid);
+                            }})
+                        .setNegativeButton(android.R.string.no, null).show();
+
+        }else if(item.getTitle().equals("READ") || item.getTitle().equals("WRITE")){
+
+            String trust = "read";
+            if(item.getTitle().equals("WRITE")){
+                trust = "write";
+            }
+
+            //Get the MiniDAPP
+            JSONObject mindapp = mMDS[mPreviousPos];
+
+            //What is the UID
+            String uid = mindapp.getString("uid");
+
+            //Run a simple function to update the trust level
+            String commandstr = mMain.getMinima().runMinimaCMD("mds action:permission uid:"+uid+" trust:"+trust,false);
+
+            //And set it here
+            mindapp.put("permission",trust);
+
+            Toast.makeText(mMain, "Permissions updated to "+trust, Toast.LENGTH_SHORT).show();
+        }
+
+        return true;
     }
 
     public void deleteMiniDAPP(String zUID){
@@ -194,6 +281,17 @@ public class MDSFragment extends Fragment {
 
         JSONObject response     = (JSONObject)json.get("response");
         JSONArray allmdsjson    = (JSONArray) response.get("minidapps");
+
+        //Sort Alphabetically..
+        Collections.sort(allmdsjson, new Comparator<JSONObject>() {
+            @Override
+            public int compare(JSONObject o1, JSONObject o2) {
+                JSONObject conf1 = (JSONObject) o1.get("conf");
+                JSONObject conf2 = (JSONObject) o2.get("conf");
+
+                return conf1.getString("name").compareTo(conf2.getString("name"));
+            }
+        });
 
         //Convert these..
         for(Object obj : allmdsjson){
