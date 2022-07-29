@@ -6,7 +6,7 @@
         android:id="@+id/action_mds_pending"
         android:orderInCategory="100"
         android:title="Pending"
-        android:icon="@drawable/pending"
+        app:actionLayout="@layout/feed_update_count"
         app:showAsAction="always" />
 
 </menu>

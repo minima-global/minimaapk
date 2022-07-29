@@ -1,7 +1,11 @@
 package com.minima.android.ui.mds;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Browser;
@@ -15,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -27,6 +33,7 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.ui.mds.pending.MDSPendingActivity;
 
+import org.bouncycastle.pqc.crypto.rainbow.Layer;
 import org.minima.Minima;
 import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
@@ -46,6 +53,9 @@ public class MDSFragment extends Fragment {
     ListView mMainList;
 
     JSONObject[] mMDS;
+
+    boolean mMinimaReady = false;
+    TextView mBadgeCount = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -104,30 +114,6 @@ public class MDSFragment extends Fragment {
 
         //Register for Context menu
         registerForContextMenu(mMainList);
-
-//        //Delete Apps..
-//        mMainList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-//            @Override
-//            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int zPosition, long l) {
-//
-//                new AlertDialog.Builder(mMain)
-//                        .setTitle("Delete MiniDAPP")
-//                        .setMessage("Are you sure ?\n\nThis will remove all data..")
-//                        .setIcon(android.R.drawable.ic_dialog_alert)
-//                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                            public void onClick(DialogInterface dialog, int whichButton) {
-//                                //Get the Selected MiniDAPP
-//                                JSONObject mds = mMDS[zPosition];
-//
-//                                String uid = mds.getString("uid");
-//
-//                                deleteMiniDAPP(uid);
-//                            }})
-//                        .setNegativeButton(android.R.string.no, null).show();
-//
-//                return true;
-//            }
-//        });
 
         FloatingActionButton fab = root.findViewById(R.id.fab_mds);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -252,7 +238,7 @@ public class MDSFragment extends Fragment {
     public void onResume() {
         super.onResume();
 
-        MinimaLogger.log("RESUME");
+        setBadgeCount();
     }
 
     public void updateMDSList(){
@@ -308,13 +294,60 @@ public class MDSFragment extends Fragment {
         //Create the custom arrayadapter
         MDSAdapter mdsadap = new MDSAdapter(mMain, R.layout.mds_view, allmds);
         mMainList.setAdapter(mdsadap);
+
+        mMinimaReady = true;
+
+        setBadgeCount();
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.mds, menu);
+
+        View count          = menu.findItem(R.id.action_mds_pending).getActionView();
+        FrameLayout fram    = count.findViewById(R.id.mds_pending_badge);
+        fram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mMain, MDSPendingActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mBadgeCount = count.findViewById(R.id.badge_count);
+        setBadgeCount();
+
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    public void setBadgeCount(){
+
+        if(!mMinimaReady){
+            return;
+        }
+
+        //Get the number of pending..
+        String pendingstr = mMain.getMinima().runMinimaCMD("mds action:pending", false);
+
+        try {
+            JSONObject json     = (JSONObject) new JSONParser().parse(pendingstr);
+            JSONObject response = (JSONObject) json.get("response");
+            JSONArray pending   = (JSONArray) response.get("pending");
+
+            int num = pending.size();
+
+            if(num == 0){
+                mBadgeCount.setVisibility(View.GONE);
+            }else{
+                mBadgeCount.setVisibility(View.VISIBLE);
+            }
+
+            mBadgeCount.setText(""+num);
+
+        }catch(Exception exc) {
+            MinimaLogger.log(exc);
+        }
     }
 
     @Override
@@ -322,9 +355,9 @@ public class MDSFragment extends Fragment {
         // Handle item selection
         switch (item.getItemId()) {
 
-            case R.id.action_mds_pending:
-                Intent intent = new Intent(mMain, MDSPendingActivity.class);
-                startActivity(intent);
+//            case R.id.action_mds_pending:
+//                Intent intent = new Intent(mMain, MDSPendingActivity.class);
+//                startActivity(intent);
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -1,25 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:paddingRight="8dp">
+    android:paddingRight="8dp"
+    android:id="@+id/mds_pending_badge">
 
-    <Button
-        android:id="@+id/notif_count"
-        android:layout_width="wrap_content"
+    <ImageView
+        android:src="@drawable/pending"
+        android:layout_width="36dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center"
         android:minWidth="48dp"
-        android:minHeight="32dp"
-        app:backgroundTint="#0000FF"
-        android:text="0"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/white"
-        android:gravity="center"
-        android:padding="2dp"
-        android:singleLine="true">
-    </Button>
+        android:minHeight="32dp"/>
 
-</LinearLayout>
+    <TextView
+        android:id="@+id/badge_count"
+        android:layout_width="24sp"
+        android:layout_height="24sp"
+        android:layout_gravity="top|left"
+        android:gravity="center"
+        android:text="3"
+        android:visibility="gone"
+        android:background="@drawable/shape_notification"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textColor="#FFFFFF"
+        />
+
+<!--    <Button-->
+<!--        android:id="@+id/notif_count"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="match_parent"-->
+<!--        android:minWidth="48dp"-->
+<!--        android:minHeight="32dp"-->
+<!--        app:backgroundTint="#0000FF"-->
+<!--        android:text="0"-->
+<!--        android:textSize="18sp"-->
+<!--        android:textStyle="bold"-->
+<!--        android:textColor="@android:color/white"-->
+<!--        android:gravity="center"-->
+<!--        android:padding="2dp"-->
+<!--        android:singleLine="true">-->
+<!--    </Button>-->
+
+</FrameLayout>
