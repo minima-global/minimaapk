@@ -40,6 +40,7 @@ import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
+import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
@@ -61,6 +62,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
      */
     public static int REQUEST_INSTALLMINI   = 42;
     public static int REQUEST_RESTORE       = 43;
+    public static int REQUEST_UPDATEMINI    = 44;
+
+    /**
+     * The MiniDAPP we are trying to update
+     */
+    String mUpdateMiniDAPP = "";
 
     /**
      * Main Minmia Service
@@ -467,6 +474,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             Thread inst = new Thread(install);
             inst.start();
+
+        }else if(requestCode == REQUEST_UPDATEMINI){
+            //Create an Update Handler
+            UpdateMiniDAPP upd = new UpdateMiniDAPP(mUpdateMiniDAPP, fileuri, this);
+
+            Thread inst = new Thread(upd);
+            inst.start();
+
         }else if(requestCode == REQUEST_RESTORE){
             //Create an Installer Handler
             RestoreBackup restore = new RestoreBackup(fileuri,this);
@@ -501,12 +516,19 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void openFile(int zRequest) {
+        openFile("",zRequest);
+    }
+
+    public void openFile(String zUID, int zRequest) {
 
         //Are we connected..
         if(mMinima == null){
             Toast.makeText(MainActivity.this, "Minima not initialised yet..", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        //Store for later
+        mUpdateMiniDAPP = zUID;
 
         //Check for permission
         if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, zRequest)){

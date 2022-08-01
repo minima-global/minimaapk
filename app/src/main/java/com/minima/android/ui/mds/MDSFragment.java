@@ -132,7 +132,9 @@ public class MDSFragment extends Fragment {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
 
-        menu.add("Info");
+        menu.add("Details");
+
+        menu.add("Update");
 
         SubMenu sub =  menu.addSubMenu("Permission");
             sub.add("READ");
@@ -154,7 +156,7 @@ public class MDSFragment extends Fragment {
         }
 
         //Is it a simple delete
-        if(item.getTitle().equals("Info")){
+        if(item.getTitle().equals("Details")){
 
             new AlertDialog.Builder(mMain)
                     .setTitle("MiniDAPP")
@@ -162,6 +164,16 @@ public class MDSFragment extends Fragment {
                     .setIcon(R.drawable.ic_minima)
                     .setNegativeButton("Close", null)
                     .show();
+
+        }else if(item.getTitle().equals("Update")){
+            //Get the MiniDAPP
+            JSONObject mindapp = mMDS[mPreviousPos];
+
+            //What is the UID
+            String uid = mindapp.getString("uid");
+
+            //Open a file and Update
+            mMain.openFile(uid, MainActivity.REQUEST_UPDATEMINI);
 
         }else if(item.getTitle().equals("Delete")){
 
