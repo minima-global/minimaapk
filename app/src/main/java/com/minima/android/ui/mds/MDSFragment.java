@@ -211,7 +211,8 @@ public class MDSFragment extends Fragment {
             String commandstr = mMain.getMinima().runMinimaCMD("mds action:permission uid:"+uid+" trust:"+trust,false);
 
             //And set it here
-            mindapp.put("permission",trust);
+            JSONObject conf = (JSONObject) mMDS[mPreviousPos].get("conf");
+            conf.put("permission",trust);
 
             Toast.makeText(mMain, "Permissions updated to "+trust, Toast.LENGTH_SHORT).show();
         }
