@@ -288,7 +288,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                     //Get the status..
                     while(!(boolean)json.get("status")){
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
 
                         //Run Status..
                         status = mMinima.getMinima().runMinimaCMD("status");
