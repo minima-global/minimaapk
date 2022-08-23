@@ -1,6 +1,8 @@
 package com.minima.android.ui.backup;
 
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -24,6 +26,7 @@ import com.minima.android.R;
 import org.minima.utils.MinimaLogger;
 
 import java.io.File;
+import java.util.List;
 
 public class BackupFragment extends Fragment {
 
@@ -65,7 +68,7 @@ public class BackupFragment extends Fragment {
             @Override
             public void run() {
                 //Where are we going to store the file
-                String filename = "minima-backup.gz.bak";
+                String filename = "minima-backup.bak.gz";
                 File backup = new File(mMain.getFilesDir(),filename);
                 if(backup.exists()){
                     backup.delete();
@@ -83,11 +86,24 @@ public class BackupFragment extends Fragment {
 
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                    intentShareFile.setType("application/zip");
+                    intentShareFile.setType("application/gz");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
-                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima backup");
+                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima_Backup_"+System.currentTimeMillis());
                     intentShareFile.putExtra(Intent.EXTRA_TEXT, "Here is my Minima backup");
-                    startActivity(Intent.createChooser(intentShareFile, "Store your Minima Backup"));
+                    intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+                    Intent chooser = Intent.createChooser(intentShareFile, "Share File");
+
+                    List<ResolveInfo> resInfoList = mMain.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+                    for (ResolveInfo resolveInfo : resInfoList) {
+                        String packageName = resolveInfo.activityInfo.packageName;
+                        mMain.grantUriPermission(packageName, backupuri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    }
+
+                    startActivity(chooser);
+
+                    //startActivity(Intent.createChooser(intentShareFile, "Store your Minima Backup"));
+                    //startActivity(intentShareFile);
 
                 }else{
                     mMain.runOnUiThread(new Runnable() {
