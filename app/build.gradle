@@ -15,10 +15,21 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_ALIAS")
+            keyPassword keystoreProperties['keyPassword'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD")
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : (System.getenv("DOWNLOADED_KEYSTORE_PATH") ? file(System.getenv("BITRISE_SOURCE_DIR") + "/" + System.getenv("DOWNLOADED_KEYSTORE_PATH")) : null)
+            storePassword keystoreProperties['storePassword'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
+            // TODO use proguard!
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
