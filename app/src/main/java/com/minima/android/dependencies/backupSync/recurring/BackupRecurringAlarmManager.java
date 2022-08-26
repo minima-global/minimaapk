@@ -37,7 +37,7 @@ public class BackupRecurringAlarmManager extends BroadcastReceiver {
         am.setInexactRepeating(
                 AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis(),
-                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
+                AlarmManager.INTERVAL_DAY,
                 createPendingIntent(context, intent)
         );
     }
