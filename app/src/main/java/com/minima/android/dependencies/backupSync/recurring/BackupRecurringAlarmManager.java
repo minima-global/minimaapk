@@ -10,13 +10,9 @@ import android.os.Build;
 import com.minima.android.dependencies.backupSync.BackupSyncProvider;
 import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
 
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-
 public class BackupRecurringAlarmManager extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("RAFARAFA - backing up at: " + DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(OffsetDateTime.now()));
         backup(context);
     }
 
@@ -37,7 +33,7 @@ public class BackupRecurringAlarmManager extends BroadcastReceiver {
         am.setInexactRepeating(
                 AlarmManager.RTC_WAKEUP,
                 System.currentTimeMillis(),
-                AlarmManager.INTERVAL_DAY,
+                AlarmManager.INTERVAL_FIFTEEN_MINUTES,
                 createPendingIntent(context, intent)
         );
     }

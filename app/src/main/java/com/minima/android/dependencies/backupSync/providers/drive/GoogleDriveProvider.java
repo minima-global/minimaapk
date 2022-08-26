@@ -131,7 +131,6 @@ public class GoogleDriveProvider extends BackupSyncProvider {
                                         .setKey(context.getApplicationInfo().packageName)
                                         .execute();
                             }
-                            System.out.println("RAFARAFA - backup id: " + id);
                         } catch (UserRecoverableAuthIOException e) {
                             if (retry != null) {
                                 retry.launch(e.getIntent());
@@ -166,7 +165,7 @@ public class GoogleDriveProvider extends BackupSyncProvider {
                         new JacksonFactory(),
                         credential
                 );
-                builder.setApplicationName("Minima GDrive");
+                builder.setApplicationName(applicationName);
                 googleDriveServiceCallback.onGoogleDriveServiceAvailable(builder.build());
             } else {
                 googleDriveServiceCallback.onGoogleDriveServiceAvailable(null);
@@ -196,7 +195,7 @@ public class GoogleDriveProvider extends BackupSyncProvider {
                             // Create folder
                             final File gDriveFolder = new File();
                             gDriveFolder.setMimeType("application/vnd.google-apps.folder");
-                            gDriveFolder.setName("Minima Backup");
+                            gDriveFolder.setName(folderBackupName);
 
                             File folderCreated = driveService
                                     .files()
@@ -220,4 +219,7 @@ public class GoogleDriveProvider extends BackupSyncProvider {
     private Intent createSignInIntent() {
         return googleSignInClient.getSignInIntent();
     }
+
+    private static final String applicationName = "Minima GDrive";
+    private static final String folderBackupName = "Minima Backup";
 }

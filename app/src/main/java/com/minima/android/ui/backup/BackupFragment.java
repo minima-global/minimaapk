@@ -128,7 +128,7 @@ public class BackupFragment extends Fragment {
             public void run() {
                 File backupFile = MinimaBackupUtils.createBackup(mMain);
                 if (backupFile != null) {
-                    Uri backupUri = FileProvider.getUriForFile(mMain, "com.minima.android.provider", backupFile);
+                    Uri backupUri = FileProvider.getUriForFile(mMain, minimaProviderAuthority, backupFile);
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
                     intentShareFile.setType("application/zip");
@@ -157,4 +157,7 @@ public class BackupFragment extends Fragment {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    private static final String minimaProviderAuthority = "com.minima.android.provider";
+
 }
