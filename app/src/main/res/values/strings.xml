@@ -48,7 +48,15 @@ The Minima Team</string>
         \n
         Once you have restored Minima will shutdown.\n
         \n
-        Please re-open Minima and your data will have been restored.
+        When finished - please re-open Minima and your data will have been restored.
+    </string>
+
+    <string name="minima_archive">
+        You can also resync from an Archive Node\n
+        \n
+        This will reset your chain to the latest - and can even reset your NEW device to an old wallet\n
+        \n
+        When finished - please re-open Minima and your data will have been restored.
     </string>
 
 </resources>

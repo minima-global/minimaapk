@@ -22,6 +22,7 @@ import androidx.fragment.app.Fragment;
 import com.minima.android.BuildConfig;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
+import com.minima.android.ui.maxima.MyDetailsActivity;
 
 import org.minima.utils.MinimaLogger;
 
@@ -56,6 +57,15 @@ public class BackupFragment extends Fragment {
             public void onClick(View view) {
                 Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
                 mMain.openFile(MainActivity.REQUEST_RESTORE);
+            }
+        });
+
+        Button archive = root.findViewById(R.id.backup_archive);
+        archive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mMain, Bip39Activity.class);
+                startActivity(intent);
             }
         });
 
