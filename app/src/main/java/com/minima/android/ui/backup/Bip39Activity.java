@@ -109,6 +109,7 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
                 }
             }
         });
+
         //Bind to the Minima Service..
 //        Intent minimaintent = new Intent(this, MinimaService.class);
 //        bindService(minimaintent, this, Context.BIND_AUTO_CREATE);

@@ -18,7 +18,7 @@
         android:layout_height="wrap_content"
         style="@style/MinimaActionBar"
         android:theme="@style/MinimaActionBar.DrawerIconColour"
-        app:title="Archive" />
+        app:title="Archive Seed Resync" />
 
     <TextView
         android:id="@+id/seed_Instructions"
@@ -61,7 +61,7 @@
         android:text="Delete Last Word"
         android:textColor="@color/coreGrey5"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="24dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_width="match_parent"
