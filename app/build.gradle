@@ -8,14 +8,14 @@ android {
     if (keystorePropertiesFile.exists()) {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
-    
+
     compileSdk 32
 
     defaultConfig {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 32
-        versionCode 14
+        versionCode System.getenv("BITRISE_BUILD_NUMBER") ? Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER")) : 14
         versionName "1.0.11"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
