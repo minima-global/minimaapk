@@ -1,17 +1,14 @@
 package com.minima.android.service;
 
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -24,8 +21,9 @@ import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
 
+import com.minima.android.MainActivity;
+
 import org.minima.Minima;
-import org.minima.objects.TxPoW;
 import org.minima.system.Main;
 import org.minima.system.network.webhooks.NotifyManager;
 import org.minima.utils.MinimaLogger;
@@ -34,10 +32,6 @@ import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-//import com.jraska.console.Console;
-import com.minima.android.MainActivity;
 //import com.minima.android.R;
 //import com.minima.boot.Alarm;
 
@@ -68,7 +62,7 @@ public class MinimaService extends Service {
     BroadcastReceiver mBatteryReceiver;
 
     //Minima Main Starter
-    Minima mStart;
+    public static Minima minima;
 
     //Used to update the Notification
     Handler mHandler;
@@ -108,7 +102,7 @@ public class MinimaService extends Service {
         }
 
         //Start Minima
-        mStart = new Minima();
+        minima = new Minima();
 
         mHandler = new Handler(Looper.getMainLooper());
 
@@ -207,7 +201,7 @@ public class MinimaService extends Service {
         //vars.add("35.228.18.150:9001");
         //vars.add("10.0.2.2:9001");
 
-        mStart.mainStarter(vars.toArray(new String[0]));
+        minima.mainStarter(vars.toArray(new String[0]));
 
         //Notify User service is now running!
         Toast.makeText(this, "Minima Service Started", Toast.LENGTH_SHORT).show();
@@ -217,7 +211,7 @@ public class MinimaService extends Service {
    }
 
     public Minima getMinima(){
-        return mStart;
+        return minima;
     }
 
     public Notification createNotification(String zText){
@@ -262,7 +256,7 @@ public class MinimaService extends Service {
         MinimaLogger.log("Minima Service onDestroy start");
 
         //QUIT nicely..
-        String resp = mStart.runMinimaCMD("quit");
+        String resp = minima.runMinimaCMD("quit");
 
         //Not listening anymore..
         Main.setMinimaListener(null);
