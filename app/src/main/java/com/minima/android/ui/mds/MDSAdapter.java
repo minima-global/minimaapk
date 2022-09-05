@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 
 import com.minima.android.R;
 
+import org.minima.system.params.GlobalParams;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
@@ -53,16 +54,17 @@ public class MDSAdapter extends ArrayAdapter<JSONObject> {
         TextView description    = v.findViewById(R.id.mds_description);
         TextView version        = v.findViewById(R.id.mds_version);
 
-        name.setText(conf.getString("name"));
-        description.setText(conf.getString("description"));
-        version.setText(conf.getString("version"));
+        name.setText(conf.getString("name","noname"));
+        description.setText(conf.getString("description","no description"));
+        version.setText(conf.getString("version",""));
 
         //Now the image
-        File rootfile  = mContext.getFilesDir();
-        File mdsroot   = new File(rootfile,"mds");
-        File webroot   = new File(mdsroot,"web");
-        File dapproot  = new File(webroot,mds.getString("uid"));
-        File image     = new File(dapproot,conf.getString("icon"));
+        File rootfile   = mContext.getFilesDir();
+        File rootminima = new File(rootfile, GlobalParams.MINIMA_BASE_VERSION);
+        File mdsroot    = new File(rootminima,"mds");
+        File webroot    = new File(mdsroot,"web");
+        File dapproot   = new File(webroot,mds.getString("uid"));
+        File image      = new File(dapproot,conf.getString("icon",""));
 
         ImageView iv = v.findViewById(R.id.mds_image);
 

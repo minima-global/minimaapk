@@ -132,7 +132,7 @@ public class MaximaFragment extends Fragment {
                 startActivity(shareIntent);
 
             case R.id.action_maxima_refresh:
-                updateUI();
+                refreshMaxima();
                 return true;
 
             case R.id.action_maxima_identity:
@@ -193,6 +193,37 @@ public class MaximaFragment extends Fragment {
 
                     //Small pause..
                     Thread.sleep(5000);
+
+                    //And Update the List
+                    mMain.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateUI();
+                        }
+                    });
+
+                }catch(Exception exc){
+                    MinimaLogger.log(exc);
+                }
+            }
+        };
+
+        Thread tt = new Thread(add);
+        tt.start();
+    }
+
+    public void refreshMaxima(){
+
+        //Small message
+        Toast.makeText(mMain, "Refreshing Maxima..", Toast.LENGTH_LONG).show();
+        
+        Runnable add = new Runnable() {
+            @Override
+            public void run() {
+                //Tell Minima..
+                try{
+                    String result = mMain.getMinima().runMinimaCMD("maxima action:refresh",false);
+                    MinimaLogger.log(result);
 
                     //And Update the List
                     mMain.runOnUiThread(new Runnable() {
