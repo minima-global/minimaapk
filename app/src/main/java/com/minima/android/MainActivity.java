@@ -40,6 +40,7 @@ import com.minima.android.databinding.ActivityMainBinding;
 import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
+import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
@@ -49,6 +50,7 @@ import com.minima.android.ui.mds.MDSFragment;
 import org.minima.Minima;
 import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
+import org.minima.system.params.GlobalParams;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
@@ -60,6 +62,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
      */
     public static int REQUEST_INSTALLMINI   = 42;
     public static int REQUEST_RESTORE       = 43;
+    public static int REQUEST_UPDATEMINI    = 44;
+
+    /**
+     * The MiniDAPP we are trying to update
+     */
+    String mUpdateMiniDAPP = "";
 
     /**
      * Main Minmia Service
@@ -77,6 +85,11 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public MDSFragment mMDSFragment         = null;
     public HomeFragment mHomeFragment       = null;
     public MaximaFragment mMaximaFragment   = null;
+
+    /**
+     * The DAPP Stores..
+     */
+    JSONObject[] mAllDappStores = null;
 
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
@@ -98,7 +111,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_backup, R.id.nav_help)
+                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_store, R.id.nav_backup, R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -224,6 +237,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         closer.start();
     }
 
+    public JSONObject[] getDappStores(){
+        return mAllDappStores;
+    }
+
+    public void setDappStores(JSONObject[] zStores){
+        mAllDappStores = zStores;
+    }
+
     public Minima getMinima(){
         if(mMinima == null){
             return null;
@@ -267,7 +288,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                     //Get the status..
                     while(!(boolean)json.get("status")){
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
 
                         //Run Status..
                         status = mMinima.getMinima().runMinimaCMD("status");
@@ -286,8 +307,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         @Override
                         public void run() {
                             //Hide the Loader
-                            if(mLoader != null){
-                                mLoader.cancel();
+                            try{
+                                if(mLoader != null && mLoader.isShowing()){
+                                    mLoader.cancel();
+                                }
+                            }catch(Exception exc){
+                                MinimaLogger.log(exc);
                             }
 
                             //Update fragments
@@ -319,68 +344,29 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void installMiniDAPPs(){
+        //Which setting is it..
+        String minidapppref = "minidapps_installed_"+ GlobalParams.MINIMA_BASE_VERSION;
+
         //Do we need to install apps..
         SharedPreferences pref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
-        if(!pref.getBoolean("minidapps_installed",false)){
+        if(!pref.getBoolean(minidapppref,false)){
 
             //Install them..
+            new InstallAssetMiniDAPP("news-1.0.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("wallet-0.1.5.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("wallet_1.9.1.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("terminal-1.91.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("maxsolo-1.81.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("helpdocs-0.1.1.mds.zip", MainActivity.this).run();
-//            new InstallAssetMiniDAPP("incentive-1.1.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("docs_1.1.3.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("ic_1.3.11.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("maxsolo_1.9.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("scriptide-1.7.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("2048-3.mds.zip", MainActivity.this).run();
 
             //And that's that
             SharedPreferences.Editor edit = pref.edit();
-            edit.putBoolean("minidapps_installed", true);
+            edit.putBoolean(minidapppref, true);
             edit.apply();
         }
     }
-
-//    public void addBatteryListener(){
-//        //Listen for Battery Events..
-//        BroadcastReceiver receiver = new BroadcastReceiver() {
-//            public void onReceive(Context context, Intent intent) {
-//                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-//
-//                //Is this a new setting
-//                if(mBatteryStaus == plugged) {
-//                    //No change..
-//                    return;
-//                }
-//                mBatteryStaus = plugged;
-//
-//                //What Happened..
-//                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
-//                    // on AC power
-//                    MinimaLogger.log("BATTERY PLUGGED IN");
-//
-//                    //Set PoW to regular
-//                    if(mMinima != null){
-//                        mMinima.getMinima().getMain().setNormalAutoMineSpeed();
-//                    }
-//
-//                } else if (plugged == 0) {
-//                    // on battery power
-//                    MinimaLogger.log("BATTERY NOT PLUGGED IN");
-//
-//                    //Set PoW to regular
-//                    if(mMinima != null){
-//                        mMinima.getMinima().getMain().setLowPowAutoMineSpeed();
-//                    }
-//
-//                } else {
-//                    // intent didnt include extra info
-//                    MinimaLogger.log("BATTERY NO EXTRA INFO");
-//                }
-//            }
-//        };
-//        IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-//        registerReceiver(receiver, filter);
-//    }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
@@ -402,9 +388,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 .setTitle("Minima Status")
                 .setMessage(status)
                 .setIcon(R.drawable.outline_info_24)
-                .setNegativeButton(android.R.string.no, null)
+                .setNegativeButton("Close", null)
                 .show();
-
     }
 
     /**
@@ -489,6 +474,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             Thread inst = new Thread(install);
             inst.start();
+
+        }else if(requestCode == REQUEST_UPDATEMINI){
+            //Create an Update Handler
+            UpdateMiniDAPP upd = new UpdateMiniDAPP(mUpdateMiniDAPP, fileuri, this);
+
+            Thread inst = new Thread(upd);
+            inst.start();
+
         }else if(requestCode == REQUEST_RESTORE){
             //Create an Installer Handler
             RestoreBackup restore = new RestoreBackup(fileuri,this);
@@ -523,12 +516,19 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void openFile(int zRequest) {
+        openFile("",zRequest);
+    }
+
+    public void openFile(String zUID, int zRequest) {
 
         //Are we connected..
         if(mMinima == null){
             Toast.makeText(MainActivity.this, "Minima not initialised yet..", Toast.LENGTH_SHORT).show();
             return;
         }
+
+        //Store for later
+        mUpdateMiniDAPP = zUID;
 
         //Check for permission
         if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, zRequest)){

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,6 +8,11 @@
     android:background="@drawable/main_background"
     android:scaleType="centerCrop"
     tools:context=".ui.home.HomeFragment">
+
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TableLayout
         android:background="@drawable/white_box"
@@ -57,11 +62,6 @@
         <TableRow android:layout_marginLeft="20dp">
             <TextView android:text="Devices : " android:gravity="right" android:textStyle="bold"/>
             <TextView android:id="@+id/text_home_devices" android:gravity="left" android:text="waiting.."/>
-        </TableRow>
-
-        <TableRow android:layout_marginLeft="20dp">
-            <TextView android:text="Connections : " android:gravity="right" android:textStyle="bold"/>
-            <TextView android:id="@+id/text_home_connections" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
     </TableLayout>
@@ -115,7 +115,7 @@
         <TableRow android:layout_marginLeft="20dp">
 
             <TextView
-                android:text="MDS"
+                android:text="MiniDAPP System"
                 android:textColor="#317AFF"
                 android:textStyle="bold"
                 android:textSize="18dp"
@@ -140,4 +140,59 @@
 
     </TableLayout>
 
+    <TableLayout
+        android:background="@drawable/white_box"
+        android:padding="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TableRow android:layout_marginLeft="20dp">
+
+            <TextView
+                android:text="Network"
+                android:textColor="#317AFF"
+                android:textStyle="bold"
+                android:textSize="18dp"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="4dp"/>
+
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Connections : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_connections" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="From : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_traffic_from" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Total Read : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_traffic_totalread" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Total Write : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_traffic_totalwrite" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Read : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_read" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+        <TableRow android:layout_marginLeft="20dp">
+            <TextView android:text="Write : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:id="@+id/text_home_write" android:gravity="left" android:text="waiting.."/>
+        </TableRow>
+
+    </TableLayout>
+
 </LinearLayout>
+
+</ScrollView>

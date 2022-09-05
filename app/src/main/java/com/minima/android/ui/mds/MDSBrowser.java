@@ -143,7 +143,7 @@ public class MDSBrowser extends AppCompatActivity {
                         //                    }
                         message += "Minima uses a self-signed certificate.\n\nDo you wish to continue anyway?";
 
-                        builder.setTitle("SSL Certificate Error");
+                        builder.setTitle("SSL Certificate Warning");
                         builder.setMessage(message);
                         builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
                             @Override

@@ -62,12 +62,26 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Maxima Contact"/>
 
+        <activity   android:name=".ui.mds.pending.MDSPendingActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="Pending Commands"/>
+
         <activity   android:name=".ui.mds.MDSBrowser"
             android:exported="true"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="MiniDAPP"/>
+
+        <activity   android:name=".ui.store.StoreBrowser"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="Store"/>
 
         <!-- SERVICES -->
         <service android:name="com.minima.android.service.MinimaService" android:enabled="true" android:exported="true"></service>
