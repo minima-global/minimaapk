@@ -38,7 +38,7 @@
         <activity
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".ui.backup.Bip39Activity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
@@ -83,12 +83,12 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Store"/>
 
-<!--        <activity   android:name=".ui.backup.Bip39Activity"-->
-<!--            android:exported="true"-->
-<!--            android:launchMode="singleInstance"-->
-<!--            android:configChanges="keyboardHidden|orientation|screenSize"-->
-<!--            android:theme="@style/Theme.MinimaAndroid.NoActionBar"-->
-<!--            android:label="Archive"/>-->
+        <activity   android:name=".ui.backup.Bip39Activity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="Archive"/>
 
         <!-- SERVICES -->
         <service android:name="com.minima.android.service.MinimaService" android:enabled="true" android:exported="true"></service>

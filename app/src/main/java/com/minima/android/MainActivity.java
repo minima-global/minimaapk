@@ -97,9 +97,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    static MainActivity mStaticLink = null;
+    public static MainActivity getMainActivity(){
+        return mStaticLink;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mStaticLink = this;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -399,7 +406,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         String packageName = getPackageName();
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
         boolean ignoring = pm.isIgnoringBatteryOptimizations(packageName);
-        MinimaLogger.log("Battery Is Ignored : "+ignoring);
+        MinimaLogger.log("Battery Optimisation is ignored : "+ignoring);
         if (!ignoring) {
             new AlertDialog.Builder(this)
                     .setTitle("Battery Optimise")

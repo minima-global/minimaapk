@@ -38,6 +38,7 @@ import java.util.Date;
 
 //import com.jraska.console.Console;
 import com.minima.android.MainActivity;
+import com.minima.android.ui.backup.Bip39Activity;
 //import com.minima.android.R;
 //import com.minima.boot.Alarm;
 
@@ -86,6 +87,8 @@ public class MinimaService extends Service {
 
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
+
+    public Bip39Activity mArchiveListener = null;
 
     @Override
     public void onCreate() {
@@ -173,6 +176,12 @@ public class MinimaService extends Service {
                                 setMinimaNotification();
                             }
                         });
+
+                    }else if(event.equals("ARCHIVEUPDATE")){
+                        MinimaLogger.log("*** "+data.toString());
+                        if(mArchiveListener!=null){
+                            mArchiveListener.updateLoader(data.toString());
+                        }
                     }
                 }
             }

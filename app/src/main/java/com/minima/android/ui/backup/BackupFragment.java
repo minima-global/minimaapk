@@ -18,10 +18,13 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.minima.android.BuildConfig;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
+import com.minima.android.ui.help.HelpFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 
 import org.minima.utils.MinimaLogger;

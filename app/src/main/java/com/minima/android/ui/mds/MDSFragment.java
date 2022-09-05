@@ -336,7 +336,7 @@ public class MDSFragment extends Fragment {
 
     public void setBadgeCount(){
 
-        if(!mMinimaReady){
+        if(!mMinimaReady || mBadgeCount==null){
             return;
         }
 
