@@ -52,9 +52,9 @@ The Minima Team</string>
     </string>
 
     <string name="minima_archive">
-        You can also resync from an Archive Node\n
+        You can also resync from an Archive Node - but this should be as a last resort\n
         \n
-        This will reset your chain to the latest - and can even reset your NEW device to an old wallet\n
+        You can reset your chain to the latest tip or you can reset your NEW device to an old wallet\n
         \n
         When finished - please re-open Minima and your data will have been restored.
     </string>

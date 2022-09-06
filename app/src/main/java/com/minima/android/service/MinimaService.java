@@ -178,9 +178,9 @@ public class MinimaService extends Service {
                         });
 
                     }else if(event.equals("ARCHIVEUPDATE")){
-                        MinimaLogger.log("*** "+data.toString());
+                        String message = data.getString("message");
                         if(mArchiveListener!=null){
-                            mArchiveListener.updateLoader(data.toString());
+                            mArchiveListener.updateLoader(message);
                         }
                     }
                 }

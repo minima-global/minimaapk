@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     /**
      * The MiniDAPP we are trying to update
      */
-    String mUpdateMiniDAPP = "";
+    String mExtraFileData = "";
 
     /**
      * Main Minmia Service
@@ -484,14 +484,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         }else if(requestCode == REQUEST_UPDATEMINI){
             //Create an Update Handler
-            UpdateMiniDAPP upd = new UpdateMiniDAPP(mUpdateMiniDAPP, fileuri, this);
+            UpdateMiniDAPP upd = new UpdateMiniDAPP(mExtraFileData, fileuri, this);
 
             Thread inst = new Thread(upd);
             inst.start();
 
         }else if(requestCode == REQUEST_RESTORE){
             //Create an Installer Handler
-            RestoreBackup restore = new RestoreBackup(fileuri,this);
+            RestoreBackup restore = new RestoreBackup(fileuri,mExtraFileData,this);
 
             Thread inst = new Thread(restore);
             inst.start();
@@ -526,7 +526,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         openFile("",zRequest);
     }
 
-    public void openFile(String zUID, int zRequest) {
+    public void openFile(String zExtraData, int zRequest) {
 
         //Are we connected..
         if(mMinima == null){
@@ -535,7 +535,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         }
 
         //Store for later
-        mUpdateMiniDAPP = zUID;
+        mExtraFileData = zExtraData;
 
         //Check for permission
         if(!checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE, zRequest)){

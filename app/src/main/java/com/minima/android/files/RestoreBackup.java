@@ -14,11 +14,12 @@ import java.io.InputStream;
 public class RestoreBackup implements Runnable {
 
     Uri mFileUri;
-
+    String mPassword;
     MainActivity mMain;
 
-    public RestoreBackup(Uri zFilePath, MainActivity zMain){
+    public RestoreBackup(Uri zFilePath,String zPassword, MainActivity zMain){
         mFileUri   = zFilePath;
+        mPassword  = zPassword;
         mMain      = zMain;
     }
 
@@ -39,8 +40,7 @@ public class RestoreBackup implements Runnable {
             MiniFile.writeDataToFile(dapp,data);
 
             //Now restore from that
-            String result = mMain.getMinima().runMinimaCMD("restore file:\""+dapp.getAbsolutePath()+"\"",false);
-            MinimaLogger.log(result);
+            String result = mMain.getMinima().runMinimaCMD("restore password:\""+mPassword+"\" file:\""+dapp.getAbsolutePath()+"\"",false);
 
             //Now shut down..
             mMain.shutdown();

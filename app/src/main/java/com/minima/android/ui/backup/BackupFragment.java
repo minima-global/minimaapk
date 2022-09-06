@@ -1,10 +1,13 @@
 package com.minima.android.ui.backup;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,10 +15,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -36,6 +41,8 @@ public class BackupFragment extends Fragment {
 
     MainActivity mMain;
 
+    String mPassword = null;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -49,8 +56,7 @@ public class BackupFragment extends Fragment {
         backup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
-                makeBackup();
+                showInputDialog(true);
             }
         });
 
@@ -58,8 +64,7 @@ public class BackupFragment extends Fragment {
         restore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
-                mMain.openFile(MainActivity.REQUEST_RESTORE);
+                showInputDialog(false);
             }
         });
 
@@ -75,6 +80,50 @@ public class BackupFragment extends Fragment {
         return root;
     }
 
+    public void showInputDialog(boolean zBackup){
+        AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
+        if(zBackup){
+            builder.setTitle("Choose Password");
+        }else{
+            builder.setTitle("Set Password");
+        }
+
+        // Set up the input
+        final EditText input = new EditText(mMain);
+
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mPassword = input.getText().toString().trim();
+                if(mPassword.equals("")){
+                    Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(zBackup){
+                    Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
+                    makeBackup();
+                }else{
+                    Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
+                    mMain.openFile(mPassword, MainActivity.REQUEST_RESTORE);
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+    }
+
     public void makeBackup(){
 
         Runnable bak = new Runnable() {
@@ -88,10 +137,8 @@ public class BackupFragment extends Fragment {
                 }
 
                 //First run a command On Minima..
-                String result = mMain.getMinima().runMinimaCMD("backup file:"+backup.getAbsolutePath());
-
-                //Now share this..
-                MinimaLogger.log("Backup : "+result);
+                String result = mMain.getMinima().runMinimaCMD("backup file:"+backup.getAbsolutePath()
+                        +" password:\""+mPassword+"\"");
 
                 if(backup.exists()) {
                     //Get the URi

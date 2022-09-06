@@ -71,7 +71,7 @@
 
     <TextView
         android:id="@+id/text_archive"
-        android:text="@string/minima_restore"
+        android:text="@string/minima_archive"
         android:background="@drawable/white_box"
         android:padding="8dp"
         android:layout_marginTop="8dp"
@@ -83,7 +83,7 @@
 
     <Button
         android:id="@+id/backup_archive"
-        android:text=" Restore from an Archive Node "
+        android:text=" Archive Node "
         android:layout_marginTop="8dp"
         android:textColor="@color/coreGrey5"
         android:layout_marginLeft="8dp"

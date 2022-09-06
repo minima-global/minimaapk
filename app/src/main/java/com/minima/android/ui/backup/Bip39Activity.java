@@ -33,6 +33,9 @@ import com.minima.android.ui.maxima.contacts.ContactAdapter;
 
 import org.minima.utils.BIP39;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONObject;
+import org.minima.utils.json.parser.JSONParser;
+import org.minima.utils.json.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -236,9 +239,21 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
         switch (item.getItemId()) {
             case R.id.archive_share:
 
+                String seedphrase = "";
+                String vault = mMinima.getMinima().runMinimaCMD("vault");
+                try {
+                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
+                    JSONObject resp = (JSONObject)json.get("response");
+                    seedphrase      = resp.getString("phrase");
+
+                } catch (ParseException e) {
+                    MinimaLogger.log("Error getting seed phrase..");
+                    return true;
+                }
+
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, "hello");
+                sendIntent.putExtra(Intent.EXTRA_TEXT, seedphrase);
                 sendIntent.setType("text/plain");
 
                 Intent shareIntent = Intent.createChooser(sendIntent, null);
