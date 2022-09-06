@@ -59,4 +59,12 @@ The Minima Team</string>
         When finished - please re-open Minima and your data will have been restored.
     </string>
 
+    <string name="minima_archive_explain">
+        Do NOT copy / paste your seed phrase here!\n
+        \n
+        The clipboard is insecure\n
+        \n
+        Either leave blank for a simple tip resync - if you are on the wrong chain - OR type each word individually and let the suggestions help you to reset your whole wallet..
+    </string>
+
 </resources>

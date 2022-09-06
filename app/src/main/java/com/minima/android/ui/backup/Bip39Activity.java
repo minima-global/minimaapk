@@ -133,10 +133,10 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
                 String fwords = mFinalWordlist.getText().toString().trim();
                 int words = fwords.split("\\s+").length;
-//                if(words!=3){
-//                    Toast.makeText(Bip39Activity.this,"Seed phrase MUST contain 24 words..", Toast.LENGTH_LONG).show();
-//                    return;
-//                }
+                if(words!=0 || words!=24){
+                    Toast.makeText(Bip39Activity.this,"Seed phrase MUST either be blank OR contain 24 words..", Toast.LENGTH_LONG).show();
+                    return;
+                }
 
                 showArchiveHostDialog();
             }
@@ -180,7 +180,9 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
                 mLoader.setCanceledOnTouchOutside(false);
                 mLoader.show();
 
-                runArchiveSync();
+                //Get the seedphrase
+                String text = mFinalWordlist.getText().toString().trim();
+                runArchiveSync(text);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -204,7 +206,7 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
         });
     }
 
-    public void runArchiveSync(){
+    public void runArchiveSync(String zSeedPhrase){
         Runnable sync = new Runnable() {
             @Override
             public void run() {
@@ -212,7 +214,11 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
                 MinimaLogger.log("Starting Archive process..");
 
                 //Do stuff..
-                mMinima.getMinima().runMinimaCMD("archive action:resync host:10.0.2.2:9001");
+                if(zSeedPhrase.equals("")){
+                    mMinima.getMinima().runMinimaCMD("archive action:resync host:10.0.2.2:9001");
+                }else{
+                    mMinima.getMinima().runMinimaCMD("archive action:resync host:10.0.2.2:9001 phrase:\""+zSeedPhrase+"\"");
+                }
 
                 MinimaLogger.log("Ending Archive process..");
 
