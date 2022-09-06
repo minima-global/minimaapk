@@ -132,8 +132,14 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
             public void onClick(View view) {
 
                 String fwords = mFinalWordlist.getText().toString().trim();
-                int words = fwords.split("\\s+").length;
-                if(words!=0 || words!=24){
+                int words     = 0;
+                if(fwords.equals("")){
+                    words     = 0;
+                }else{
+                    words     = fwords.split("\\s+").length;
+                }
+
+                if(words!=0 && words!=24){
                     Toast.makeText(Bip39Activity.this,"Seed phrase MUST either be blank OR contain 24 words..", Toast.LENGTH_LONG).show();
                     return;
                 }
@@ -215,9 +221,9 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
                 //Do stuff..
                 if(zSeedPhrase.equals("")){
-                    mMinima.getMinima().runMinimaCMD("archive action:resync host:10.0.2.2:9001");
+                    mMinima.getMinima().runMinimaCMD("archive action:resync host:"+mArchiveNode);
                 }else{
-                    mMinima.getMinima().runMinimaCMD("archive action:resync host:10.0.2.2:9001 phrase:\""+zSeedPhrase+"\"");
+                    mMinima.getMinima().runMinimaCMD("archive action:resync host:"+mArchiveNode+" phrase:\""+zSeedPhrase+"\"");
                 }
 
                 MinimaLogger.log("Ending Archive process..");
