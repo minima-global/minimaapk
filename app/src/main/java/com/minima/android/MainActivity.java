@@ -132,6 +132,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
         //Wait for Minima to fully start up..
+        MinimaLogger.log("Show initial Loader..");
         mLoader = new ProgressDialog(this);
         mLoader.setTitle("Connecting to Minima");
         mLoader.setMessage("Please wait..");
@@ -276,6 +277,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void waitForMinimaToStartUp(){
+        MinimaLogger.log("MAINACTIVITY - waiting for Minima to StartUp..");
+
         Runnable checker = new Runnable() {
             @Override
             public void run() {
@@ -307,6 +310,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     }
 
                     //Install the MiniDApps..
+                    MinimaLogger.log("Install MiniDAPPs");
                     installMiniDAPPs();
 
                     //OK - Status returned OK..
@@ -315,6 +319,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         public void run() {
                             //Hide the Loader
                             try{
+                                MinimaLogger.log("Remove Loader");
                                 if(mLoader != null && mLoader.isShowing()){
                                     mLoader.cancel();
                                 }
@@ -323,16 +328,28 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             //Update fragments
-                            if(mMDSFragment != null){
-                                mMDSFragment.updateMDSList();
+                            try{
+                                if(mMDSFragment != null){
+                                    mMDSFragment.updateMDSList();
+                                }
+                            }catch(Exception exc){
+                                MinimaLogger.log(exc);
                             }
 
-                            if(mHomeFragment != null){
-                                mHomeFragment.updateUI();
+                            try{
+                                if(mHomeFragment != null){
+                                    mHomeFragment.updateUI();
+                                }
+                            }catch(Exception exc){
+                                MinimaLogger.log(exc);
                             }
 
-                            if(mMaximaFragment != null){
-                                mMaximaFragment.updateUI();
+                            try{
+                                if(mMaximaFragment != null){
+                                    mMaximaFragment.updateUI();
+                                }
+                            }catch(Exception exc){
+                                MinimaLogger.log(exc);
                             }
 
                             //And check for Battery..
@@ -343,6 +360,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 }catch(Exception exc) {
                     MinimaLogger.log(exc);
                 }
+
+                MinimaLogger.log("MAINACTIVITY - Minima StartUp complete..");
             }
         };
 
@@ -454,10 +473,19 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     protected void onDestroy() {
         super.onDestroy();
 
+        MinimaLogger.log("MAINACTIVITY - ONDESTROY");
+
         //Unbind from the service..
         if(mMinima != null){
             unbindService(this);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        MinimaLogger.log("MAINACTIVITY - ONRESUME");
     }
 
     @Override
