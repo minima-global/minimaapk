@@ -476,6 +476,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         MinimaLogger.log("MAINACTIVITY - ONDESTROY");
 
+        if(mLoader != null && mLoader.isShowing()){
+            mLoader.cancel();
+        }
+
         //Unbind from the service..
         if(mMinima != null){
             unbindService(this);

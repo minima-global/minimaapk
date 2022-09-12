@@ -219,18 +219,43 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
                 MinimaLogger.log("Starting Archive process..");
 
-                //Do stuff..
-                if(zSeedPhrase.equals("")){
-                    mMinima.getMinima().runMinimaCMD("archive action:resync host:"+mArchiveNode);
-                }else{
-                    mMinima.getMinima().runMinimaCMD("archive action:resync host:"+mArchiveNode+" phrase:\""+zSeedPhrase+"\"");
+                try {
+
+                    String result = null;
+                    if (zSeedPhrase.equals("")) {
+                        result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode);
+                    } else {
+                        result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode + " phrase:\"" + zSeedPhrase + "\"");
+                    }
+
+                    MinimaLogger.log("Ending Archive process.. ");
+
+                    //Parse the result..
+                    JSONObject json = (JSONObject) new JSONParser().parse(result);
+                    if((boolean)json.get("status")){
+                        //It worked!
+                        //Close both
+                        Bip39Activity.this.finishAffinity();
+                        MainActivity.getMainActivity().shutdown();
+
+                    }else{
+                        Bip39Activity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                mSeedphrase.setEnabled(true);
+                                mDelete.setEnabled(true);
+                                mComplete.setEnabled(true);
+
+                                mLoader.cancel();
+
+                                Toast.makeText(Bip39Activity.this, "Could not connect to host! "+mArchiveNode, Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                }catch(Exception exc){
+                    MinimaLogger.log("Error while processing Archive "+exc);
                 }
-
-                MinimaLogger.log("Ending Archive process..");
-
-                //Close both
-                Bip39Activity.this.finishAffinity();
-                MainActivity.getMainActivity().shutdown();
             }
         };
 
@@ -300,6 +325,10 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
         super.onDestroy();
         if(mMinima != null){
             unbindService(this);
+        }
+
+        if(mLoader != null && mLoader.isShowing()){
+            mLoader.cancel();
         }
     }
 }
