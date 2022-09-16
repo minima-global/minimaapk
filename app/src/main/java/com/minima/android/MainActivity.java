@@ -380,6 +380,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             //Install them..
             new InstallAssetMiniDAPP("news-1.0.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("gimme20_1.6.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("wallet_1.9.1.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("terminal-1.91.mds.zip", MainActivity.this).run();
