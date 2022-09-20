@@ -272,12 +272,41 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        String seedphrase   = "";
+        String vault        = "";
+
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.archive_reveal:
+
+                vault = mMinima.getMinima().runMinimaCMD("vault");
+                try {
+                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
+                    JSONObject resp = (JSONObject)json.get("response");
+                    seedphrase      = resp.getString("phrase");
+
+                } catch (ParseException e) {
+                    MinimaLogger.log("Error getting seed phrase..");
+                    return true;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Seed Phrase");
+                builder.setMessage(seedphrase);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+                return true;
+
             case R.id.archive_share:
 
-                String seedphrase = "";
-                String vault = mMinima.getMinima().runMinimaCMD("vault");
+                vault = mMinima.getMinima().runMinimaCMD("vault");
                 try {
                     JSONObject json = (JSONObject)new JSONParser().parse(vault);
                     JSONObject resp = (JSONObject)json.get("response");

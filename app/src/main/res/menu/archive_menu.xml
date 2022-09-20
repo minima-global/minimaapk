@@ -9,4 +9,14 @@
         android:title="Share"
         app:iconTint="@color/coreBlackContrast"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/archive_reveal"
+        android:icon="@android:drawable/ic_menu_info_details"
+        android:iconTint="@color/coreBlackContrast"
+        android:orderInCategory="100"
+        android:title="Reveal Seed"
+        app:iconTint="@color/coreBlackContrast"
+        app:showAsAction="always" />
+
 </menu>
