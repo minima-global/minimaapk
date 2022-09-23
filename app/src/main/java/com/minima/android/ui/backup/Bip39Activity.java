@@ -86,11 +86,19 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
             @Override
             public void afterTextChanged(Editable editable) {
                 String word = mSeedphrase.getText().toString().trim().toLowerCase();
-                MinimaLogger.log("Word : "+word);
                 if(mWordListArray.contains(word)){
 
-                    //Remove and add to our Main List!
-                    mFinalWordlist.append(word.toUpperCase()+" ");
+                    //Add to our Main List!
+                    String text = mFinalWordlist.getText().toString();
+                    if(text.equals("")){
+                        mFinalWordlist.append(word.toUpperCase()+" ");
+
+                    }else if(text.endsWith(" ")){
+                        mFinalWordlist.append(word.toUpperCase()+" ");
+
+                    }else{
+                        mFinalWordlist.append(" "+word.toUpperCase()+" ");
+                    }
 
                     //And clear again
                     mSeedphrase.setText("");
@@ -104,6 +112,7 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
         });
 
         mFinalWordlist  = findViewById(R.id.seed_wordlist);
+        mFinalWordlist.setText("");
 
         mWordCount      = findViewById(R.id.seed_wordcount);
         mWordCount.setText("Word Count : 0 / 24");
