@@ -3,22 +3,39 @@ plugins {
 }
 
 android {
+    def keystoreProperties = new Properties()
+    def keystorePropertiesFile = rootProject.file('key.properties')
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
     compileSdk 32
 
     defaultConfig {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 32
-        versionCode 14
-        versionName "1.0.11"
+        versionCode System.getenv("BITRISE_BUILD_NUMBER") ? Integer.parseInt(System.getenv("BITRISE_BUILD_NUMBER")) : 14
+        versionName "1.0.12"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_ALIAS")
+            keyPassword keystoreProperties['keyPassword'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD")
+            storeFile keystoreProperties['storeFile'] ? file(keystoreProperties['storeFile']) : (System.getenv("DOWNLOADED_KEYSTORE_PATH") ? file(System.getenv("BITRISE_SOURCE_DIR") + "/" + System.getenv("DOWNLOADED_KEYSTORE_PATH")) : null)
+            storePassword keystoreProperties['storePassword'] ?: System.getenv("BITRISEIO_ANDROID_KEYSTORE_PASSWORD")
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
+            // TODO use proguard!
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
