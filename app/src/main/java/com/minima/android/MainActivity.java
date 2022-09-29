@@ -170,7 +170,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.action_status:
-//                shutdown();
                 runStatus();
                 return true;
 
@@ -203,20 +202,27 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 //                requestBatteryCheck(true);
 //                return true;
 //
-//            case R.id.action_shutdown:
-//
-////                if(mMinima != null){
-////                    mMinima.shutdownComplete(this);
-////                }
-////
-//                //unbindService(this);
-//
-//                Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-//                stopService(minimaintent);
-//
-//                finish();
-//
-//                return true;
+            case R.id.action_shutdown:
+
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Shutdown");
+                builder.setMessage("Are you sure you want to shutdown Minima ?");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        shutdown();
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+
+                return true;
 
             default:
                 return super.onOptionsItemSelected(item);

@@ -14,10 +14,10 @@
         android:title="Battery Optimisation"
         app:showAsAction="never" />
 
-<!--    <item-->
-<!--        android:id="@+id/action_shutdown"-->
-<!--        android:orderInCategory="100"-->
-<!--        android:title="ShutDown"-->
-<!--        app:showAsAction="never" />-->
+    <item
+        android:id="@+id/action_shutdown"
+        android:orderInCategory="100"
+        android:title="ShutDown"
+        app:showAsAction="never" />
 
 </menu>
