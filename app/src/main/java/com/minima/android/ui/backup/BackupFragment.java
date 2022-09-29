@@ -1,7 +1,8 @@
 package com.minima.android.ui.backup;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -11,7 +12,6 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -19,20 +19,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 
-import com.minima.android.BuildConfig;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.ui.help.HelpFragment;
-import com.minima.android.ui.maxima.MyDetailsActivity;
-
-import org.minima.utils.MinimaLogger;
+import com.minima.android.dependencies.backupSync.BackupSyncProvider;
+import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
+import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserNotSignedInYet;
+import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
+import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
 
 import java.io.File;
 import java.util.List;
@@ -43,12 +45,25 @@ public class BackupFragment extends Fragment {
 
     String mPassword = null;
 
+    private TextView gDriveText;
+    private Button gDriveButton;
+
+    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            (ActivityResultCallback<ActivityResult>) result -> {
+                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
+                    updateGDriveTexts(getContext());
+                    backup(getContext());
+                }
+            }
+    );
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
 
-        mMain = (MainActivity)getActivity();
+        mMain = (MainActivity) getActivity();
 
         View root = inflater.inflate(R.layout.fragment_backup, container, false);
 
@@ -76,6 +91,13 @@ public class BackupFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        gDriveText = root.findViewById(R.id.text_gdrive);
+        gDriveButton = root.findViewById(R.id.backup_gdrive);
+        gDriveText.setVisibility(View.GONE);
+        gDriveButton.setVisibility(View.GONE);
+
+        updateGDriveTexts(root.getContext());
 
         return root;
     }
@@ -185,4 +207,41 @@ public class BackupFragment extends Fragment {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
     }
+
+    private void updateGDriveTexts(Context context) {
+        BackupSyncProvider
+                .getGoogleDriveProvider(context)
+                .getUserState(context, backupUserStateModel -> {
+                    GoogleStateUserModel googleStateUserModel = (GoogleStateUserModel) backupUserStateModel;
+
+                    if (gDriveText != null && gDriveButton != null) {
+                        gDriveText.setVisibility(View.VISIBLE);
+                        gDriveButton.setVisibility(View.VISIBLE);
+
+                        if (googleStateUserModel instanceof GoogleDriveUserNotSignedInYet) {
+                            gDriveText.setText(getString(R.string.minima_gdrive_backup_explanation_not_signed_in));
+                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_not_signed_in));
+                            gDriveButton.setOnClickListener(
+                                    view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
+                            );
+                        } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
+                            gDriveText.setText(
+                                    getString(
+                                            R.string.minima_gdrive_backup_explanation_signed_in,
+                                            ((GoogleDriveUserSignedInModel) googleStateUserModel).getEmail()
+                                    )
+                            );
+                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_signed_in));
+                            gDriveButton.setOnClickListener(view -> backup(view.getContext()));
+                        }
+                    }
+                });
+
+    }
+
+    private void backup(Context context) {
+        BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
+    }
+
+    private static final String minimaProviderAuthority = "com.minima.android.provider";
 }

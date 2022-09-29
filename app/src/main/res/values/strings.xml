@@ -67,4 +67,10 @@ The Minima Team</string>
         Either leave blank for a simple tip resync - if you are on the wrong chain - OR type each word individually and let the suggestions help you to reset your whole wallet..
     </string>
 
+    <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
+    <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
+
+    <string name="minima_gdrive_backup_explanation_signed_in">GDrive User has activated daily backups\n\nThis happens automatically\n\nEmail:%s</string>
+    <string name="minima_gdrive_backup_button_signed_in">Make GDrive backup Now</string>
+
 </resources>
