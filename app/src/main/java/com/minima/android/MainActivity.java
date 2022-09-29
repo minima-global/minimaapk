@@ -513,7 +513,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         //Get the file URI
         Uri fileuri = data.getData();
-        MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
+        //MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
 
         if(requestCode == REQUEST_INSTALLMINI){
             //Create an Installer Handler

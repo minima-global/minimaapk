@@ -240,6 +240,8 @@ public class BackupFragment extends Fragment {
     }
 
     private void backup(Context context) {
+        Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
+
         BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
     }
 

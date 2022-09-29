@@ -1,6 +1,7 @@
 package com.minima.android.dependencies.backupSync.minima;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
@@ -14,6 +15,7 @@ import java.io.File;
 public class MinimaBackupUtils {
    @Nullable
    public static File createBackup(Context context) {
+
       final Minima minima = MinimaService.minima;
       if (minima != null) {
          //Where are we going to store the file
@@ -27,7 +29,7 @@ public class MinimaBackupUtils {
          String result = minima.runMinimaCMD("backup file:" + backup.getAbsolutePath());
 
          //Now share this..
-         MinimaLogger.log("Backup : " + result);
+         //MinimaLogger.log("Backup : " + result);
 
          if (backup.exists()) {
             return backup;
