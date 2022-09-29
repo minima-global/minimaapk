@@ -31,7 +31,7 @@ public class RestoreBackup implements Runnable {
             byte[] data = Utils.loadFile(is);
 
             //Get a file..
-            File dapp = new File(mMain.getFilesDir(),"restore.gz.bak");
+            File dapp = new File(mMain.getFilesDir(),"restore.bak");
             if(dapp.exists()){
                 dapp.delete();
             }

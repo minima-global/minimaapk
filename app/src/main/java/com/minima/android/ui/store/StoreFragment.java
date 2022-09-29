@@ -217,7 +217,8 @@ public class StoreFragment extends Fragment {
         mPrefsStoreSet          = prefs.getStringSet("allstores", new HashSet<>());
 
         //Always add the Main One..
-        mPrefsStoreSet.add("https://raw.githubusercontent.com/minima-global/Minima/dev-spartacus/mds/store/dapps.json");
+        mPrefsStoreSet.add("https://minidapps.minima.global/data/dapps.json");
+//        mPrefsStoreSet.add("https://raw.githubusercontent.com/minima-global/Minima/dev-spartacus/mds/store/dapps.json");
 
         //Are we refreshing..
         if(mMain.getDappStores() == null || zForceRefresh) {

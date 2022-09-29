@@ -19,7 +19,7 @@ public class MinimaBackupUtils {
       final Minima minima = MinimaService.minima;
       if (minima != null) {
          //Where are we going to store the file
-         String filename = "minima-backup.bak";
+         String filename = "minima-backup-gdrive.bak";
          File backup = new File(context.getFilesDir(), filename);
          if (backup.exists()) {
             backup.delete();

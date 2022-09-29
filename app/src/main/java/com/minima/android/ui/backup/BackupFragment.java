@@ -158,7 +158,7 @@ public class BackupFragment extends Fragment {
             @Override
             public void run() {
                 //Where are we going to store the file
-                String filename = "minima-backup.bak.gz";
+                String filename = "minima-backup-custom.bak";
                 File backup = new File(mMain.getFilesDir(),filename);
                 if(backup.exists()){
                     backup.delete();
