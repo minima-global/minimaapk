@@ -2,6 +2,7 @@ package com.minima.android.dependencies.backupSync.providers.drive;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
+import com.minima.android.MainActivity;
 import com.minima.android.dependencies.backupSync.BackupSyncProvider;
 import com.minima.android.dependencies.backupSync.model.BackupUserStateCallback;
 import com.minima.android.dependencies.backupSync.providers.drive.model.GoogleDriveServiceCallback;
@@ -26,8 +28,11 @@ import com.minima.android.dependencies.backupSync.providers.drive.model.fileMode
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserNotSignedInYet;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
 
+import org.minima.utils.MinimaLogger;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Optional;
 
 import javax.annotation.Nullable;
@@ -83,6 +88,14 @@ public class GoogleDriveProvider extends BackupSyncProvider {
 
     @Override
     public void uploadBackup(Context context, java.io.File fileToUpload, @Nullable ActivityResultLauncher<Intent> retry) {
+
+        //Store this time..
+        SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putLong("lastgdrive",System.currentTimeMillis());
+        edit.commit();
+
+        //Upload to GDrive
         getDriveService(context, driveService -> {
             if (driveService != null) {
                 createFolderIfNeeded(context, retry, folderId -> {
@@ -131,6 +144,9 @@ public class GoogleDriveProvider extends BackupSyncProvider {
                                         .setKey(context.getApplicationInfo().packageName)
                                         .execute();
                             }
+
+                            MinimaLogger.log("GDrive File Uploaded : "+new Date(System.currentTimeMillis()).toString());
+
                         } catch (UserRecoverableAuthIOException e) {
                             if (retry != null) {
                                 retry.launch(e.getIntent());

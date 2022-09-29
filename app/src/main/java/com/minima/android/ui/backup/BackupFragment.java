@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
@@ -36,7 +37,10 @@ import com.minima.android.dependencies.backupSync.providers.drive.model.userMode
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
 
+import org.minima.utils.MinimaLogger;
+
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 
 public class BackupFragment extends Fragment {
@@ -225,6 +229,19 @@ public class BackupFragment extends Fragment {
                                     view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
                             );
                         } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
+
+//                            //Store this time..
+//                            SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
+//                            long lastbackup = pref.getLong("lastgdrive",0);
+//                            String backuptime = null;
+//                            if(lastbackup == 0){
+//                                backuptime = "None yet..";
+//                            }else{
+//                                backuptime = new Date(lastbackup).toString();
+//                            }
+//
+//                            MinimaLogger.log("LAST GDrive found : "+lastbackup);
+
                             gDriveText.setText(
                                     getString(
                                             R.string.minima_gdrive_backup_explanation_signed_in,
@@ -243,6 +260,8 @@ public class BackupFragment extends Fragment {
         Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
 
         BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
+
+        MinimaLogger.log("Finished Backup.. ");
     }
 
     private static final String minimaProviderAuthority = "com.minima.android.provider";
