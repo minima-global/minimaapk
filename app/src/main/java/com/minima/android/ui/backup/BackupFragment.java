@@ -126,9 +126,11 @@ public class BackupFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mPassword = input.getText().toString().trim();
-                if(mPassword.equals("")){
+                if(zBackup && mPassword.equals("")){
                     Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
                     return;
+                }else if(mPassword.equals("")){
+                    mPassword = "minima";
                 }
 
                 if(zBackup){
