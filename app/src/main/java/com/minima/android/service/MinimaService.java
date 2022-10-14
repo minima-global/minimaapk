@@ -44,7 +44,7 @@ import com.minima.android.ui.backup.Bip39Activity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST     = false;
+    static boolean TEST     = true;
     static boolean GENESIS  = false;
 
     //Currently Binding doesn't work as we run in a separate process..
@@ -235,8 +235,26 @@ public class MinimaService extends Service {
         return mNotification;
     }
 
+    public void createMiniDAPPNotification(int zID, String zTitle, String zText){
+
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setContentTitle(zTitle)
+                .setContentText(zText+" "+zID)
+                .setAutoCancel(true)
+                .setSmallIcon(com.minima.android.R.drawable.ic_minima)
+                .setContentIntent(mPendingIntent)
+                .build();
+
+        mNotificationManager.notify(zID,notification);
+    }
+
+    int counter = 0;
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+
+        counter++;
+        createMiniDAPPNotification(counter,"Minima","onstart "+counter);
 
         //Set status Bar notification
         setMinimaNotification();

@@ -86,9 +86,6 @@ public class MaximaFragment extends Fragment {
             }
         });
 
-        //What are your Maxima contact details
-        getDetails();
-
         return root;
     }
 
@@ -109,6 +106,18 @@ public class MaximaFragment extends Fragment {
         }
     }
 
+    public static boolean isLocal(String zContact){
+        return 	zContact.contains("@127.")  ||
+                zContact.contains("@localhost") ||
+                zContact.contains("@10.")   ||
+                zContact.contains("@100.")  ||
+                zContact.contains("@0.") 	 ||
+                zContact.contains("@169.")  ||
+                zContact.contains("@172.")  ||
+                zContact.contains("@198.")  ||
+                zContact.contains("@192.");
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -122,6 +131,14 @@ public class MaximaFragment extends Fragment {
         switch (item.getItemId()) {
 
             case R.id.action_maxima_share:
+
+                //What are your Maxima contact details
+                getDetails();
+
+                if(isLocal(mMyContactAddress)){
+                    Toast.makeText(mMain, "No valid Maxima Host yet..", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
 
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);

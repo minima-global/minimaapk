@@ -124,11 +124,18 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        // The TextView to show your Text
+                        TextView showText = new TextView(MDSPendingActivity.this);
+                        showText.setText(commandstr);
+                        showText.setTextIsSelectable(true);
+
                         //Show the results
                         new AlertDialog.Builder(MDSPendingActivity.this)
                                 .setTitle("Command Output")
-                                .setMessage(commandstr)
+                                .setView(showText)
+//                                .setMessage(commandstr)
                                 .setIcon(R.drawable.ic_minima)
+                                .setCancelable(true)
                                 .setNegativeButton("Close", null)
                                 .show();
 

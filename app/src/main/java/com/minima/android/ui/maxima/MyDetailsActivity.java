@@ -96,7 +96,11 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
             mContactString          = (String) response.get("contact");
 
             mName.setText(mNameString);
-            mContact.setText(mContactString);
+            if(MaximaFragment.isLocal(mContactString)){
+                mContact.setText("No valid Maxima Host yet.. pls come back in a minute");
+            }else{
+                mContact.setText(mContactString);
+            }
 
         }catch(Exception exc){
             MinimaLogger.log(exc);
@@ -115,6 +119,11 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.menu_share:
+
+                if(MaximaFragment.isLocal(mContactString)){
+                    Toast.makeText(this, "No valid Maxima Host yet..", Toast.LENGTH_SHORT).show();
+                    return true;
+                }
 
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
