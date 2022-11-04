@@ -436,22 +436,26 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         boolean ignoring = pm.isIgnoringBatteryOptimizations(packageName);
         MinimaLogger.log("Battery Optimisation is ignored : "+ignoring);
         if (!ignoring) {
-            new AlertDialog.Builder(this)
-                    .setTitle("Battery Optimise")
-                    .setMessage("Minima needs to run in the background to validate and secure your coins.\n\n" +
-                            "You can see this setting in your options menu in the top right.")
-                    // Specifying a listener allows you to take an action before dismissing the dialog.
-                    // The dialog is automatically dismissed when a dialog button is clicked.
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // Continue with delete operation
-                            checkBatteryOptimisation();
-                        }
-                    })
-                    // A null listener allows the button to dismiss the dialog and take no further action.
+            try{
+                new AlertDialog.Builder(this)
+                        .setTitle("Battery Optimise")
+                        .setMessage("Minima needs to run in the background to validate and secure your coins.\n\n" +
+                                "You can see this setting in your options menu in the top right.")
+                        // Specifying a listener allows you to take an action before dismissing the dialog.
+                        // The dialog is automatically dismissed when a dialog button is clicked.
+                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                // Continue with delete operation
+                                checkBatteryOptimisation();
+                            }
+                        })
+                        // A null listener allows the button to dismiss the dialog and take no further action.
 //                    .setNegativeButton(android.R.string.no, null)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .show();
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }catch (Exception exc){
+                MinimaLogger.log(exc);
+            }
 
             return true;
         }

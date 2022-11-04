@@ -44,7 +44,7 @@ import com.minima.android.ui.backup.Bip39Activity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST     = true;
+    static boolean TEST     = false;
     static boolean GENESIS  = false;
 
     //Currently Binding doesn't work as we run in a separate process..
@@ -253,8 +253,8 @@ public class MinimaService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        counter++;
-        createMiniDAPPNotification(counter,"Minima","onstart "+counter);
+//        counter++;
+//        createMiniDAPPNotification(counter,"Minima","onstart "+counter);
 
         //Set status Bar notification
         setMinimaNotification();
