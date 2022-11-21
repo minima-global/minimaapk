@@ -290,12 +290,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             @Override
             public void run() {
                 try{
-//                    //Wait for Maxima..
-//                    MaximaManager max = Main.getInstance().getMaxima();
-//                    while(max == null || !max.isInited()) {
-//                        Thread.sleep(1000);
-//                        max = Main.getInstance().getMaxima();
-//                    }
+                    //Wait for Maxima..
+                    MaximaManager max = Main.getInstance().getMaxima();
+                    while(max == null || !max.isInited()) {
+                        Thread.sleep(1000);
+                        max = Main.getInstance().getMaxima();
+                    }
 
                     //Wait a second..
                     Thread.sleep(2000);
