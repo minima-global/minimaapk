@@ -3,6 +3,8 @@ package com.minima.android.ui.mds;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -20,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +38,7 @@ import com.minima.android.ui.mds.pending.MDSPendingActivity;
 
 import org.bouncycastle.pqc.crypto.rainbow.Layer;
 import org.minima.Minima;
+import org.minima.system.params.GlobalParams;
 import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
@@ -42,6 +46,7 @@ import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
 import org.minima.utils.json.parser.ParseException;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -141,6 +146,9 @@ public class MDSFragment extends Fragment {
             sub.add("WRITE");
 
         menu.add("Delete");
+
+//        menu.add("NOTIFY");
+//        menu.add("CANCEL");
     }
 
     int mPreviousPos=0;
@@ -215,6 +223,26 @@ public class MDSFragment extends Fragment {
             conf.put("permission",trust);
 
             Toast.makeText(mMain, "Permissions updated to "+trust, Toast.LENGTH_SHORT).show();
+
+        }else if(item.getTitle().equals("NOTIFY")){
+
+            //Get the MiniDAPP
+            JSONObject mds  = mMDS[mPreviousPos];
+            JSONObject conf = (JSONObject) mds.get("conf");
+
+            //What is the UID
+            String uid  = mds.getString("uid");
+            String name = conf.getString("name");
+
+            //Test Notification
+            mMain.getMinimaService().createMiniDAPPNotification(uid, name,"the text");
+
+        }else if(item.getTitle().equals("CANCEL")){
+            //Get the MiniDAPP
+            JSONObject mds  = mMDS[mPreviousPos];
+            String uid      = mds.getString("uid");
+
+            mMain.getMinimaService().cancelNotification(uid);
         }
 
         return true;

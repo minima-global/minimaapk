@@ -9,6 +9,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -20,6 +22,7 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
 import com.minima.android.MainActivity;
 
@@ -46,7 +49,7 @@ public class MinimaService extends Service {
 
     static boolean CLEAN        = false;
     static boolean NOCONNECT    = false;
-    static boolean TEST         = false;
+    static boolean TEST         = true;
     static boolean GENESIS      = false;
 
     //Currently Binding doesn't work as we run in a separate process..
@@ -245,17 +248,21 @@ public class MinimaService extends Service {
         return mNotification;
     }
 
-    public void createMiniDAPPNotification(int zID, String zTitle, String zText){
+    public void createMiniDAPPNotification(String zTag, String zTitle, String zText){
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(zTitle)
-                .setContentText(zText+" "+zID)
+                .setContentText(zText+" "+zTag)
                 .setAutoCancel(true)
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
                 .setContentIntent(mPendingIntent)
                 .build();
 
-        mNotificationManager.notify(zID,notification);
+        mNotificationManager.notify(zTag, 1, notification);
+    }
+
+    public void cancelNotification(String zTag){
+        mNotificationManager.cancel(zTag,1);
     }
 
     int counter = 0;

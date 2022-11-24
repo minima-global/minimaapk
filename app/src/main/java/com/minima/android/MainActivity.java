@@ -334,6 +334,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         return mMinima.getMinima();
     }
 
+    public MinimaService getMinimaService(){
+        if(mMinima == null){
+            return null;
+        }
+
+        return mMinima;
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
