@@ -44,8 +44,10 @@ import com.minima.android.ui.backup.Bip39Activity;
  * */
 public class MinimaService extends Service {
 
-    static boolean TEST     = false;
-    static boolean GENESIS  = false;
+    static boolean CLEAN        = false;
+    static boolean NOCONNECT    = false;
+    static boolean TEST         = false;
+    static boolean GENESIS      = false;
 
     //Currently Binding doesn't work as we run in a separate process..
     public class MyBinder extends Binder {
@@ -196,6 +198,14 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         vars.add("-noshutdownhook");
+
+        if(CLEAN) {
+            vars.add("-clean");
+        }
+
+        if(NOCONNECT) {
+            vars.add("-noconnect");
+        }
 
         if(TEST) {
             vars.add("-nop2p");

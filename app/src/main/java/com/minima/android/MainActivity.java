@@ -20,8 +20,10 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -53,8 +55,10 @@ import org.minima.system.Main;
 import org.minima.system.network.maxima.MaximaManager;
 import org.minima.system.params.GlobalParams;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
+import org.minima.utils.json.parser.ParseException;
 
 public class MainActivity extends AppCompatActivity  implements ServiceConnection {
 
@@ -198,6 +202,68 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 openBatteryOptimisation();
                 return true;
 
+            case R.id.action_sharepeers:
+
+                //Run peers..
+                String peers = mMinima.getMinima().runMinimaCMD("peers max:20",false);
+
+                //Get just the peers
+                String list = "[]";
+                try {
+                    JSONObject jsonpeers  = (JSONObject) new JSONParser().parse(peers);
+                    JSONObject resp       = (JSONObject) jsonpeers.get("response");
+                    MinimaLogger.log("response:"+resp.toString());
+
+                    JSONArray  peersarray = (JSONArray) resp.get("peers-list");
+                    list = peersarray.toString();
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    return true;
+                }
+
+                Intent share = new Intent(Intent.ACTION_SEND);
+                share.setType("text/plain");
+                share.putExtra(Intent.EXTRA_TEXT, list);
+                startActivity(Intent.createChooser(share, "Share your peers"));
+
+                return true;
+
+            case R.id.action_importpeers:
+
+                AlertDialog.Builder pbuilder = new AlertDialog.Builder(this);
+                pbuilder.setTitle("Import Peers");
+
+                // Set up the input
+                final EditText input = new EditText(this);
+                input.setInputType(InputType.TYPE_CLASS_TEXT);
+                pbuilder.setView(input);
+
+                pbuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        //Get the peers list
+                        String peers = input.getText().toString().trim();
+
+                        //Import these peers..
+                        String addpeer = mMinima.getMinima().runMinimaCMD("peers action:addpeers peerslist:"+peers,false);
+
+                        MinimaLogger.log(addpeer);
+
+                        Toast.makeText(MainActivity.this, "Peers Imported", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                pbuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                pbuilder.show();
+
+                return true;
+
 //            case R.id.action_requestbattery:
 //                requestBatteryCheck(true);
 //                return true;
@@ -293,12 +359,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     //Wait for Maxima..
                     MaximaManager max = Main.getInstance().getMaxima();
                     while(max == null || !max.isInited()) {
-                        Thread.sleep(1000);
+                        Thread.sleep(2000);
                         max = Main.getInstance().getMaxima();
+                        MinimaLogger.log("Waiting for Maxima.. ");
                     }
-
-                    //Wait a second..
-                    Thread.sleep(2000);
 
                     //Run Status..
                     String status = mMinima.getMinima().runMinimaCMD("status",false);

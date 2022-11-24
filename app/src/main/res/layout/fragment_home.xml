@@ -59,10 +59,10 @@
             <TextView android:id="@+id/text_home_diskspace" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
-        <TableRow android:layout_marginLeft="20dp">
-            <TextView android:text="Devices : " android:gravity="right" android:textStyle="bold"/>
-            <TextView android:id="@+id/text_home_devices" android:gravity="left" android:text="waiting.."/>
-        </TableRow>
+<!--        <TableRow android:layout_marginLeft="20dp">-->
+<!--            <TextView android:text="Devices : " android:gravity="right" android:textStyle="bold"/>-->
+<!--            <TextView android:id="@+id/text_home_devices" android:gravity="left" android:text="waiting.."/>-->
+<!--        </TableRow>-->
 
     </TableLayout>
 
