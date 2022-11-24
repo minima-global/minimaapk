@@ -40,7 +40,7 @@ public class InstallAssetMiniDAPP implements Runnable {
 
             //Now load that..
             String result = mMain.getMinima().runMinimaCMD("mds action:install file:\""+dapp.getAbsolutePath()+"\"",false);
-            MinimaLogger.log(result);
+            //MinimaLogger.log(result);
 
             if(mMain.mMDSFragment != null){
                 mMain.runOnUiThread(new Runnable() {
