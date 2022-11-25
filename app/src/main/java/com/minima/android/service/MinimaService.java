@@ -49,7 +49,7 @@ public class MinimaService extends Service {
 
     static boolean CLEAN        = false;
     static boolean NOCONNECT    = false;
-    static boolean TEST         = true;
+    static boolean TEST         = false;
     static boolean GENESIS      = false;
 
     //Currently Binding doesn't work as we run in a separate process..
@@ -176,6 +176,25 @@ public class MinimaService extends Service {
                             }
                         });
 
+                    }else if(event.equals("NEWBALANCE")){
+
+                        //Notify the User
+                        createMiniDAPPNotification("0x00","Minima","Your balance has changed");
+
+                    }else if(event.equals("NOTIFICATION")){
+
+                        boolean show = (boolean)data.get("show");
+                        String uid = data.getString("uid", "NO UID");
+
+                        if(show) {
+                            String title = data.getString("title", "NO TITLE");
+                            String text = data.getString("text", "NO MSG");
+
+                            createMiniDAPPNotification(uid, title, text);
+                        }else{
+                            cancelNotification(uid);
+                        }
+
                     }else if(event.equals("ARCHIVEUPDATE")){
                         String message = data.getString("message");
                         if(mArchiveListener!=null){
@@ -248,21 +267,21 @@ public class MinimaService extends Service {
         return mNotification;
     }
 
-    public void createMiniDAPPNotification(String zTag, String zTitle, String zText){
+    public void createMiniDAPPNotification(String zMiniDAPPUID, String zTitle, String zText){
 
         Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(zTitle)
-                .setContentText(zText+" "+zTag)
+                .setContentText(zText)
                 .setAutoCancel(true)
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
                 .setContentIntent(mPendingIntent)
                 .build();
 
-        mNotificationManager.notify(zTag, 1, notification);
+        mNotificationManager.notify(zMiniDAPPUID, 1, notification);
     }
 
-    public void cancelNotification(String zTag){
-        mNotificationManager.cancel(zTag,1);
+    public void cancelNotification(String zMiniDAPPUID){
+        mNotificationManager.cancel(zMiniDAPPUID,1);
     }
 
     int counter = 0;
