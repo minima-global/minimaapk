@@ -469,7 +469,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             new InstallAssetMiniDAPP("news-2.0.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("scriptide-1.71.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("terminal-2.03.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("wallet_1.13.9.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("wallet_1.13.12.mds.zip", MainActivity.this).run();
 
             //And that's that
             SharedPreferences.Editor edit = pref.edit();
