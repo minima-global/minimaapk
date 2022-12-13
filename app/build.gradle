@@ -9,8 +9,8 @@ android {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 32
-        versionCode 106
-        versionName "1.0.30"
+        versionCode 107
+        versionName "0.104.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -52,7 +52,7 @@ dependencies {
     implementation 'jp.wasabeef:picasso-transformations:2.4.0'
 
     //Minima requirements
-    implementation 'com.h2database:h2:1.4.200'
+    implementation 'com.h2database:h2:2.1.214'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
     implementation 'org.mozilla:rhino:1.7.14'
 
