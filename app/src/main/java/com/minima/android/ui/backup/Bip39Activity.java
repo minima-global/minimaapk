@@ -86,7 +86,7 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
             @Override
             public void afterTextChanged(Editable editable) {
                 String word = mSeedphrase.getText().toString().trim().toLowerCase();
-                if(mWordListArray.contains(word)){
+                if(word.length()>=4 && mWordListArray.contains(word)){
 
                     //Add to our Main List!
                     String text = mFinalWordlist.getText().toString();
