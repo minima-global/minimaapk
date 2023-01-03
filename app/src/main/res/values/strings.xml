@@ -67,6 +67,18 @@ The Minima Team</string>
         Either leave blank for a simple tip resync - if you are on the wrong chain - OR type each word individually and let the suggestions help you to reset your whole wallet..
     </string>
 
+    <string name="minima_vaultlock">
+        Encrypt your private keys with a password.\n
+        \n
+        You will not be able to send any coins or sign anything.
+    </string>
+
+    <string name="minima_vaultunlock">
+        Decrypt your private keys with your password.\n
+        \n
+        You will be able to send coins and sign again.
+    </string>
+
     <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
     <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
 

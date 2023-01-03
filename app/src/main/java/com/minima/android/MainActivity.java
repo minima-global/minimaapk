@@ -49,6 +49,7 @@ import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 import com.minima.android.ui.mds.MDSFragment;
+import com.minima.android.ui.vault.VaultFragment;
 
 import org.minima.Minima;
 import org.minima.system.Main;
@@ -90,6 +91,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public MDSFragment mMDSFragment         = null;
     public HomeFragment mHomeFragment       = null;
     public MaximaFragment mMaximaFragment   = null;
+    public VaultFragment mVaultFragment     = null;
 
     /**
      * The DAPP Stores..
@@ -123,7 +125,13 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_store, R.id.nav_backup, R.id.nav_help)
+                R.id.nav_home,
+                R.id.nav_mds,
+                R.id.nav_maxima,
+                R.id.nav_store,
+                R.id.nav_backup,
+                R.id.nav_vault,
+                R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);

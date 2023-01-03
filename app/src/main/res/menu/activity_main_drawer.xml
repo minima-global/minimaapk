@@ -34,6 +34,15 @@
             android:title="Backup / Restore" />
 
         <item
+            android:id="@+id/nav_vault"
+            android:icon="@drawable/ic_drawer_backup_restore"
+            android:title="Vault" />
+
+    </group>
+
+    <group android:id="@+id/bottom_menu" android:checkableBehavior="single">
+
+        <item
             android:id="@+id/nav_help"
             android:icon="@drawable/ic_drawer_backup_help"
             android:title="@string/menu_help" />
