@@ -10,7 +10,7 @@ android {
         minSdk 26
         targetSdk 32
         versionCode 107
-        versionName "0.104.2"
+        versionName "0.104.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
