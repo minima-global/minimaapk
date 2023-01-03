@@ -2,6 +2,7 @@ package com.minima.android.ui.vault;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -151,9 +152,9 @@ public class VaultFragment extends Fragment {
                         @Override
                         public void run() {
                             if(mLocked){
-                                mLockStatus.setText(" Status : LOCKED ");
+                                mLockStatus.setText(Html.fromHtml(" Status : <b>LOCKED</b> ", Html.FROM_HTML_MODE_COMPACT) );
                             }else{
-                                mLockStatus.setText(" Status : UNLOCKED ");
+                                mLockStatus.setText(Html.fromHtml(" Status : <b>UNLOCKED</b> ", Html.FROM_HTML_MODE_COMPACT) );
                             }
                         }
                     });

@@ -11,7 +11,7 @@ public class MinimaApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        BackupRecurringAlarmManager.setAlarm(this);
+        //BackupRecurringAlarmManager.setAlarm(this);
         setupActivityListener();
     }
 

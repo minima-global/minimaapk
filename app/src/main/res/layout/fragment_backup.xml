@@ -92,9 +92,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/white_box"
         android:padding="8dp"
-        android:text="@string/minima_gdrive_backup_explanation_not_signed_in"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:text="@string/minima_gdrive_backup_explanation_not_signed_in"/>
 
     <Button
         android:id="@+id/backup_gdrive"
@@ -105,9 +103,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:textColor="@color/coreGrey5"
-        android:visibility="gone"
-        tools:text="@string/minima_gdrive_backup_button_not_signed_in"
-        tools:visibility="visible" />
+        tools:text="@string/minima_gdrive_backup_button_not_signed_in"/>
 
     </LinearLayout>
 

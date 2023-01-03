@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -76,6 +77,21 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bip39);
         mSeedphrase.setAdapter(adapter);
+        mSeedphrase.setMaxLines(1);
+        mSeedphrase.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                int key     = keyEvent.getKeyCode();
+                int action  = keyEvent.getAction();
+
+                if(key == KeyEvent.KEYCODE_ENTER && action==KeyEvent.ACTION_DOWN){
+                    checkSeedWord(false);
+                    return  true;
+                }
+
+                return false;
+            }
+        });
         mSeedphrase.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
@@ -85,29 +101,7 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
 
             @Override
             public void afterTextChanged(Editable editable) {
-                String word = mSeedphrase.getText().toString().trim().toLowerCase();
-                if(mWordListArray.contains(word)){
-
-                    //Add to our Main List!
-                    String text = mFinalWordlist.getText().toString();
-                    if(text.equals("")){
-                        mFinalWordlist.append(word.toUpperCase()+" ");
-
-                    }else if(text.endsWith(" ")){
-                        mFinalWordlist.append(word.toUpperCase()+" ");
-
-                    }else{
-                        mFinalWordlist.append(" "+word.toUpperCase()+" ");
-                    }
-
-                    //And clear again
-                    mSeedphrase.setText("");
-
-                    //Set the wordcount
-                    String fwords = mFinalWordlist.getText().toString().trim();
-                    int words = fwords.split("\\s+").length;
-                    mWordCount.setText("Word Count : "+words+" / 24");
-                }
+                checkSeedWord(true);
             }
         });
 
@@ -160,6 +154,41 @@ public class Bip39Activity extends AppCompatActivity implements ServiceConnectio
         //Bind to the Minima Service..
         Intent minimaintent = new Intent(this, MinimaService.class);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+    }
+
+    public void checkSeedWord(boolean zMinLen){
+        String word = mSeedphrase.getText().toString().trim().toLowerCase();
+
+        //remove whitespace
+        word = word.replaceAll("\\s+","");
+
+        //Check at least 4 characters
+        if(zMinLen && word.length()<4){
+            return;
+        }
+
+        if(mWordListArray.contains(word)){
+
+            //Add to our Main List!
+            String text = mFinalWordlist.getText().toString();
+            if(text.equals("")){
+                mFinalWordlist.append(word.toUpperCase()+" ");
+
+            }else if(text.endsWith(" ")){
+                mFinalWordlist.append(word.toUpperCase()+" ");
+
+            }else{
+                mFinalWordlist.append(" "+word.toUpperCase()+" ");
+            }
+
+            //And clear again
+            mSeedphrase.setText("");
+
+            //Set the wordcount
+            String fwords = mFinalWordlist.getText().toString().trim();
+            int words = fwords.split("\\s+").length;
+            mWordCount.setText("Word Count : "+words+" / 24");
+        }
     }
 
     public void showArchiveHostDialog(){

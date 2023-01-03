@@ -166,7 +166,7 @@ public class BackupFragment extends Fragment {
 
                 //First run a command On Minima..
                 String result = mMain.getMinima().runMinimaCMD("backup file:"+backup.getAbsolutePath()
-                        +" password:\""+mPassword+"\"");
+                        +" password:\""+mPassword+"\"",false);
 
                 if(backup.exists()) {
                     //Get the URi
@@ -174,9 +174,10 @@ public class BackupFragment extends Fragment {
 
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                    intentShareFile.setType("application/gz");
+                    intentShareFile.setType("application/zip");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
-                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima_Backup_"+System.currentTimeMillis());
+                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima_Backup_"+System.currentTimeMillis()+".bak");
+//                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,filename);
                     intentShareFile.putExtra(Intent.EXTRA_TEXT, "Here is my Minima backup");
                     intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -215,6 +216,12 @@ public class BackupFragment extends Fragment {
     }
 
     private void updateGDriveTexts(Context context) {
+
+        //Cut this out for now..
+        if(true){
+            return;
+        }
+
         BackupSyncProvider
                 .getGoogleDriveProvider(context)
                 .getUserState(context, backupUserStateModel -> {
