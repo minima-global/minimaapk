@@ -402,9 +402,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     }
 
                     //Run Status..
-                    MinimaLogger.log("Running Status .. ");
-                    String status = mMinima.getMinima().runMinimaCMD("status debug:true",false);
-                    MinimaLogger.log("Status finished .. "+status);
+                    String status = mMinima.getMinima().runMinimaCMD("status",false);
 
                     //Make a JSON
                     JSONObject json = (JSONObject) new JSONParser().parse(status);
