@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.text.InputType;
 import android.view.Menu;
@@ -40,11 +42,13 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.minima.android.databinding.ActivityMainBinding;
+import com.minima.android.files.CopyFile;
 import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
+import com.minima.android.ui.files.FilesFragment;
 import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
@@ -70,6 +74,9 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public static int REQUEST_RESTORE       = 43;
     public static int REQUEST_UPDATEMINI    = 44;
 
+    public static int REQUEST_WRITEPERMISSIONS          = 45;
+    public static int REQUEST_COPYFILE_TO_INTERNAL      = 46;
+
     /**
      * The MiniDAPP we are trying to update
      */
@@ -92,6 +99,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public HomeFragment mHomeFragment       = null;
     public MaximaFragment mMaximaFragment   = null;
     public VaultFragment mVaultFragment     = null;
+    public FilesFragment mFileFragment      = null;
 
     /**
      * The DAPP Stores..
@@ -131,6 +139,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 R.id.nav_store,
                 R.id.nav_backup,
                 R.id.nav_vault,
+                R.id.nav_files,
                 R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
@@ -381,13 +390,17 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     }
 
                     //Run Status..
-                    String status = mMinima.getMinima().runMinimaCMD("status",false);
+                    MinimaLogger.log("Running Status .. ");
+                    String status = mMinima.getMinima().runMinimaCMD("status debug:true",false);
+                    MinimaLogger.log("Status finished .. "+status);
 
                     //Make a JSON
                     JSONObject json = (JSONObject) new JSONParser().parse(status);
 
                     //Get the status..
                     while(!(boolean)json.get("status")){
+                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+
                         Thread.sleep(2000);
 
                         //Run Status..
@@ -396,7 +409,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         //Make a JSON
                         json = (JSONObject) new JSONParser().parse(status);
 
-                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+//                        MinimaLogger.log("Waiting for Status .. "+json.toString());
                     }
 
                     //Install the MiniDApps..
@@ -419,6 +432,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                             //Update fragments
                             try{
+                                MinimaLogger.log("Update MDS");
                                 if(mMDSFragment != null){
                                     mMDSFragment.updateMDSList();
                                 }
@@ -427,6 +441,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             try{
+                                MinimaLogger.log("Update Home");
                                 if(mHomeFragment != null){
                                     mHomeFragment.updateUI();
                                 }
@@ -435,6 +450,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             try{
+                                MinimaLogger.log("Update Maxima");
                                 if(mMaximaFragment != null){
                                     mMaximaFragment.updateUI();
                                 }
@@ -601,7 +617,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         //Get the file URI
         Uri fileuri = data.getData();
-        //MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
 
         if(requestCode == REQUEST_INSTALLMINI){
             //Create an Installer Handler
@@ -623,7 +638,35 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             Thread inst = new Thread(restore);
             inst.start();
+
+        }else if(requestCode == REQUEST_COPYFILE_TO_INTERNAL){
+            CopyFile cf = new CopyFile(fileuri,getFileName(fileuri),this);
+            Thread inst = new Thread(cf);
+            inst.start();
         }
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int row = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(row);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     // Function to check and request permission
@@ -643,8 +686,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         //Was this from our MDS open File..
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //Access granted Open the File manager..
-            openFile(requestCode);
+            if(requestCode != REQUEST_WRITEPERMISSIONS) {
+                //Access granted Open the File manager..
+                openFile(requestCode);
+            }
         }else{
             Toast.makeText(MainActivity.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
         }

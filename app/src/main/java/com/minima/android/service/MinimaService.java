@@ -213,6 +213,9 @@ public class MinimaService extends Service {
         vars.add("-data");
         vars.add(getFilesDir().getAbsolutePath());
 
+        vars.add("-basefolder");
+        vars.add(getFilesDir().getAbsolutePath());
+
         //Normal
         vars.add("-isclient");
         vars.add("-mobile");
