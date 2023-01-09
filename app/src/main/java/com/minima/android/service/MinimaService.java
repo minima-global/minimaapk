@@ -89,6 +89,8 @@ public class MinimaService extends Service {
 
     public Bip39Activity mArchiveListener = null;
 
+    ArrayList<String> mLogs = new ArrayList<>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -149,14 +151,10 @@ public class MinimaService extends Service {
         Main.setMinimaListener(new MessageListener() {
             @Override
             public void processMessage(Message zMessage) {
-                if(zMessage.getMessageType().equals(MinimaLogger.MINIMA_LOG)){
-//                    Console.writeLine(zMessage.getString("log"));
 
-                }else if(zMessage.getMessageType().equals(NotifyManager.NOTIFY_POST)){
+                if(zMessage.getMessageType().equals(NotifyManager.NOTIFY_POST)){
                     //Get the JSON..
                     JSONObject notify = (JSONObject) zMessage.getObject("notify");
-
-                    //MinimaLogger.log("NOTIFY : "+notify.toString());
 
                     //What is the Event..
                     String event    = (String) notify.get("event");
@@ -175,6 +173,17 @@ public class MinimaService extends Service {
                                 setMinimaNotification();
                             }
                         });
+
+                    }else if(event.equals("MINIMALOG")){
+
+                        //Get the message
+                        String message = data.getString("message");
+                        mLogs.add(message);
+
+                        //Check size..
+                        if(mLogs.size() > 500){
+                            mLogs.remove(0);
+                        }
 
                     }else if(event.equals("NEWBALANCE")){
 
@@ -255,7 +264,15 @@ public class MinimaService extends Service {
         addBatteryListener();
    }
 
-    public Minima getMinima(){
+   public String getFullLogs(){
+        String fulllogs = "";
+        for(String log : mLogs){
+            fulllogs += log+"\n";
+        }
+        return fulllogs;
+   }
+
+   public Minima getMinima(){
         return minima;
     }
 

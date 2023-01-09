@@ -50,6 +50,7 @@ import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.files.FilesFragment;
 import com.minima.android.ui.home.HomeFragment;
+import com.minima.android.ui.logs.LogsFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 import com.minima.android.ui.mds.MDSFragment;
@@ -100,6 +101,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public MaximaFragment mMaximaFragment   = null;
     public VaultFragment mVaultFragment     = null;
     public FilesFragment mFileFragment      = null;
+    public LogsFragment mLogsFragment      = null;
 
     /**
      * The DAPP Stores..
@@ -140,6 +142,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 R.id.nav_backup,
                 R.id.nav_vault,
                 R.id.nav_files,
+                R.id.nav_logs,
                 R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
@@ -358,6 +361,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         return mMinima;
     }
+
+    public String getFullLogs(){
+        if(mMinima == null){
+            return "Not connected to Service yet..";
+        }
+
+        return mMinima.getFullLogs();
+    }
+
 
     @Override
     public boolean onSupportNavigateUp() {

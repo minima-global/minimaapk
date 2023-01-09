@@ -48,6 +48,12 @@
         tools:layout="@layout/fragment_files" />
 
     <fragment
+        android:id="@+id/nav_logs"
+        android:name="com.minima.android.ui.logs.LogsFragment"
+        android:label="Logs"
+        tools:layout="@layout/fragment_logs" />
+
+    <fragment
         android:id="@+id/nav_help"
         android:name="com.minima.android.ui.help.HelpFragment"
         android:label="Help"

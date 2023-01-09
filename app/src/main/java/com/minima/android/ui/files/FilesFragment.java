@@ -79,19 +79,11 @@ public class FilesFragment extends Fragment {
                 JSONObject file  = mFiles[zPosition];
                 boolean isdir    = (boolean)file.get("isdir");
 
-                MinimaLogger.log("FILE CHOSEN : "+file.toString());
-
                 if(isdir){
                     //Load the new files..
                     String abs = (String)file.get("absolute");
                     loadFiles(abs);
-                }else{
-
-                    //Do you want to downlaod..
-
-
                 }
-
             }
         });
 
