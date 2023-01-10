@@ -43,7 +43,9 @@ public class UpdateMiniDAPP implements Runnable {
 
             //Now load that..
             String result = mMain.getMinima().runMinimaCMD("mds action:update uid:"+mUID+" file:\""+dapp.getAbsolutePath()+"\"",false);
-            //MinimaLogger.log(result);
+
+            //Delete the MiniDAPP
+            dapp.delete();
 
             if(mMain.mMDSFragment != null){
                 mMain.runOnUiThread(new Runnable() {
