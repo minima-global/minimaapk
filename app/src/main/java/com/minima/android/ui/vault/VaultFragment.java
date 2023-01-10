@@ -37,6 +37,9 @@ public class VaultFragment extends Fragment {
 
     TextView mLockStatus;
 
+    EditText mInput1;
+    EditText mInput2;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
@@ -75,24 +78,44 @@ public class VaultFragment extends Fragment {
 
     public void showInputDialog(boolean zBackup){
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
-        if(zBackup){
-            builder.setTitle("Choose Password");
+        builder.setTitle("Password Entry");
+
+        if(zBackup) {
+            LayoutInflater inflater = mMain.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.password_view, null);
+
+            // Set up the input
+            mInput1 = dialogView.findViewById(R.id.passowrd_try1);
+            mInput2 = dialogView.findViewById(R.id.passowrd_try2);
+
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            builder.setView(dialogView);
         }else{
-            builder.setTitle("Set Password");
+
+            //Just one input..
+            mInput1 = new EditText(mMain);
+            mInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+            builder.setView(mInput1);
         }
-
-        // Set up the input
-        final EditText input = new EditText(mMain);
-
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
 
         // Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPassword = input.getText().toString().trim();
+
+                mPassword = mInput1.getText().toString().trim();
+
+                if(zBackup) {
+                    String passcheck = mInput2.getText().toString().trim();
+
+                    //MUST be the same
+                    if (!passcheck.equals(mPassword)) {
+                        Toast.makeText(mMain, "Passwords do NOT match!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }
+
                 if(mPassword.equals("")){
                     Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
                     return;
