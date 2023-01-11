@@ -160,16 +160,30 @@ public class FilesFragment extends Fragment {
             }
 
         }else if(item.getTitle().equals("Delete")){
-            Toast.makeText(mMain,"DELETE "+name, Toast.LENGTH_SHORT).show();
-
-            //Delete this file..
-            MiniFile.deleteFileOrFolder(mMain.getFilesDir().getAbsolutePath(),orig);
-
-            //Reload..
-            loadFiles();
+            confirmDelete(name, orig.getAbsolutePath());
         }
 
         return true;
+    }
+
+    public void confirmDelete(String zName, String zPath){
+
+        new AlertDialog.Builder(mMain)
+                .setTitle("Delete File")
+                .setMessage("Are you sure you wish to delete this file ?")
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        Toast.makeText(mMain,"DELETE "+zName, Toast.LENGTH_SHORT).show();
+
+                        //Delete this file..
+                        MiniFile.deleteFileOrFolder(mMain.getFilesDir().getAbsolutePath(),new File(zPath));
+
+                        //Reload..
+                        loadFiles();
+                    }})
+                .setNegativeButton(android.R.string.no, null).show();
+
     }
 
     @Override
