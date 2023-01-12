@@ -22,6 +22,9 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 
 import org.minima.Minima;
+import org.minima.database.wallet.Wallet;
+import org.minima.system.Main;
+import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
@@ -77,6 +80,29 @@ public class VaultFragment extends Fragment {
     }
 
     public void showInputDialog(boolean zBackup){
+
+        //Check we are connected..
+        Minima minima = mMain.getMinima();
+        if(minima == null){
+            Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        //Are all the keys created..?
+        if(!Main.getInstance().getAllKeysCreated()){
+            String current = "Currently ("+Main.getInstance().getAllDefaultKeysSize()+"/"+Wallet.NUMBER_GETADDRESS_KEYS+")";
+            new AlertDialog.Builder(mMain)
+                    .setTitle("MiniDAPP")
+                    .setMessage("Please wait for ALL your Minima keys to be created\n\n" +
+                            "This process can take up to 5 mins\n\n" +
+                            "Once that is done you can vault lock your keys!\n\n" + current)
+                    .setIcon(R.drawable.ic_minima)
+                    .setNegativeButton("Close", null)
+                    .show();
+
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
         builder.setTitle("Password Entry");
 
