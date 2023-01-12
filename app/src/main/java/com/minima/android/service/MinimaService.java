@@ -181,7 +181,7 @@ public class MinimaService extends Service {
                         mLogs.add(message);
 
                         //Check size..
-                        if(mLogs.size() > 500){
+                        if(mLogs.size() > 250){
                             mLogs.remove(0);
                         }
 
