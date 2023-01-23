@@ -237,7 +237,7 @@ public class VaultFragment extends Fragment {
                     Minima minima = mMain.getMinima();
 
                     //Run Status..
-                    String passlock = minima.runMinimaCMD("vault action:passwordlock password:"+mPassword,false);
+                    String passlock = minima.runMinimaCMD("vault action:passwordlock password:"+mPassword+" confirm:"+mPassword,false);
 
                     MinimaLogger.log("passlock : "+passlock);
 

@@ -228,6 +228,7 @@ public class MinimaService extends Service {
         //Normal
         vars.add("-isclient");
         vars.add("-mobile");
+        vars.add("-limitbandwidth");
 
         vars.add("-mdsenable");
 

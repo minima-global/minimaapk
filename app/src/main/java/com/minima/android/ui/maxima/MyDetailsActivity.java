@@ -37,6 +37,8 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
     TextView mContact;
     String mContactString = "";
 
+    TextView mPublicKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +63,7 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
         });
 
         mContact    = findViewById(R.id.mydetails_contact);
+        mPublicKey  = findViewById(R.id.mydetails_publickey);
 
         //Bind to the Minima Service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
@@ -101,6 +104,9 @@ public class MyDetailsActivity extends AppCompatActivity implements ServiceConne
             }else{
                 mContact.setText(mContactString);
             }
+
+            String publickey = response.getString("publickey");
+            mPublicKey.setText(publickey);
 
         }catch(Exception exc){
             MinimaLogger.log(exc);

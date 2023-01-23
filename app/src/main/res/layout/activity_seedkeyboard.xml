@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/main_background"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context=".ui.maxima.contacts.ContactActivity">
+    android:scaleType="centerCrop">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+<!--        <LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:orientation="vertical"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@drawable/main_background"-->
+<!--    android:focusable="true"-->
+<!--    android:focusableInTouchMode="true"-->
+<!--    tools:context=".ui.maxima.contacts.ContactActivity">-->
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/seed_toolbar"
@@ -24,7 +38,7 @@
         android:id="@+id/seed_Instructions"
         android:layout_margin="8dp"
         android:padding="8dp"
-        android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you"
+        android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you\n\nYou CAN leave the seed blank - and your keys will remain unchanged, just does a chain resync.."
         android:background="@drawable/white_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -77,3 +91,4 @@
         android:layout_height="wrap_content"/>
 
 </LinearLayout>
+</ScrollView>
