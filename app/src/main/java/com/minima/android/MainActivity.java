@@ -20,6 +20,7 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.text.InputType;
@@ -42,6 +43,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.minima.android.databinding.ActivityMainBinding;
+import com.minima.android.dynamite.OnboardingOne;
 import com.minima.android.files.CopyFile;
 import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;

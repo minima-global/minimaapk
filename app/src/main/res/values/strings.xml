@@ -85,4 +85,14 @@ The Minima Team</string>
     <string name="minima_gdrive_backup_explanation_signed_in">GDrive User has activated daily backups\n\nThis happens automatically\n\nEmail:%s</string>
     <string name="minima_gdrive_backup_button_signed_in">Make GDrive backup Now</string>
 
+    <string name="welcome_to_minima">Welcome to Minima</string>
+    <string name="get_started">Start Minima</string>
+    <string name="begin_setup">Begin Setup</string>
+    <string name="onboarding_slide_description_one">Minima allows you to securely transact and communicate - without banks and without borders - with anyone else on the network.</string>
+    <string name="onboarding_slide_description_two">The blockchain you are running ensures your transactions are secure and unalterable. Everyone running a Minima node shares this blockchain.</string>
+    <string name="onboarding_slide_description_three">MiniDapps allow you to view information from the blockchain and interact with it, for example to send transactions.</string>
+    <string name="onboarding_slide_description_four">Your node is unique to you, only YOU hold your data and funds.\n\nYou are independent and sovereign.</string>
+    <string name="onboarding_slide_description_five">This Freedom comes with responsibility. Freedom is not Free. Make sure you make a backup regularly, at least once a month, and have a copy of your seed phrase.</string>
+    <string name="onboarding_slide_description_six">You can do this.\n\nEmbrace it - and never look back.</string>
+
 </resources>

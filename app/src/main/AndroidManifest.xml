@@ -39,10 +39,10 @@
         <activity
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".MainActivity"
+            android:name=".LauncherActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+            android:theme="@android:style/Theme.NoDisplay">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -118,6 +118,45 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_path"/>
         </provider>
+
+        <activity
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
+        <!--DYNAMITE-->
+
+        <activity
+            android:name="com.minima.android.dynamite.OnboardingOne"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="OnBoarding"
+            android:exported="true">
+        </activity>
+
+        <activity
+            android:name="com.minima.android.dynamite.OnboardingTwo"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name="com.minima.android.dynamite.OnboardingThree"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name="com.minima.android.dynamite.OnboardingFour"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name="com.minima.android.dynamite.OnboardingFive"
+            android:exported="true">
+        </activity>
+
+        <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
 
     </application>
 
