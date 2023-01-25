@@ -15,6 +15,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_intro"
+        android:orderInCategory="100"
+        android:title="Intro"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_sharepeers"
         android:orderInCategory="100"
         android:title="Share Peers"

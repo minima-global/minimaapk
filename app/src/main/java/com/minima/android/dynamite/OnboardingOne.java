@@ -24,6 +24,8 @@ import com.minima.android.R;
 import com.minima.android.dynamite.HelperClasses.SliderAdapter;
 import com.minima.android.service.MinimaService;
 
+import org.minima.utils.MinimaLogger;
+
 public class OnboardingOne extends AppCompatActivity implements ServiceConnection {
 
     ViewPager viewPager;
@@ -31,16 +33,25 @@ public class OnboardingOne extends AppCompatActivity implements ServiceConnectio
     SliderAdapter sliderAdaptor;
     TextView[] dots;
 
+    boolean mFromBoot;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onboarding_one);
 
+        //Is this from Boot
+        mFromBoot = getIntent().getBooleanExtra("FROMBOOT",true);
+
+        MinimaLogger.log("INTRO FROMBOOT : "+mFromBoot);
+
         //Start the Minima Service..
-        Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-        startForegroundService(minimaintent);
-        bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+        if(mFromBoot) {
+            Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+            startForegroundService(minimaintent);
+            bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+        }
 
         viewPager = findViewById(R.id.slider);
         dotsLayout = findViewById(R.id.dots);
@@ -57,8 +68,10 @@ public class OnboardingOne extends AppCompatActivity implements ServiceConnectio
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(view.getContext(), MainActivity.class);
-                view.getContext().startActivity(intent);
+                if(mFromBoot) {
+                    Intent intent = new Intent(view.getContext(), MainActivity.class);
+                    view.getContext().startActivity(intent);
+                }
 
                 //Close the old app..
                 finish();

@@ -199,6 +199,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 runStatus();
                 return true;
 
+            case R.id.action_intro:
+
+                Intent introintent = new Intent(this, OnboardingOne.class);
+                introintent.putExtra("FROMBOOT", false);
+                startActivity(introintent);
+
+                return true;
+
             case R.id.action_maxima_identity:
                 //Wait for Maxima..
                 if(Main.getInstance() == null){
@@ -499,7 +507,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("docs_1.1.3.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("futurecash_1.4.5.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("ic_1.3.11.mds.zip", MainActivity.this).run();
+            //new InstallAssetMiniDAPP("ic_1.3.11.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("maxsolo_2.2.12.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("news-2.0.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("scriptide-2.0.mds.zip", MainActivity.this).run();
