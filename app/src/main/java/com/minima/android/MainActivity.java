@@ -143,6 +143,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 R.id.nav_store,
                 R.id.nav_backup,
                 R.id.nav_vault,
+                R.id.nav_archive,
                 R.id.nav_files,
                 R.id.nav_logs,
                 R.id.nav_help)

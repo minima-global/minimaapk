@@ -79,6 +79,22 @@ The Minima Team</string>
         You will be able to send coins and sign again.
     </string>
 
+    <string name="minima_archive_chainsync">
+        You can re-sync JUST the Minima blockchain.\n
+        \n
+        This will leave your wallet and keys untouched.\n
+        \n
+        You can do this is you find yourself on the wrong chain.
+    </string>
+
+    <string name="minima_archive_seedsync">
+        As a last resort you can re-sync your entire wallet.\n
+        \n
+        If you lose your phone, and do not have a backup you can use JUST your seed phrase to do a complete Wallet re-sync.\n
+        \n
+        Your wallet and keys will be reset to the chosen seed phrase and all blocks re-downloaded.
+    </string>
+
     <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
     <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
 

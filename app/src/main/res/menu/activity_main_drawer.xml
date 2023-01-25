@@ -33,6 +33,11 @@
             android:icon="@drawable/ic_vault_icon"
             android:title="Vault" />
 
+        <item
+            android:id="@+id/nav_archive"
+            android:icon="@drawable/ic_archive"
+            android:title="Archive" />
+
     </group>
 
     <group android:id="@+id/bottom_menu" android:checkableBehavior="single">
