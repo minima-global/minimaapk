@@ -57,15 +57,15 @@ public class BackupFragment extends Fragment {
     EditText mInput1;
     EditText mInput2;
 
-    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            (ActivityResultCallback<ActivityResult>) result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
-                    updateGDriveTexts(getContext());
-                    backup(getContext());
-                }
-            }
-    );
+//    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            (ActivityResultCallback<ActivityResult>) result -> {
+//                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
+//                    updateGDriveTexts(getContext());
+//                    backup(getContext());
+//                }
+//            }
+//    );
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -106,7 +106,7 @@ public class BackupFragment extends Fragment {
         gDriveText.setVisibility(View.GONE);
         gDriveButton.setVisibility(View.GONE);
 
-        updateGDriveTexts(root.getContext());
+//        updateGDriveTexts(root.getContext());
 
         return root;
     }
@@ -312,56 +312,56 @@ public class BackupFragment extends Fragment {
             return;
         }
 
-        BackupSyncProvider
-                .getGoogleDriveProvider(context)
-                .getUserState(context, backupUserStateModel -> {
-                    GoogleStateUserModel googleStateUserModel = (GoogleStateUserModel) backupUserStateModel;
-
-                    if (gDriveText != null && gDriveButton != null) {
-                        gDriveText.setVisibility(View.VISIBLE);
-                        gDriveButton.setVisibility(View.VISIBLE);
-
-                        if (googleStateUserModel instanceof GoogleDriveUserNotSignedInYet) {
-                            gDriveText.setText(getString(R.string.minima_gdrive_backup_explanation_not_signed_in));
-                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_not_signed_in));
-                            gDriveButton.setOnClickListener(
-                                    view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
-                            );
-                        } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
-
-//                            //Store this time..
-//                            SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
-//                            long lastbackup = pref.getLong("lastgdrive",0);
-//                            String backuptime = null;
-//                            if(lastbackup == 0){
-//                                backuptime = "None yet..";
-//                            }else{
-//                                backuptime = new Date(lastbackup).toString();
-//                            }
+//        BackupSyncProvider
+//                .getGoogleDriveProvider(context)
+//                .getUserState(context, backupUserStateModel -> {
+//                    GoogleStateUserModel googleStateUserModel = (GoogleStateUserModel) backupUserStateModel;
 //
-//                            MinimaLogger.log("LAST GDrive found : "+lastbackup);
-
-                            gDriveText.setText(
-                                    getString(
-                                            R.string.minima_gdrive_backup_explanation_signed_in,
-                                            ((GoogleDriveUserSignedInModel) googleStateUserModel).getEmail()
-                                    )
-                            );
-                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_signed_in));
-                            gDriveButton.setOnClickListener(view -> backup(view.getContext()));
-                        }
-                    }
-                });
+//                    if (gDriveText != null && gDriveButton != null) {
+//                        gDriveText.setVisibility(View.VISIBLE);
+//                        gDriveButton.setVisibility(View.VISIBLE);
+//
+//                        if (googleStateUserModel instanceof GoogleDriveUserNotSignedInYet) {
+//                            gDriveText.setText(getString(R.string.minima_gdrive_backup_explanation_not_signed_in));
+//                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_not_signed_in));
+//                            gDriveButton.setOnClickListener(
+//                                    view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
+//                            );
+//                        } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
+//
+////                            //Store this time..
+////                            SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
+////                            long lastbackup = pref.getLong("lastgdrive",0);
+////                            String backuptime = null;
+////                            if(lastbackup == 0){
+////                                backuptime = "None yet..";
+////                            }else{
+////                                backuptime = new Date(lastbackup).toString();
+////                            }
+////
+////                            MinimaLogger.log("LAST GDrive found : "+lastbackup);
+//
+//                            gDriveText.setText(
+//                                    getString(
+//                                            R.string.minima_gdrive_backup_explanation_signed_in,
+//                                            ((GoogleDriveUserSignedInModel) googleStateUserModel).getEmail()
+//                                    )
+//                            );
+//                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_signed_in));
+//                            gDriveButton.setOnClickListener(view -> backup(view.getContext()));
+//                        }
+//                    }
+//                });
 
     }
 
-    private void backup(Context context) {
-        Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
-
-        BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
-
-        MinimaLogger.log("Finished Backup.. ");
-    }
+//    private void backup(Context context) {
+//        Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
+//
+//        BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
+//
+//        MinimaLogger.log("Finished Backup.. ");
+//    }
 
     private static final String minimaProviderAuthority = "com.minima.android.provider";
 }

@@ -27,15 +27,14 @@
 <!--    tools:context=".ui.maxima.contacts.ContactActivity">-->
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/seed_toolbar"
+        android:id="@+id/archive_chainsync_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/MinimaActionBar"
         android:theme="@style/MinimaActionBar.DrawerIconColour"
-        app:title="Seed Phrase Re-sync" />
+        app:title="Chain Re-sync" />
 
     <TextView
-        android:id="@+id/seed_Instructions"
         android:layout_margin="8dp"
         android:padding="8dp"
         android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you\n\nYou CAN leave the seed blank - and your keys will remain unchanged, just does a chain resync.."
@@ -43,37 +42,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <AutoCompleteTextView
-        android:id="@+id/seed_entry"
-        android:layout_marginTop="16sp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:maxLines="1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/seed_wordlist"
-        android:layout_margin="8dp"
-        android:minHeight="64dp"
-        android:padding="8dp"
-        android:background="@drawable/white_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
-    <TextView
-        android:id="@+id/seed_wordcount"
-        android:layout_margin="8dp"
-        android:minHeight="32dp"
-        android:padding="8dp"
-        android:gravity="right"
-        android:background="@drawable/white_box"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <Button
-        android:id="@+id/seed_delete"
-        android:text="Delete Last Word"
+        android:id="@+id/chainsync_start"
+        android:text="Start Chain Re-Sync"
         android:textColor="@color/coreGrey5"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="24dp"
@@ -82,13 +53,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <Button
-        android:id="@+id/seed_phrasecomplete"
-        android:text="Seed Phrase Complete"
-        android:textColor="@color/coreGrey5"
-        android:layout_margin="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
 </LinearLayout>
+
 </ScrollView>
