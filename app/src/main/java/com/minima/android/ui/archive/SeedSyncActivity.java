@@ -39,7 +39,7 @@ import org.minima.utils.json.parser.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SeedSyncActivity extends AppCompatActivity implements ServiceConnection {
+public class SeedSyncActivity extends AppCompatActivity implements ServiceConnection, ArchiveListener {
 
     MinimaService mMinima;
 
@@ -54,6 +54,9 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
 
     Button mDelete;
     Button mComplete;
+
+    EditText mMaxKeys;
+    int mNumberKeys = 0;
 
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
@@ -71,6 +74,8 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
         mSeedphrase = findViewById(R.id.seed_entry);
         mWordListArray = new ArrayList<>(Arrays.asList(BIP39.WORD_LIST));
         String[] bip39 = BIP39.WORD_LIST;
+
+        mMaxKeys = findViewById(R.id.seed_maxkeys);
 
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bip39);
         mSeedphrase.setAdapter(adapter);
@@ -139,8 +144,8 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
                     words     = fwords.split("\\s+").length;
                 }
 
-                if(words!=0 && words!=24){
-                    Toast.makeText(SeedSyncActivity.this,"Seed phrase MUST either be blank OR contain 24 words..", Toast.LENGTH_LONG).show();
+                if(words!=24){
+                    Toast.makeText(SeedSyncActivity.this,"Seed phrase MUST contain 24 words..", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -209,6 +214,14 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
                     return;
                 }
 
+                //How many keys..
+                String keys = mMaxKeys.getText().toString();
+                mNumberKeys = Integer.parseInt(keys);
+                if(mNumberKeys<1 || mNumberKeys>200000){
+                    Toast.makeText(SeedSyncActivity.this,"Invalid Max Keys.. ", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 mSeedphrase.setEnabled(false);
                 mDelete.setEnabled(false);
                 mComplete.setEnabled(false);
@@ -237,12 +250,13 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
         builder.show();
     }
 
-    public void updateLoader(String zString){
+    @Override
+    public void updateArchiveStatus(String zStatus) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(mLoader != null && mLoader.isShowing()){
-                    mLoader.setMessage(zString);
+                    mLoader.setMessage(zStatus);
                 }
             }
         });
@@ -261,7 +275,7 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
                     if (zSeedPhrase.equals("")) {
                         result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode);
                     } else {
-                        result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode + " phrase:\"" + zSeedPhrase + "\"");
+                        result = mMinima.getMinima().runMinimaCMD("archive keyuses:"+mNumberKeys+" action:resync host:" + mArchiveNode + " phrase:\"" + zSeedPhrase + "\"");
                     }
 
                     MinimaLogger.log("Ending Archive process.. ");
@@ -300,87 +314,18 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.archive_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        String seedphrase   = "";
-        String vault        = "";
-
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.archive_reveal:
-
-                vault = mMinima.getMinima().runMinimaCMD("vault");
-                try {
-                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
-                    JSONObject resp = (JSONObject)json.get("response");
-                    seedphrase      = resp.getString("phrase");
-
-                } catch (ParseException e) {
-                    MinimaLogger.log("Error getting seed phrase..");
-                    return true;
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Seed Phrase");
-                builder.setMessage(seedphrase);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-
-                return true;
-
-            case R.id.archive_share:
-
-                vault = mMinima.getMinima().runMinimaCMD("vault");
-                try {
-                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
-                    JSONObject resp = (JSONObject)json.get("response");
-                    seedphrase      = resp.getString("phrase");
-
-                } catch (ParseException e) {
-                    MinimaLogger.log("Error getting seed phrase..");
-                    return true;
-                }
-
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, seedphrase);
-                sendIntent.setType("text/plain");
-
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        MinimaLogger.log("BIP39 CONNECTED TO SERVICE");
+        MinimaLogger.log("SEEDSYNC CONNECTED TO SERVICE");
         MinimaService.MyBinder binder = (MinimaService.MyBinder)iBinder;
         mMinima = binder.getService();
 
         //Set the listener
-//        mMinima.mArchiveListener = this;
+        mMinima.mArchiveListener = this;
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        MinimaLogger.log("BIP39  DISCONNECTED TO SERVICE");
+        MinimaLogger.log("SEEDSYNC  DISCONNECTED TO SERVICE");
         mMinima.mArchiveListener = null;
         mMinima = null;
     }

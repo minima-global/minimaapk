@@ -7,6 +7,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -29,6 +30,7 @@ import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONArray;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
+import org.minima.utils.json.parser.ParseException;
 
 public class VaultFragment extends Fragment {
 
@@ -42,6 +44,8 @@ public class VaultFragment extends Fragment {
 
     EditText mInput1;
     EditText mInput2;
+
+    String mSeedPhrase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -167,7 +171,45 @@ public class VaultFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
+        inflater.inflate(R.menu.archive_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+
+            case R.id.archive_reveal:
+
+                String vault = mMain.getMinima().runMinimaCMD("vault");
+                try {
+                    JSONObject json  = (JSONObject)new JSONParser().parse(vault);
+                    JSONObject resp  = (JSONObject)json.get("response");
+                    mSeedPhrase      = resp.getString("phrase");
+
+                } catch (ParseException e) {
+                    MinimaLogger.log("Error getting seed phrase..");
+                    return true;
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
+                builder.setTitle("Seed Phrase");
+                builder.setMessage(mSeedPhrase);
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int i) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     public void updateUI(){

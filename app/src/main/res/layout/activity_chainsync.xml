@@ -37,7 +37,7 @@
     <TextView
         android:layout_margin="8dp"
         android:padding="8dp"
-        android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you\n\nYou CAN leave the seed blank - and your keys will remain unchanged, just does a chain resync.."
+        android:text="@string/minima_archive_chainsync_text"
         android:background="@drawable/white_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>

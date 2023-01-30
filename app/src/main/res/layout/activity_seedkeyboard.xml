@@ -14,18 +14,6 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-<!--        <LinearLayout-->
-<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
-<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
-<!--    xmlns:tools="http://schemas.android.com/tools"-->
-<!--    android:orientation="vertical"-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    android:background="@drawable/main_background"-->
-<!--    android:focusable="true"-->
-<!--    android:focusableInTouchMode="true"-->
-<!--    tools:context=".ui.maxima.contacts.ContactActivity">-->
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/seed_toolbar"
         android:layout_width="match_parent"
@@ -38,7 +26,7 @@
         android:id="@+id/seed_Instructions"
         android:layout_margin="8dp"
         android:padding="8dp"
-        android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you\n\nYou CAN leave the seed blank - and your keys will remain unchanged, just does a chain resync.."
+        android:text="Do NOT copy / paste your seed phrase here!\n\nThe clipboard is insecure\n\nType each word individually and let the suggestions help you"
         android:background="@drawable/white_box"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -81,6 +69,30 @@
         android:layout_marginRight="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_box"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Max Keys Uses :"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/seed_maxkeys"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:maxLines="1"
+            android:text="1000"
+            android:inputType="numberSigned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
 
     <Button
         android:id="@+id/seed_phrasecomplete"

@@ -12,6 +12,7 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,28 +31,12 @@ import androidx.fragment.app.Fragment;
 
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.dependencies.backupSync.BackupSyncProvider;
-import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserNotSignedInYet;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
-import com.minima.android.ui.backup.Bip39Activity;
-
-import org.minima.database.wallet.Wallet;
-import org.minima.system.Main;
-import org.minima.utils.MinimaLogger;
-
-import java.io.File;
-import java.util.List;
 
 public class ArchiveFragment extends Fragment {
 
     MainActivity mMain;
 
-    String mPassword = null;
-
-    EditText mInput1;
-    EditText mInput2;
+    String mSeedPhrase;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {

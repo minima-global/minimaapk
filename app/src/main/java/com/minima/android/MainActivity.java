@@ -434,7 +434,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 //                    }
 
                     //Install the MiniDApps..
-                    MinimaLogger.log("Install MiniDAPPs");
                     installMiniDAPPs();
 
                     //OK - Lets update the views..
@@ -443,8 +442,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         public void run() {
                             //Hide the Loader
                             try{
-                                MinimaLogger.log("Remove Loader");
                                 if(mLoader != null && mLoader.isShowing()){
+                                    MinimaLogger.log("Remove Loader");
                                     mLoader.cancel();
                                 }
                             }catch(Exception exc){
@@ -504,6 +503,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         SharedPreferences pref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         if(!pref.getBoolean(minidapppref,false)){
 
+            MinimaLogger.log("Installing MiniDAPPs first time");
+
             //Install them..
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("docs_1.1.3.mds.zip", MainActivity.this).run();
@@ -519,6 +520,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             SharedPreferences.Editor edit = pref.edit();
             edit.putBoolean(minidapppref, true);
             edit.apply();
+        }else{
+            MinimaLogger.log("MiniDAPPs already installed");
         }
     }
 

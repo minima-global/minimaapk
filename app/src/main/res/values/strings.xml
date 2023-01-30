@@ -40,7 +40,7 @@ The Minima Team</string>
         \n
         Currently - backups are only valid for 1-2 months.\n
         \n
-        The files are about 500Kb.. so not very big.
+        The files are about 1MB.. so not very big.
     </string>
 
     <string name="minima_restore">
@@ -85,6 +85,18 @@ The Minima Team</string>
         This will leave your wallet and keys untouched.\n
         \n
         You can do this if you find yourself on the wrong chain.
+    </string>
+
+    <string name="minima_archive_chainsync_text">
+        Here you can choose the Archive node host:port you will be connecting to.\n
+        \n
+        The default is \'auto\' - where we pick one for you.\n
+        \n
+        Once you have started please wait for the process to finish - then Minima will shutdown.\n
+        \n
+        Restart Minima and the changes will have taken effect.\n
+        \n
+        You wallet and private keys will remain unchanged.
     </string>
 
     <string name="minima_archive_seedsync">

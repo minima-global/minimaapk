@@ -92,17 +92,17 @@ public class BackupFragment extends Fragment {
             }
         });
 
-        Button archive = root.findViewById(R.id.backup_archive);
-        archive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mMain, Bip39Activity.class);
-                startActivity(intent);
-            }
-        });
-
-        gDriveText = root.findViewById(R.id.text_gdrive);
-        gDriveButton = root.findViewById(R.id.backup_gdrive);
+//        Button archive = root.findViewById(R.id.backup_archive);
+//        archive.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mMain, Bip39Activity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+        gDriveText      = root.findViewById(R.id.text_gdrive);
+        gDriveButton    = root.findViewById(R.id.backup_gdrive);
         gDriveText.setVisibility(View.GONE);
         gDriveButton.setVisibility(View.GONE);
 

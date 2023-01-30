@@ -35,9 +35,8 @@ import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
-import com.minima.android.ui.backup.Bip39Activity;
-//import com.minima.android.R;
-//import com.minima.boot.Alarm;
+
+import com.minima.android.ui.archive.ArchiveListener;
 
 /** Foreground Service for the Minima Node
  *
@@ -87,7 +86,8 @@ public class MinimaService extends Service {
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
 
-    public Bip39Activity mArchiveListener = null;
+    //public Bip39Activity mArchiveListener = null;
+    public ArchiveListener mArchiveListener = null;
 
     ArrayList<String> mLogs = new ArrayList<>();
 
@@ -207,7 +207,7 @@ public class MinimaService extends Service {
                     }else if(event.equals("ARCHIVEUPDATE")){
                         String message = data.getString("message");
                         if(mArchiveListener!=null){
-                            mArchiveListener.updateLoader(message);
+                            mArchiveListener.updateArchiveStatus(message);
                         }
                     }
                 }

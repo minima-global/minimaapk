@@ -39,21 +39,11 @@ import org.minima.utils.json.parser.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class ChainSyncActivity extends AppCompatActivity implements ServiceConnection {
+public class ChainSyncActivity extends AppCompatActivity implements ServiceConnection, ArchiveListener {
 
     MinimaService mMinima;
 
-    AutoCompleteTextView mSeedphrase;
-    ArrayList<String> mWordListArray;
-
-    TextView mFinalWordlist;
-
-    TextView mWordCount;
-
     String mArchiveNode = "";
-
-    Button mDelete;
-    Button mComplete;
 
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
@@ -67,9 +57,18 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
         Toolbar tb  = findViewById(R.id.archive_chainsync_toolbar);
         setSupportActionBar(tb);
 
+        Button startarchive = findViewById(R.id.chainsync_start);
+        startarchive.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Start the process..
+                showArchiveHostDialog();
+            }
+        });
+
         //Bind to the Minima Service..
-        //Intent minimaintent = new Intent(this, MinimaService.class);
-        //bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+        Intent minimaintent = new Intent(this, MinimaService.class);
+        bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
     }
 
     public void showArchiveHostDialog(){
@@ -93,10 +92,6 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
                     return;
                 }
 
-                mSeedphrase.setEnabled(false);
-                mDelete.setEnabled(false);
-                mComplete.setEnabled(false);
-
                 Toast.makeText(ChainSyncActivity.this,"Resyncing.. please wait..", Toast.LENGTH_LONG).show();
 
                 //Wait for Minima to fully start up..
@@ -107,8 +102,7 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
                 mLoader.show();
 
                 //Get the seedphrase
-                String text = mFinalWordlist.getText().toString().trim();
-                runArchiveSync(text);
+                runArchiveSync();
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -121,18 +115,19 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
         builder.show();
     }
 
-    public void updateLoader(String zString){
+    @Override
+    public void updateArchiveStatus(String zStatus) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 if(mLoader != null && mLoader.isShowing()){
-                    mLoader.setMessage(zString);
+                    mLoader.setMessage(zStatus);
                 }
             }
         });
     }
 
-    public void runArchiveSync(String zSeedPhrase){
+    public void runArchiveSync(){
         Runnable sync = new Runnable() {
             @Override
             public void run() {
@@ -140,20 +135,18 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
                 MinimaLogger.log("Starting Archive process..");
 
                 try {
+                    String result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode);
 
-                    String result = null;
-                    if (zSeedPhrase.equals("")) {
-                        result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode);
-                    } else {
-                        result = mMinima.getMinima().runMinimaCMD("archive action:resync host:" + mArchiveNode + " phrase:\"" + zSeedPhrase + "\"");
-                    }
+                    MinimaLogger.log("Archive : "+result);
 
                     MinimaLogger.log("Ending Archive process.. ");
 
                     //Parse the result..
                     JSONObject json = (JSONObject) new JSONParser().parse(result);
                     if((boolean)json.get("status")){
-                        //It worked!
+                        //Remove loader
+                        mLoader.cancel();
+
                         //Close both
                         ChainSyncActivity.this.finishAffinity();
                         MainActivity.getMainActivity().shutdown();
@@ -162,10 +155,7 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
                         ChainSyncActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                mSeedphrase.setEnabled(true);
-                                mDelete.setEnabled(true);
-                                mComplete.setEnabled(true);
-
+                                //Remove loader
                                 mLoader.cancel();
 
                                 Toast.makeText(ChainSyncActivity.this, "Could not connect to host! "+mArchiveNode, Toast.LENGTH_SHORT).show();
@@ -184,87 +174,18 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.archive_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        String seedphrase   = "";
-        String vault        = "";
-
-        // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.archive_reveal:
-
-                vault = mMinima.getMinima().runMinimaCMD("vault");
-                try {
-                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
-                    JSONObject resp = (JSONObject)json.get("response");
-                    seedphrase      = resp.getString("phrase");
-
-                } catch (ParseException e) {
-                    MinimaLogger.log("Error getting seed phrase..");
-                    return true;
-                }
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Seed Phrase");
-                builder.setMessage(seedphrase);
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
-
-                return true;
-
-            case R.id.archive_share:
-
-                vault = mMinima.getMinima().runMinimaCMD("vault");
-                try {
-                    JSONObject json = (JSONObject)new JSONParser().parse(vault);
-                    JSONObject resp = (JSONObject)json.get("response");
-                    seedphrase      = resp.getString("phrase");
-
-                } catch (ParseException e) {
-                    MinimaLogger.log("Error getting seed phrase..");
-                    return true;
-                }
-
-                Intent sendIntent = new Intent();
-                sendIntent.setAction(Intent.ACTION_SEND);
-                sendIntent.putExtra(Intent.EXTRA_TEXT, seedphrase);
-                sendIntent.setType("text/plain");
-
-                Intent shareIntent = Intent.createChooser(sendIntent, null);
-                startActivity(shareIntent);
-
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
     public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-        MinimaLogger.log("BIP39 CONNECTED TO SERVICE");
+        MinimaLogger.log("CHAINSYNC CONNECTED TO SERVICE");
         MinimaService.MyBinder binder = (MinimaService.MyBinder)iBinder;
         mMinima = binder.getService();
 
         //Set the listener
-//        mMinima.mArchiveListener = this;
+        mMinima.mArchiveListener = this;
     }
 
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
-        MinimaLogger.log("BIP39  DISCONNECTED TO SERVICE");
+        MinimaLogger.log("CHAINSYNC  DISCONNECTED TO SERVICE");
         mMinima.mArchiveListener = null;
         mMinima = null;
     }
