@@ -36,6 +36,30 @@
         tools:layout="@layout/fragment_backup" />
 
     <fragment
+        android:id="@+id/nav_vault"
+        android:name="com.minima.android.ui.vault.VaultFragment"
+        android:label="Vault"
+        tools:layout="@layout/fragment_vault" />
+
+    <fragment
+        android:id="@+id/nav_archive"
+        android:name="com.minima.android.ui.archive.ArchiveFragment"
+        android:label="Archive"
+        tools:layout="@layout/fragment_archive" />
+
+    <fragment
+        android:id="@+id/nav_files"
+        android:name="com.minima.android.ui.files.FilesFragment"
+        android:label="Files"
+        tools:layout="@layout/fragment_files" />
+
+    <fragment
+        android:id="@+id/nav_logs"
+        android:name="com.minima.android.ui.logs.LogsFragment"
+        android:label="Logs"
+        tools:layout="@layout/fragment_logs" />
+
+    <fragment
         android:id="@+id/nav_help"
         android:name="com.minima.android.ui.help.HelpFragment"
         android:label="Help"

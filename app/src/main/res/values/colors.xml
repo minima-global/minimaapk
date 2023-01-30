@@ -13,4 +13,8 @@
 
     <color name="coreWhite">#FFFFFF</color>
 
+    <color name="secondaryGrey">#E9E9EB</color>
+    <color name="disabledBlack">#737373</color>
+    <color name="grey">#91919D</color>
+
 </resources>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/main_background"
+    android:scaleType="centerCrop">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+<!--        <LinearLayout-->
+<!--    xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--    xmlns:app="http://schemas.android.com/apk/res-auto"-->
+<!--    xmlns:tools="http://schemas.android.com/tools"-->
+<!--    android:orientation="vertical"-->
+<!--    android:layout_width="match_parent"-->
+<!--    android:layout_height="match_parent"-->
+<!--    android:background="@drawable/main_background"-->
+<!--    android:focusable="true"-->
+<!--    android:focusableInTouchMode="true"-->
+<!--    tools:context=".ui.maxima.contacts.ContactActivity">-->
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/archive_chainsync_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/MinimaActionBar"
+        android:theme="@style/MinimaActionBar.DrawerIconColour"
+        app:title="Chain Re-sync" />
+
+    <TextView
+        android:layout_margin="8dp"
+        android:padding="8dp"
+        android:text="@string/minima_archive_chainsync_text"
+        android:background="@drawable/white_box"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/chainsync_start"
+        android:text="Start Chain Re-Sync"
+        android:textColor="@color/coreGrey5"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+
+</ScrollView>

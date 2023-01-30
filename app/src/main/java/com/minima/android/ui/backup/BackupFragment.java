@@ -37,6 +37,8 @@ import com.minima.android.dependencies.backupSync.providers.drive.model.userMode
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
 
+import org.minima.database.wallet.Wallet;
+import org.minima.system.Main;
 import org.minima.utils.MinimaLogger;
 
 import java.io.File;
@@ -52,15 +54,18 @@ public class BackupFragment extends Fragment {
     private TextView gDriveText;
     private Button gDriveButton;
 
-    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            (ActivityResultCallback<ActivityResult>) result -> {
-                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
-                    updateGDriveTexts(getContext());
-                    backup(getContext());
-                }
-            }
-    );
+    EditText mInput1;
+    EditText mInput2;
+
+//    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
+//            new ActivityResultContracts.StartActivityForResult(),
+//            (ActivityResultCallback<ActivityResult>) result -> {
+//                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
+//                    updateGDriveTexts(getContext());
+//                    backup(getContext());
+//                }
+//            }
+//    );
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -87,50 +92,89 @@ public class BackupFragment extends Fragment {
             }
         });
 
-        Button archive = root.findViewById(R.id.backup_archive);
-        archive.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(mMain, Bip39Activity.class);
-                startActivity(intent);
-            }
-        });
-
-        gDriveText = root.findViewById(R.id.text_gdrive);
-        gDriveButton = root.findViewById(R.id.backup_gdrive);
+//        Button archive = root.findViewById(R.id.backup_archive);
+//        archive.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(mMain, Bip39Activity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+        gDriveText      = root.findViewById(R.id.text_gdrive);
+        gDriveButton    = root.findViewById(R.id.backup_gdrive);
         gDriveText.setVisibility(View.GONE);
         gDriveButton.setVisibility(View.GONE);
 
-        updateGDriveTexts(root.getContext());
+//        updateGDriveTexts(root.getContext());
 
         return root;
     }
 
     public void showInputDialog(boolean zBackup){
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
-        if(zBackup){
-            builder.setTitle("Choose Password");
+        builder.setTitle("Password Entry");
+
+        if(zBackup) {
+
+            //Are all the keys created..?
+            if(!Main.getInstance().getAllKeysCreated()){
+                String current = "Currently ("+Main.getInstance().getAllDefaultKeysSize()+"/"+ Wallet.NUMBER_GETADDRESS_KEYS+")";
+                new AlertDialog.Builder(mMain)
+                        .setTitle("MiniDAPP")
+                        .setMessage("Please wait for ALL your Minima keys to be created\n\n" +
+                                "This process can take up to 5 mins\n\n" +
+                                "Once that is done you can make a backup!\n\n" +current)
+                        .setIcon(R.drawable.ic_minima)
+                        .setNegativeButton("Close", null)
+                        .show();
+
+                return;
+            }
+
+
+            LayoutInflater inflater = mMain.getLayoutInflater();
+            View dialogView = inflater.inflate(R.layout.password_view, null);
+
+            // Set up the input
+            mInput1 = dialogView.findViewById(R.id.passowrd_try1);
+            mInput2 = dialogView.findViewById(R.id.passowrd_try2);
+
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            builder.setView(dialogView);
         }else{
-            builder.setTitle("Set Password");
+
+            //Just one input..
+            mInput1 = new EditText(mMain);
+            mInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+
+            builder.setView(mInput1);
         }
-
-        // Set up the input
-        final EditText input = new EditText(mMain);
-
-        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-        input.setInputType(InputType.TYPE_CLASS_TEXT);
-        builder.setView(input);
 
         // Set up the buttons
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mPassword = input.getText().toString().trim();
-                if(zBackup && mPassword.equals("")){
-                    Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
-                    return;
-                }else if(mPassword.equals("")){
-                    mPassword = "minima";
+
+                mPassword = mInput1.getText().toString().trim();
+
+                if(zBackup) {
+                    String passcheck = mInput2.getText().toString().trim();
+
+                    //MUST be the same
+                    if (!passcheck.equals(mPassword)) {
+                        Toast.makeText(mMain, "Passwords do NOT match!", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    if(mPassword.equals("")){
+                        Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                }else{
+                    if(mPassword.equals("")){
+                        mPassword = "minima";
+                    }
                 }
 
                 if(zBackup){
@@ -152,6 +196,52 @@ public class BackupFragment extends Fragment {
         builder.show();
     }
 
+//    public void showInputDialog(boolean zBackup){
+//        AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
+//        if(zBackup){
+//            builder.setTitle("Choose Password");
+//        }else{
+//            builder.setTitle("Set Password");
+//        }
+//
+//        // Set up the input
+//        final EditText input = new EditText(mMain);
+//
+//        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//        input.setInputType(InputType.TYPE_CLASS_TEXT);
+//        builder.setView(input);
+//
+//        // Set up the buttons
+//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                mPassword = input.getText().toString().trim();
+//                if(zBackup && mPassword.equals("")){
+//                    Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
+//                    return;
+//                }else if(mPassword.equals("")){
+//                    mPassword = "minima";
+//                }
+//
+//                if(zBackup){
+//                    Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
+//                    makeBackup();
+//                }else{
+//                    Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
+//                    mMain.openFile(mPassword, MainActivity.REQUEST_RESTORE);
+//                }
+//            }
+//        });
+//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                dialog.cancel();
+//            }
+//        });
+//
+//        builder.show();
+//    }
+
     public void makeBackup(){
 
         Runnable bak = new Runnable() {
@@ -166,7 +256,7 @@ public class BackupFragment extends Fragment {
 
                 //First run a command On Minima..
                 String result = mMain.getMinima().runMinimaCMD("backup file:"+backup.getAbsolutePath()
-                        +" password:\""+mPassword+"\"");
+                        +" password:\""+mPassword+"\"",false);
 
                 if(backup.exists()) {
                     //Get the URi
@@ -174,9 +264,10 @@ public class BackupFragment extends Fragment {
 
                     //Now share that file..
                     Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                    intentShareFile.setType("application/gz");
+                    intentShareFile.setType("application/zip");
                     intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
-                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima_Backup_"+System.currentTimeMillis());
+                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Minima_Backup_"+System.currentTimeMillis()+".bak");
+//                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT,filename);
                     intentShareFile.putExtra(Intent.EXTRA_TEXT, "Here is my Minima backup");
                     intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
@@ -215,56 +306,62 @@ public class BackupFragment extends Fragment {
     }
 
     private void updateGDriveTexts(Context context) {
-        BackupSyncProvider
-                .getGoogleDriveProvider(context)
-                .getUserState(context, backupUserStateModel -> {
-                    GoogleStateUserModel googleStateUserModel = (GoogleStateUserModel) backupUserStateModel;
 
-                    if (gDriveText != null && gDriveButton != null) {
-                        gDriveText.setVisibility(View.VISIBLE);
-                        gDriveButton.setVisibility(View.VISIBLE);
+        //Cut this out for now..
+        if(true){
+            return;
+        }
 
-                        if (googleStateUserModel instanceof GoogleDriveUserNotSignedInYet) {
-                            gDriveText.setText(getString(R.string.minima_gdrive_backup_explanation_not_signed_in));
-                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_not_signed_in));
-                            gDriveButton.setOnClickListener(
-                                    view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
-                            );
-                        } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
-
-//                            //Store this time..
-//                            SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
-//                            long lastbackup = pref.getLong("lastgdrive",0);
-//                            String backuptime = null;
-//                            if(lastbackup == 0){
-//                                backuptime = "None yet..";
-//                            }else{
-//                                backuptime = new Date(lastbackup).toString();
-//                            }
+//        BackupSyncProvider
+//                .getGoogleDriveProvider(context)
+//                .getUserState(context, backupUserStateModel -> {
+//                    GoogleStateUserModel googleStateUserModel = (GoogleStateUserModel) backupUserStateModel;
 //
-//                            MinimaLogger.log("LAST GDrive found : "+lastbackup);
-
-                            gDriveText.setText(
-                                    getString(
-                                            R.string.minima_gdrive_backup_explanation_signed_in,
-                                            ((GoogleDriveUserSignedInModel) googleStateUserModel).getEmail()
-                                    )
-                            );
-                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_signed_in));
-                            gDriveButton.setOnClickListener(view -> backup(view.getContext()));
-                        }
-                    }
-                });
+//                    if (gDriveText != null && gDriveButton != null) {
+//                        gDriveText.setVisibility(View.VISIBLE);
+//                        gDriveButton.setVisibility(View.VISIBLE);
+//
+//                        if (googleStateUserModel instanceof GoogleDriveUserNotSignedInYet) {
+//                            gDriveText.setText(getString(R.string.minima_gdrive_backup_explanation_not_signed_in));
+//                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_not_signed_in));
+//                            gDriveButton.setOnClickListener(
+//                                    view -> BackupSyncProvider.getGoogleDriveProvider(context).auth(view.getContext(), authResultLauncher)
+//                            );
+//                        } else if (googleStateUserModel instanceof GoogleDriveUserSignedInModel) {
+//
+////                            //Store this time..
+////                            SharedPreferences pref = context.getSharedPreferences("gdrive",Context.MODE_PRIVATE);
+////                            long lastbackup = pref.getLong("lastgdrive",0);
+////                            String backuptime = null;
+////                            if(lastbackup == 0){
+////                                backuptime = "None yet..";
+////                            }else{
+////                                backuptime = new Date(lastbackup).toString();
+////                            }
+////
+////                            MinimaLogger.log("LAST GDrive found : "+lastbackup);
+//
+//                            gDriveText.setText(
+//                                    getString(
+//                                            R.string.minima_gdrive_backup_explanation_signed_in,
+//                                            ((GoogleDriveUserSignedInModel) googleStateUserModel).getEmail()
+//                                    )
+//                            );
+//                            gDriveButton.setText(getString(R.string.minima_gdrive_backup_button_signed_in));
+//                            gDriveButton.setOnClickListener(view -> backup(view.getContext()));
+//                        }
+//                    }
+//                });
 
     }
 
-    private void backup(Context context) {
-        Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
-
-        BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
-
-        MinimaLogger.log("Finished Backup.. ");
-    }
+//    private void backup(Context context) {
+//        Toast.makeText(context, "Saving Minima backup to GDrive", Toast.LENGTH_SHORT).show();
+//
+//        BackupSyncProvider.getGoogleDriveProvider(context).uploadBackup(context, MinimaBackupUtils.createBackup(mMain), authResultLauncher);
+//
+//        MinimaLogger.log("Finished Backup.. ");
+//    }
 
     private static final String minimaProviderAuthority = "com.minima.android.provider";
 }

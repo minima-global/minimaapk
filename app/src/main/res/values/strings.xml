@@ -40,7 +40,7 @@ The Minima Team</string>
         \n
         Currently - backups are only valid for 1-2 months.\n
         \n
-        The files are about 500Kb.. so not very big.
+        The files are about 1MB.. so not very big.
     </string>
 
     <string name="minima_restore">
@@ -67,10 +67,60 @@ The Minima Team</string>
         Either leave blank for a simple tip resync - if you are on the wrong chain - OR type each word individually and let the suggestions help you to reset your whole wallet..
     </string>
 
+    <string name="minima_vaultlock">
+        Encrypt your private keys with a password.\n
+        \n
+        You will not be able to send any coins or sign anything.
+    </string>
+
+    <string name="minima_vaultunlock">
+        Decrypt your private keys with your password.\n
+        \n
+        You will be able to send coins and sign again.
+    </string>
+
+    <string name="minima_archive_chainsync">
+        You can re-sync JUST the Minima blockchain.\n
+        \n
+        This will leave your wallet and keys untouched.\n
+        \n
+        You can do this if you find yourself on the wrong chain.
+    </string>
+
+    <string name="minima_archive_chainsync_text">
+        Here you can choose the Archive node host:port you will be connecting to.\n
+        \n
+        The default is \'auto\' - where we pick one for you.\n
+        \n
+        Once you have started please wait for the process to finish - then Minima will shutdown.\n
+        \n
+        Restart Minima and the changes will have taken effect.\n
+        \n
+        You wallet and private keys will remain unchanged.
+    </string>
+
+    <string name="minima_archive_seedsync">
+        As a last resort you can re-sync your entire wallet.\n
+        \n
+        If you lose your phone, and do not have a backup you can use JUST your seed phrase to do a complete Wallet re-sync.\n
+        \n
+        Your wallet and keys will be reset to the chosen seed phrase and all blocks re-downloaded.
+    </string>
+
     <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
     <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
 
     <string name="minima_gdrive_backup_explanation_signed_in">GDrive User has activated daily backups\n\nThis happens automatically\n\nEmail:%s</string>
     <string name="minima_gdrive_backup_button_signed_in">Make GDrive backup Now</string>
+
+    <string name="welcome_to_minima">Welcome to Minima</string>
+    <string name="get_started">Start Minima</string>
+    <string name="begin_setup">Begin Setup</string>
+    <string name="onboarding_slide_description_one">Minima allows you to securely transact and communicate - without banks and without borders - with anyone else on the network.</string>
+    <string name="onboarding_slide_description_two">The blockchain you are running ensures your transactions are secure and unalterable. Everyone running a Minima node shares this blockchain.</string>
+    <string name="onboarding_slide_description_three">MiniDapps allow you to view information from the blockchain and interact with it, for example to send transactions.</string>
+    <string name="onboarding_slide_description_four">Your node is unique to you, only YOU hold your data and funds.\n\nYou are independent and sovereign.</string>
+    <string name="onboarding_slide_description_five">This Freedom comes with responsibility. Freedom is not Free. Make sure you make a backup regularly, at least once a month, and have a copy of your seed phrase.</string>
+    <string name="onboarding_slide_description_six">You can do this.\n\nEmbrace it - and never look back.</string>
 
 </resources>

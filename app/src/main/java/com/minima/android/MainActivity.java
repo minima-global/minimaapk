@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -19,6 +20,8 @@ import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.preference.PreferenceManager;
+import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.text.InputType;
 import android.view.Menu;
@@ -40,15 +43,20 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.minima.android.databinding.ActivityMainBinding;
+import com.minima.android.dynamite.OnboardingOne;
+import com.minima.android.files.CopyFile;
 import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
+import com.minima.android.ui.files.FilesFragment;
 import com.minima.android.ui.home.HomeFragment;
+import com.minima.android.ui.logs.LogsFragment;
 import com.minima.android.ui.maxima.MaximaFragment;
 import com.minima.android.ui.maxima.MyDetailsActivity;
 import com.minima.android.ui.mds.MDSFragment;
+import com.minima.android.ui.vault.VaultFragment;
 
 import org.minima.Minima;
 import org.minima.system.Main;
@@ -68,6 +76,9 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public static int REQUEST_INSTALLMINI   = 42;
     public static int REQUEST_RESTORE       = 43;
     public static int REQUEST_UPDATEMINI    = 44;
+
+    public static int REQUEST_WRITEPERMISSIONS          = 45;
+    public static int REQUEST_COPYFILE_TO_INTERNAL      = 46;
 
     /**
      * The MiniDAPP we are trying to update
@@ -90,6 +101,9 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public MDSFragment mMDSFragment         = null;
     public HomeFragment mHomeFragment       = null;
     public MaximaFragment mMaximaFragment   = null;
+    public VaultFragment mVaultFragment     = null;
+    public FilesFragment mFileFragment      = null;
+    public LogsFragment mLogsFragment      = null;
 
     /**
      * The DAPP Stores..
@@ -123,7 +137,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_mds, R.id.nav_maxima, R.id.nav_store, R.id.nav_backup, R.id.nav_help)
+                R.id.nav_home,
+                R.id.nav_mds,
+                R.id.nav_maxima,
+                R.id.nav_store,
+                R.id.nav_backup,
+                R.id.nav_vault,
+                R.id.nav_archive,
+                R.id.nav_files,
+                R.id.nav_logs,
+                R.id.nav_help)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -175,6 +198,14 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         switch (item.getItemId()) {
             case R.id.action_status:
                 runStatus();
+                return true;
+
+            case R.id.action_intro:
+
+                Intent introintent = new Intent(this, OnboardingOne.class);
+                introintent.putExtra("FROMBOOT", false);
+                startActivity(introintent);
+
                 return true;
 
             case R.id.action_maxima_identity:
@@ -342,6 +373,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         return mMinima;
     }
 
+    public String getFullLogs(){
+        if(mMinima == null){
+            return "Not connected to Service yet..";
+        }
+
+        return mMinima.getFullLogs();
+    }
+
+
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -372,37 +412,38 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         MinimaLogger.log("Waiting for Maxima.. ");
                     }
 
-                    //Run Status..
-                    String status = mMinima.getMinima().runMinimaCMD("status",false);
-
-                    //Make a JSON
-                    JSONObject json = (JSONObject) new JSONParser().parse(status);
-
-                    //Get the status..
-                    while(!(boolean)json.get("status")){
-                        Thread.sleep(2000);
-
-                        //Run Status..
-                        status = mMinima.getMinima().runMinimaCMD("status");
-
-                        //Make a JSON
-                        json = (JSONObject) new JSONParser().parse(status);
-
-                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-                    }
+//                    //Run Status..
+//                    String status = mMinima.getMinima().runMinimaCMD("status",false);
+//
+//                    //Make a JSON
+//                    JSONObject json = (JSONObject) new JSONParser().parse(status);
+//
+//                    //Get the status..
+//                    while(!(boolean)json.get("status")){
+//                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+//
+//                        Thread.sleep(2000);
+//
+//                        //Run Status..
+//                        status = mMinima.getMinima().runMinimaCMD("status");
+//
+//                        //Make a JSON
+//                        json = (JSONObject) new JSONParser().parse(status);
+//
+////                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+//                    }
 
                     //Install the MiniDApps..
-                    MinimaLogger.log("Install MiniDAPPs");
                     installMiniDAPPs();
 
-                    //OK - Status returned OK..
+                    //OK - Lets update the views..
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             //Hide the Loader
                             try{
-                                MinimaLogger.log("Remove Loader");
                                 if(mLoader != null && mLoader.isShowing()){
+                                    MinimaLogger.log("Remove Loader");
                                     mLoader.cancel();
                                 }
                             }catch(Exception exc){
@@ -411,6 +452,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                             //Update fragments
                             try{
+                                MinimaLogger.log("Update MDS");
                                 if(mMDSFragment != null){
                                     mMDSFragment.updateMDSList();
                                 }
@@ -419,6 +461,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             try{
+                                MinimaLogger.log("Update Home");
                                 if(mHomeFragment != null){
                                     mHomeFragment.updateUI();
                                 }
@@ -427,6 +470,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             }
 
                             try{
+                                MinimaLogger.log("Update Maxima");
                                 if(mMaximaFragment != null){
                                     mMaximaFragment.updateUI();
                                 }
@@ -459,22 +503,25 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         SharedPreferences pref = MainActivity.this.getPreferences(Context.MODE_PRIVATE);
         if(!pref.getBoolean(minidapppref,false)){
 
+            MinimaLogger.log("Installing MiniDAPPs first time");
+
             //Install them..
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("docs_1.1.3.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("futurecash_1.3.4.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("gimme20_1.6.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("ic_1.3.11.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("maxsolo_2.0.19.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("futurecash_1.4.5.mds.zip", MainActivity.this).run();
+            //new InstallAssetMiniDAPP("ic_1.3.11.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("maxsolo_2.2.12.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("news-2.0.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("scriptide-1.71.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("scriptide-2.0.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("terminal-2.03.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("wallet_1.13.12.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("wallet_2.3.2.mds.zip", MainActivity.this).run();
 
             //And that's that
             SharedPreferences.Editor edit = pref.edit();
             edit.putBoolean(minidapppref, true);
             edit.apply();
+        }else{
+            MinimaLogger.log("MiniDAPPs already installed");
         }
     }
 
@@ -593,7 +640,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         //Get the file URI
         Uri fileuri = data.getData();
-        //MinimaLogger.log("FILE CHOSEN : "+data.getDataString());
 
         if(requestCode == REQUEST_INSTALLMINI){
             //Create an Installer Handler
@@ -615,7 +661,35 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             Thread inst = new Thread(restore);
             inst.start();
+
+        }else if(requestCode == REQUEST_COPYFILE_TO_INTERNAL){
+            CopyFile cf = new CopyFile(fileuri,getFileName(fileuri),this);
+            Thread inst = new Thread(cf);
+            inst.start();
         }
+    }
+
+    public String getFileName(Uri uri) {
+        String result = null;
+        if (uri.getScheme().equals("content")) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            try {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int row = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    result = cursor.getString(row);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        if (result == null) {
+            result = uri.getPath();
+            int cut = result.lastIndexOf('/');
+            if (cut != -1) {
+                result = result.substring(cut + 1);
+            }
+        }
+        return result;
     }
 
     // Function to check and request permission
@@ -635,8 +709,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
         //Was this from our MDS open File..
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            //Access granted Open the File manager..
-            openFile(requestCode);
+            if(requestCode != REQUEST_WRITEPERMISSIONS) {
+                //Access granted Open the File manager..
+                openFile(requestCode);
+            }
         }else{
             Toast.makeText(MainActivity.this, "File Permission Denied", Toast.LENGTH_SHORT).show();
         }

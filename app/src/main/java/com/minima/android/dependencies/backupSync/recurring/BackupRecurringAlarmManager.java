@@ -14,16 +14,17 @@ import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
 public class BackupRecurringAlarmManager extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        backup(context);
+        //backup(context);
     }
 
     private void backup(Context context) {
-        BackupSyncProvider
-                .getGoogleDriveProvider(context)
-                .uploadBackup(
-                        context,
-                        MinimaBackupUtils.createBackup(context)
-                );
+        //DO NOTHING FOR NOW
+//        BackupSyncProvider
+//                .getGoogleDriveProvider(context)
+//                .uploadBackup(
+//                        context,
+//                        MinimaBackupUtils.createBackup(context)
+//                );
     }
 
     public static void setAlarm(Context context) {

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@drawable/main_background"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context=".ui.maxima.contacts.ContactActivity">
+    android:scaleType="centerCrop">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/seed_toolbar"
@@ -18,7 +20,7 @@
         android:layout_height="wrap_content"
         style="@style/MinimaActionBar"
         android:theme="@style/MinimaActionBar.DrawerIconColour"
-        app:title="Archive Seed Resync" />
+        app:title="Seed Phrase Re-sync" />
 
     <TextView
         android:id="@+id/seed_Instructions"
@@ -68,6 +70,30 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/white_box"
+        android:orientation="vertical">
+
+        <TextView
+            android:text="Max Keys Uses :"
+            android:padding="8dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <EditText
+            android:id="@+id/seed_maxkeys"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:maxLines="1"
+            android:text="1000"
+            android:inputType="numberSigned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/seed_phrasecomplete"
         android:text="Seed Phrase Complete"
@@ -77,3 +103,4 @@
         android:layout_height="wrap_content"/>
 
 </LinearLayout>
+</ScrollView>

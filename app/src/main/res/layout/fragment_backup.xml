@@ -59,28 +59,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <TextView
-        android:id="@+id/text_archive"
-        android:text="@string/minima_archive"
-        android:background="@drawable/white_box"
-        android:padding="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--    <TextView-->
+<!--        android:id="@+id/text_archive"-->
+<!--        android:text="@string/minima_archive"-->
+<!--        android:background="@drawable/white_box"-->
+<!--        android:padding="8dp"-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
-    <Button
-        android:id="@+id/backup_archive"
-        android:text=" Archive Node "
-        android:layout_marginTop="8dp"
-        android:textColor="@color/coreGrey5"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+<!--    <Button-->
+<!--        android:id="@+id/backup_archive"-->
+<!--        android:text=" Archive Node "-->
+<!--        android:layout_marginTop="8dp"-->
+<!--        android:textColor="@color/coreGrey5"-->
+<!--        android:layout_marginLeft="8dp"-->
+<!--        android:layout_marginRight="8dp"-->
+<!--        android:layout_marginBottom="8dp"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"/>-->
 
     <TextView
         android:id="@+id/text_gdrive"
@@ -92,9 +92,7 @@
         android:layout_marginBottom="8dp"
         android:background="@drawable/white_box"
         android:padding="8dp"
-        android:text="@string/minima_gdrive_backup_explanation_not_signed_in"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        android:text="@string/minima_gdrive_backup_explanation_not_signed_in"/>
 
     <Button
         android:id="@+id/backup_gdrive"
@@ -105,9 +103,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:textColor="@color/coreGrey5"
-        android:visibility="gone"
-        tools:text="@string/minima_gdrive_backup_button_not_signed_in"
-        tools:visibility="visible" />
+        tools:text="@string/minima_gdrive_backup_button_not_signed_in"/>
 
     </LinearLayout>
 

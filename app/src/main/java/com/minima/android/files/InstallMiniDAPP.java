@@ -40,7 +40,9 @@ public class InstallMiniDAPP implements Runnable {
 
             //Now load that..
             String result = mMain.getMinima().runMinimaCMD("mds action:install file:\""+dapp.getAbsolutePath()+"\"",false);
-            //MinimaLogger.log(result);
+
+            //And finally delete the MiniDAPP file..
+            dapp.delete();
 
             if(mMain.mMDSFragment != null){
                 mMain.runOnUiThread(new Runnable() {

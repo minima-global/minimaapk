@@ -35,9 +35,8 @@ import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
-import com.minima.android.ui.backup.Bip39Activity;
-//import com.minima.android.R;
-//import com.minima.boot.Alarm;
+
+import com.minima.android.ui.archive.ArchiveListener;
 
 /** Foreground Service for the Minima Node
  *
@@ -87,7 +86,10 @@ public class MinimaService extends Service {
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
 
-    public Bip39Activity mArchiveListener = null;
+    //public Bip39Activity mArchiveListener = null;
+    public ArchiveListener mArchiveListener = null;
+
+    ArrayList<String> mLogs = new ArrayList<>();
 
     @Override
     public void onCreate() {
@@ -149,14 +151,10 @@ public class MinimaService extends Service {
         Main.setMinimaListener(new MessageListener() {
             @Override
             public void processMessage(Message zMessage) {
-                if(zMessage.getMessageType().equals(MinimaLogger.MINIMA_LOG)){
-//                    Console.writeLine(zMessage.getString("log"));
 
-                }else if(zMessage.getMessageType().equals(NotifyManager.NOTIFY_POST)){
+                if(zMessage.getMessageType().equals(NotifyManager.NOTIFY_POST)){
                     //Get the JSON..
                     JSONObject notify = (JSONObject) zMessage.getObject("notify");
-
-                    //MinimaLogger.log("NOTIFY : "+notify.toString());
 
                     //What is the Event..
                     String event    = (String) notify.get("event");
@@ -175,6 +173,17 @@ public class MinimaService extends Service {
                                 setMinimaNotification();
                             }
                         });
+
+                    }else if(event.equals("MINIMALOG")){
+
+                        //Get the message
+                        String message = data.getString("message");
+                        mLogs.add(message);
+
+                        //Check size..
+                        if(mLogs.size() > 250){
+                            mLogs.remove(0);
+                        }
 
                     }else if(event.equals("NEWBALANCE")){
 
@@ -198,7 +207,7 @@ public class MinimaService extends Service {
                     }else if(event.equals("ARCHIVEUPDATE")){
                         String message = data.getString("message");
                         if(mArchiveListener!=null){
-                            mArchiveListener.updateLoader(message);
+                            mArchiveListener.updateArchiveStatus(message);
                         }
                     }
                 }
@@ -213,9 +222,13 @@ public class MinimaService extends Service {
         vars.add("-data");
         vars.add(getFilesDir().getAbsolutePath());
 
+        vars.add("-basefolder");
+        vars.add(getFilesDir().getAbsolutePath());
+
         //Normal
         vars.add("-isclient");
         vars.add("-mobile");
+        vars.add("-limitbandwidth");
 
         vars.add("-mdsenable");
 
@@ -252,7 +265,15 @@ public class MinimaService extends Service {
         addBatteryListener();
    }
 
-    public Minima getMinima(){
+   public String getFullLogs(){
+        String fulllogs = "";
+        for(String log : mLogs){
+            fulllogs += log+"\n";
+        }
+        return fulllogs;
+   }
+
+   public Minima getMinima(){
         return minima;
     }
 

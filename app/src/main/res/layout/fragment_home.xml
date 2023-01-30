@@ -103,6 +103,8 @@
 
     </TableLayout>
 
+
+
     <TableLayout
         android:background="@drawable/white_box"
         android:padding="8dp"
@@ -115,7 +117,7 @@
         <TableRow android:layout_marginLeft="20dp">
 
             <TextView
-                android:text="MiniDAPP System"
+                android:text="MDS"
                 android:textColor="#317AFF"
                 android:textStyle="bold"
                 android:textSize="18dp"
@@ -129,7 +131,7 @@
         </TableRow>
 
         <TableRow android:layout_marginLeft="20dp">
-            <TextView android:text="Desktop Connect : " android:gravity="right" android:textStyle="bold"/>
+            <TextView android:text="Connect : " android:gravity="right" android:textStyle="bold"/>
             <TextView android:id="@+id/text_home_ip" android:gravity="left" android:text="waiting.."/>
         </TableRow>
 
