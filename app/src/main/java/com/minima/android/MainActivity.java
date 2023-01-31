@@ -412,26 +412,24 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         MinimaLogger.log("Waiting for Maxima.. ");
                     }
 
-//                    //Run Status..
-//                    String status = mMinima.getMinima().runMinimaCMD("status",false);
-//
-//                    //Make a JSON
-//                    JSONObject json = (JSONObject) new JSONParser().parse(status);
-//
-//                    //Get the status..
-//                    while(!(boolean)json.get("status")){
-//                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-//
-//                        Thread.sleep(2000);
-//
-//                        //Run Status..
-//                        status = mMinima.getMinima().runMinimaCMD("status");
-//
-//                        //Make a JSON
-//                        json = (JSONObject) new JSONParser().parse(status);
-//
-////                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-//                    }
+                    //Run Status..
+                    String status = mMinima.getMinima().runMinimaCMD("status",false);
+
+                    //Make a JSON
+                    JSONObject json = (JSONObject) new JSONParser().parse(status);
+
+                    //Get the status..
+                    while(!(boolean)json.get("status")){
+                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+
+                        Thread.sleep(2000);
+
+                        //Run Status..
+                        status = mMinima.getMinima().runMinimaCMD("status");
+
+                        //Make a JSON
+                        json = (JSONObject) new JSONParser().parse(status);
+                    }
 
                     //Install the MiniDApps..
                     installMiniDAPPs();
