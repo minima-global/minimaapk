@@ -9,8 +9,8 @@ android {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 32
-        versionCode 112
-        versionName "1.0.16"
+        versionCode 113
+        versionName "1.0.17"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -55,6 +55,8 @@ dependencies {
     implementation 'com.h2database:h2:2.1.214'
     implementation 'org.bouncycastle:bcpkix-jdk15on:1.69'
     implementation 'org.mozilla:rhino:1.7.14'
+
+    implementation "mysql:mysql-connector-java:8.0.24"
 
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.6.0'
