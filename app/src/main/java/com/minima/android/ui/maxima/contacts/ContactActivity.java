@@ -97,7 +97,7 @@ public class ContactActivity extends AppCompatActivity implements ServiceConnect
                     mMinima.getMinima().runMinimaCMD("maxcontacts action:remove id:"+mContact.mID);
 
                     //Pause to let it update..
-                    Thread.sleep(3000);
+                    Thread.sleep(1000);
 
                 }catch(Exception exc){
                     MinimaLogger.log(exc);

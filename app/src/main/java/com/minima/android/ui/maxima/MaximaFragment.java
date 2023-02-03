@@ -58,7 +58,7 @@ public class MaximaFragment extends Fragment {
 
         //Get the Main Activity
         mMain = (MainActivity)getActivity();
-        mMain.mMaximaFragment = this;
+        mMain.setMaximaFragment(this);
 
         //If it's Empty
         //mMainList.setEmptyView(root.findViewById(R.id.empty_list_item));
@@ -206,18 +206,18 @@ public class MaximaFragment extends Fragment {
                 //Tell Minima..
                 try{
                     String result = mMain.getMinima().runMinimaCMD("maxcontacts action:add contact:"+mNewContactAddress,false);
-                    MinimaLogger.log(result);
-
-                    //Small pause..
-                    Thread.sleep(5000);
-
-                    //And Update the List
-                    mMain.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateUI();
-                        }
-                    });
+//                    MinimaLogger.log(result);
+//
+//                    //Small pause..
+//                    Thread.sleep(5000);
+//
+//                    //And Update the List
+//                    mMain.runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            updateUI();
+//                        }
+//                    });
 
                 }catch(Exception exc){
                     MinimaLogger.log(exc);
@@ -240,15 +240,10 @@ public class MaximaFragment extends Fragment {
                 //Tell Minima..
                 try{
                     String result = mMain.getMinima().runMinimaCMD("maxima action:refresh",false);
-                    MinimaLogger.log(result);
+//                    MinimaLogger.log(result);
 
                     //And Update the List
-                    mMain.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateUI();
-                        }
-                    });
+                    updateUIOnUIThread();
 
                 }catch(Exception exc){
                     MinimaLogger.log(exc);
@@ -260,61 +255,71 @@ public class MaximaFragment extends Fragment {
         tt.start();
     }
 
-    public void updateUI(){
+    public void updateUIOnUIThread(){
+        //And Update the List
+        mMain.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        });
+    }
 
-        //Check we are connected..
-        Minima minima = mMain.getMinima();
-        if(minima == null){
-            Toast.makeText(mMain,"Minima not initialised yet", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    public void updateUI() {
 
-        ArrayList<Contact> contacts = new ArrayList<>();
-
-        //Do the RPC call..
-        String maxcontacts = minima.runMinimaCMD("maxcontacts",false);
-
-        //Convert JSON
-        JSONObject json         = null;
         try {
-            json = (JSONObject)new JSONParser().parse(maxcontacts);
-        } catch (ParseException e) {
-            return;
+            //Check we are connected..
+            Minima minima = mMain.getMinima();
+            if (minima == null) {
+                Toast.makeText(mMain, "Minima not initialised yet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            ArrayList<Contact> contacts = new ArrayList<>();
+
+            //Do the RPC call..
+            String maxcontacts = minima.runMinimaCMD("maxcontacts", false);
+
+            //Convert JSON
+            JSONObject json = null;
+            json = (JSONObject) new JSONParser().parse(maxcontacts);
+
+            //Did it work..
+            if (!(boolean) json.get("status")) {
+                //Too soon
+                mMain.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mMain, "Maxima NOT initialised yet.. ", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                return;
+            }
+
+            JSONObject response = (JSONObject) json.get("response");
+            JSONArray allcontactsjson = (JSONArray) response.get("contacts");
+
+            //Convert these..
+            for (Object obj : allcontactsjson) {
+
+                JSONObject jconcontact = (JSONObject) obj;
+
+                Contact newcontact = new Contact(jconcontact);
+                contacts.add(newcontact);
+            }
+
+            //Get the array list
+            Contact[] allcontacts = contacts.toArray(new Contact[0]);
+
+            //Keep for later
+            mContacts = contacts;
+
+            //Create the custom arrayadapter
+            ContactAdapter adapter = new ContactAdapter(mMain, R.layout.contact_view, allcontacts);
+            mMainList.setAdapter(adapter);
+        } catch (Exception e) {
+            MinimaLogger.log(e);
         }
-
-        //Did it work..
-        if(!(boolean)json.get("status")){
-            //Too soon
-            mMain.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(mMain,"Maxima NOT initialised yet.. ",Toast.LENGTH_SHORT).show();
-                }
-            });
-            return;
-        }
-
-        JSONObject response     = (JSONObject)json.get("response");
-        JSONArray allcontactsjson   = (JSONArray) response.get("contacts");
-
-        //Convert these..
-        for(Object obj : allcontactsjson){
-
-            JSONObject jconcontact = (JSONObject)obj;
-
-            Contact newcontact = new Contact(jconcontact);
-            contacts.add(newcontact);
-        }
-
-        //Get the array list
-        Contact[] allcontacts = contacts.toArray(new Contact[0]);
-
-        //Keep for later
-        mContacts = contacts;
-
-        //Create the custom arrayadapter
-        ContactAdapter adapter = new ContactAdapter(mMain, R.layout.contact_view, allcontacts);
-        mMainList.setAdapter(adapter);
     }
 
     @Override

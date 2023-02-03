@@ -381,6 +381,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         return mMinima.getFullLogs();
     }
 
+    public void setMaximaFragment(MaximaFragment zMaxima){
+        mMaximaFragment         = zMaxima;
+        mMinima.mContactsFrag   = zMaxima;
+    }
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -526,6 +530,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         MinimaLogger.log("DISCONNECTED TO SERVICE");
+        mMinima.mContactsFrag = null;
         mMinima = null;
     }
 

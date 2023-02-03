@@ -37,6 +37,7 @@ import org.minima.utils.messages.MessageListener;
 import java.util.ArrayList;
 
 import com.minima.android.ui.archive.ArchiveListener;
+import com.minima.android.ui.maxima.MaximaFragment;
 
 /** Foreground Service for the Minima Node
  *
@@ -86,8 +87,11 @@ public class MinimaService extends Service {
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
 
-    //public Bip39Activity mArchiveListener = null;
+    //the archive Listener
     public ArchiveListener mArchiveListener = null;
+
+    //The Contacts Fragment
+    public MaximaFragment mContactsFrag = null;
 
     ArrayList<String> mLogs = new ArrayList<>();
 
@@ -183,6 +187,17 @@ public class MinimaService extends Service {
                         //Check size..
                         while(mLogs.size() > 250){
                             mLogs.remove(0);
+                        }
+
+                    }else if(event.equals("MAXIMACONTACTS")){
+
+                        MinimaLogger.log("MAXIMACONTACTS CHANGED!");
+                        try{
+                            if(mContactsFrag!=null){
+                                mContactsFrag.updateUIOnUIThread();
+                            }
+                        }catch(Exception exc){
+                            MinimaLogger.log(exc);
                         }
 
                     }else if(event.equals("NEWBALANCE")){
