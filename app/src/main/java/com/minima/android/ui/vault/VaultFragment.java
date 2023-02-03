@@ -281,8 +281,6 @@ public class VaultFragment extends Fragment {
                     //Run Status..
                     String passlock = minima.runMinimaCMD("vault action:passwordlock password:"+mPassword+" confirm:"+mPassword,false);
 
-                    MinimaLogger.log("passlock : "+passlock);
-
                     //Make a JSON
                     JSONObject json = (JSONObject) new JSONParser().parse(passlock);
 

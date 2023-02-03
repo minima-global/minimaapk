@@ -86,26 +86,28 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
                 int key     = keyEvent.getKeyCode();
                 int action  = keyEvent.getAction();
 
-                if(key == KeyEvent.KEYCODE_ENTER && action==KeyEvent.ACTION_DOWN){
-                    checkSeedWord(false);
+                if(key == KeyEvent.KEYCODE_ENTER){
+                    if(action==KeyEvent.ACTION_DOWN){
+                        checkSeedWord();
+                    }
                     return  true;
                 }
 
                 return false;
             }
         });
-        mSeedphrase.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                checkSeedWord(true);
-            }
-        });
+//        mSeedphrase.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+//
+//            @Override
+//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+//
+//            @Override
+//            public void afterTextChanged(Editable editable) {
+//                checkSeedWord(true);
+//            }
+//        });
 
         mFinalWordlist  = findViewById(R.id.seed_wordlist);
         mFinalWordlist.setText("");
@@ -158,14 +160,14 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
     }
 
-    public void checkSeedWord(boolean zMinLen){
+    public void checkSeedWord(){
         String word = mSeedphrase.getText().toString().trim().toLowerCase();
 
         //remove whitespace
         word = word.replaceAll("\\s+","");
 
         //Check at least 4 characters
-        if(zMinLen && word.length()<4){
+        if(word.length()<3){
             return;
         }
 
