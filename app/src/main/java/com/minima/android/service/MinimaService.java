@@ -191,7 +191,7 @@ public class MinimaService extends Service {
 
                     }else if(event.equals("MAXIMACONTACTS")){
 
-                        MinimaLogger.log("MAXIMACONTACTS CHANGED!");
+                        //MinimaLogger.log("MAXIMACONTACTS CHANGED!");
                         try{
                             if(mContactsFrag!=null){
                                 mContactsFrag.updateUIOnUIThread();
