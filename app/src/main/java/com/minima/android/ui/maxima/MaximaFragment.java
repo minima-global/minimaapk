@@ -257,12 +257,19 @@ public class MaximaFragment extends Fragment {
 
     public void updateUIOnUIThread(){
         //And Update the List
-        mMain.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        });
+        if(mMain == null){
+            return;
+        }
+
+        try{
+            mMain.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    updateUI();
+                }
+            });
+        }catch(Exception exc){
+        }
     }
 
     public void updateUI() {

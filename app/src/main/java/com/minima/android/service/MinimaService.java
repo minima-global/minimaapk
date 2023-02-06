@@ -154,7 +154,7 @@ public class MinimaService extends Service {
         //Add a Minima listener..
         Main.setMinimaListener(new MessageListener() {
             @Override
-            public void processMessage(Message zMessage) {
+            public void processMessage(Message zMessage) throws Exception {
 
                 if(zMessage.getMessageType().equals(NotifyManager.NOTIFY_POST)){
                     //Get the JSON..
