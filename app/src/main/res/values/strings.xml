@@ -116,11 +116,11 @@ The Minima Team</string>
     <string name="welcome_to_minima">Welcome to Minima</string>
     <string name="get_started">Start Minima</string>
     <string name="begin_setup">Begin Setup</string>
-    <string name="onboarding_slide_description_one">Minima allows you to securely transact and communicate - without banks and without borders - with anyone else on the network.</string>
-    <string name="onboarding_slide_description_two">The blockchain you are running ensures your transactions are secure and unalterable. Everyone running a Minima node shares this blockchain.</string>
-    <string name="onboarding_slide_description_three">MiniDapps allow you to view information from the blockchain and interact with it, for example to send transactions.</string>
+    <string name="onboarding_slide_description_one">The world operates on the exchange of value and information. Minima allows you to do this securely, with anyone on the network, without intermediaries.</string>
+    <string name="onboarding_slide_description_two">Every member runs a complete node. All nodes are equal. We all cooperate to validate and secure the blockchain.</string>
+    <string name="onboarding_slide_description_three">MiniDapps are decentralized web apps that run locally via your node. They are the gateway to a censorship-resistant web.</string>
     <string name="onboarding_slide_description_four">Your node is unique to you, only YOU hold your data and funds.\n\nYou are independent and sovereign.</string>
-    <string name="onboarding_slide_description_five">This Freedom comes with responsibility. Freedom is not Free. Make sure you make a backup regularly, at least once a month, and have a copy of your seed phrase.</string>
+    <string name="onboarding_slide_description_five"> Freedom is not free. You must be responsible. Make a backup regularly and keep your seed phrase safe.</string>
     <string name="onboarding_slide_description_six">You can do this.\n\nEmbrace it - and never look back.</string>
 
 </resources>
