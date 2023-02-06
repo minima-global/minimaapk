@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -80,22 +81,35 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, bip39);
         mSeedphrase.setAdapter(adapter);
         mSeedphrase.setMaxLines(1);
-        mSeedphrase.setOnKeyListener(new View.OnKeyListener() {
+
+        mSeedphrase.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                int key     = keyEvent.getKeyCode();
-                int action  = keyEvent.getAction();
-
-                if(key == KeyEvent.KEYCODE_ENTER){
-                    if(action==KeyEvent.ACTION_DOWN){
-                        checkSeedWord();
-                    }
-                    return  true;
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    checkSeedWord();
+                    return true;
                 }
-
                 return false;
             }
         });
+
+//        mSeedphrase.setOnKeyListener(new View.OnKeyListener() {
+//            @Override
+//            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+//                int key     = keyEvent.getKeyCode();
+//                int action  = keyEvent.getAction();
+//
+//                if(key == KeyEvent.KEYCODE_ENTER){
+//                    if(action==KeyEvent.ACTION_DOWN){
+//                        checkSeedWord();
+//                    }
+//                    return  true;
+//                }
+//
+//                return false;
+//            }
+//        });
+
 //        mSeedphrase.addTextChangedListener(new TextWatcher() {
 //            @Override
 //            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
