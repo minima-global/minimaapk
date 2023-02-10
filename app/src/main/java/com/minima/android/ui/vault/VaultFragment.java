@@ -1,5 +1,6 @@
 package com.minima.android.ui.vault;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Html;
@@ -10,6 +11,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -203,7 +205,11 @@ public class VaultFragment extends Fragment {
                     }
                 });
 
-                builder.show();
+                AlertDialog dlg = builder.create();
+                dlg.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+                dlg.show();
+
+                //builder.show();
 
                 return true;
 
