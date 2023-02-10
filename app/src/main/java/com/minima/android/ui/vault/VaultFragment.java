@@ -167,7 +167,11 @@ public class VaultFragment extends Fragment {
             }
         });
 
-        builder.show();
+        AlertDialog dlg = builder.create();
+        dlg.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        dlg.show();
+
+        //builder.show();
     }
 
     @Override
