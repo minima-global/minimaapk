@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -193,7 +194,11 @@ public class BackupFragment extends Fragment {
             }
         });
 
-        builder.show();
+        AlertDialog dlg = builder.create();
+        dlg.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+        dlg.show();
+
+        //builder.show();
     }
 
 //    public void showInputDialog(boolean zBackup){
