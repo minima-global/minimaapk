@@ -33,6 +33,12 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_recalcip"
+        android:orderInCategory="100"
+        android:title="Reset IP"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_shutdown"
         android:orderInCategory="100"
         android:title="ShutDown"

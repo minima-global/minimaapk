@@ -208,6 +208,23 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                 return true;
 
+            case R.id.action_recalcip:
+
+                String recalcip = mMinima.getMinima().runMinimaCMD("network action:recalculateip",false);
+
+                Toast.makeText(this,"NEW Host IP Set",Toast.LENGTH_SHORT).show();
+
+                //Refresh..
+                try{
+                    if(mHomeFragment != null){
+                        mHomeFragment.updateUI();
+                    }
+                }catch(Exception exc){
+                    MinimaLogger.log(exc);
+                }
+
+                return true;
+
             case R.id.action_maxima_identity:
                 //Wait for Maxima..
                 if(Main.getInstance() == null){
@@ -510,7 +527,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             //Install them..
             new InstallAssetMiniDAPP("block-0.1.5.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("docs_1.1.3.mds.zip", MainActivity.this).run();
-            new InstallAssetMiniDAPP("futurecash_1.5.0.mds.zip", MainActivity.this).run();
+            new InstallAssetMiniDAPP("futurecash_1.6.0.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("maxcontacts-1.3.4.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("maxsolo-2.2.16.mds.zip", MainActivity.this).run();
             new InstallAssetMiniDAPP("news-2.0.mds.zip", MainActivity.this).run();
