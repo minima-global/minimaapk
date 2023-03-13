@@ -93,6 +93,7 @@ public class MinimaService extends Service {
     //The Contacts Fragment
     public MaximaFragment mContactsFrag = null;
 
+    Object mSyncLogObject = new Object();
     ArrayList<String> mLogs = new ArrayList<>();
 
     @Override
@@ -181,12 +182,14 @@ public class MinimaService extends Service {
                     }else if(event.equals("MINIMALOG")){
 
                         //Get the message
-                        String message = data.getString("message");
-                        mLogs.add(message);
+                        synchronized (mSyncLogObject) {
+                            String message = data.getString("message");
+                            mLogs.add(message);
 
-                        //Check size..
-                        while(mLogs.size() > 250){
-                            mLogs.remove(0);
+                            //Check size..
+                            while (mLogs.size() > 250) {
+                                mLogs.remove(0);
+                            }
                         }
 
                     }else if(event.equals("MAXIMACONTACTS")){
@@ -281,11 +284,13 @@ public class MinimaService extends Service {
    }
 
    public String getFullLogs(){
-        String fulllogs = "";
-        for(String log : mLogs){
-            fulllogs += log+"\n";
-        }
-        return fulllogs;
+       synchronized (mSyncLogObject) {
+           String fulllogs = "";
+           for(String log : mLogs){
+               fulllogs += log+"\n";
+           }
+           return fulllogs;
+       }
    }
 
    public Minima getMinima(){
