@@ -249,6 +249,7 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
                 mLoader.setTitle("Syncing..");
                 mLoader.setMessage("Please wait..");
                 mLoader.setCanceledOnTouchOutside(false);
+                mLoader.setCancelable(false);
                 mLoader.show();
 
                 //Get the seedphrase
