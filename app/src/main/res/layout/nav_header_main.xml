@@ -15,6 +15,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:layout_marginStart="25dp"
-        android:src="@drawable/ic_long_minima_logo" />
+        android:src="@drawable/logo_150_x_28" />
 
 </LinearLayout>

@@ -32,6 +32,7 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 
 import org.minima.Minima;
+import org.minima.system.params.GeneralParams;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
@@ -174,10 +175,28 @@ public class FilesFragment extends Fragment {
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        Toast.makeText(mMain,"DELETE "+zName, Toast.LENGTH_SHORT).show();
 
-                        //Delete this file..
-                        MiniFile.deleteFileOrFolder(mMain.getFilesDir().getAbsolutePath(),new File(zPath));
+                        //Check is not as root file..
+                        File delfile = new File(zPath);
+                        String delpath = delfile.getAbsolutePath();
+                        if(delpath.endsWith("/")){
+                            delpath = delpath.substring(0,delpath.length()-1);
+                        }
+
+                        //Check it..
+                        File rootfiles  = new File(mMain.getFilesDir(),"1.0");
+                        String rootpath = rootfiles.getAbsolutePath();
+                        if(rootpath.endsWith("/")){
+                            rootpath = delpath.substring(0,rootpath.length()-1);
+                        }
+
+                        //Check allowed
+                        if(delpath.startsWith(rootpath)){
+                            Toast.makeText(mMain,"NOT ALLOWED to delete these files!", Toast.LENGTH_LONG).show();
+                        }else{
+                            Toast.makeText(mMain,"File deleted.. "+zName, Toast.LENGTH_SHORT).show();
+                            MiniFile.deleteFileOrFolder(mMain.getFilesDir().getAbsolutePath(),new File(zPath));
+                        }
 
                         //Reload..
                         loadFiles();
