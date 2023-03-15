@@ -325,7 +325,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        shutdown();
+                        shutdown(true);
                     }
                 });
                 builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -344,13 +344,22 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void shutdown(){
+        shutdown(false);
+    }
+
+    public void shutdown(boolean zCompact){
 
         Runnable close = new Runnable() {
             @Override
             public void run() {
                 if(mMinima != null){
-                    String res = mMinima.getMinima().runMinimaCMD("quit");
-                    MinimaLogger.log(res);
+                    if(zCompact){
+                        String res = mMinima.getMinima().runMinimaCMD("quit compact:true");
+                        MinimaLogger.log(res);
+                    }else{
+                        String res = mMinima.getMinima().runMinimaCMD("quit");
+                        MinimaLogger.log(res);
+                    }
                 }
 
                 //Stop the service
@@ -560,7 +569,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         }
 
         //Run Status Command
-        String status = mMinima.getMinima().runMinimaCMD("status");
+        String status = mMinima.getMinima().runMinimaCMD("status complete:true");
 
         new AlertDialog.Builder(this)
                 .setTitle("Minima Status")
