@@ -124,23 +124,28 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        // The TextView to show your Text
-                        TextView showText = new TextView(MDSPendingActivity.this);
-                        showText.setText(commandstr);
-                        showText.setTextIsSelectable(true);
+                        try{
+                            // The TextView to show your Text
+                            TextView showText = new TextView(MDSPendingActivity.this);
+                            showText.setText(commandstr);
+                            showText.setTextIsSelectable(true);
 
-                        //Show the results
-                        new AlertDialog.Builder(MDSPendingActivity.this)
-                                .setTitle("Command Output")
-                                .setView(showText)
+                            //Show the results
+                            new AlertDialog.Builder(MDSPendingActivity.this)
+                                    .setTitle("Command Output")
+                                    .setView(showText)
 //                                .setMessage(commandstr)
-                                .setIcon(R.drawable.ic_minima)
-                                .setCancelable(true)
-                                .setNegativeButton("Close", null)
-                                .show();
+                                    .setIcon(R.drawable.ic_minima)
+                                    .setCancelable(true)
+                                    .setNegativeButton("Close", null)
+                                    .show();
 
-                        //And reset the list
-                        updateList();
+                            //And reset the list
+                            updateList();
+
+                        }catch(Exception exc) {
+                            MinimaLogger.log(exc);
+                        }
                     }
                 });
             }
