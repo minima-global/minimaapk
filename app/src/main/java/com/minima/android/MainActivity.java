@@ -349,6 +349,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
     public void shutdown(boolean zCompact){
 
+        MinimaLogger.log("SHUTDOWN REQUESTED");
+
         Runnable close = new Runnable() {
             @Override
             public void run() {
@@ -365,6 +367,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 //Stop the service
                 Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
                 stopService(minimaintent);
+
+                MinimaLogger.log("SHUTDOWN FINISHED");
 
                 //Shut this down..
                 finish();
@@ -441,6 +445,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         max = Main.getInstance().getMaxima();
                         MinimaLogger.log("Waiting for Maxima.. ");
                     }
+                    MinimaLogger.log("Maxima started.. ");
 
                     //Run Status..
                     String status = mMinima.getMinima().runMinimaCMD("status",false);
@@ -460,6 +465,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         //Make a JSON
                         json = (JSONObject) new JSONParser().parse(status);
                     }
+                    MinimaLogger.log("Status true.. ");
 
                     //Install the MiniDApps..
                     installMiniDAPPs();

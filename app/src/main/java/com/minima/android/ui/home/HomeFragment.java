@@ -97,29 +97,34 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
 
-                //Get the Header details..
-                JSONObject memory   = (JSONObject)zStatusJSON.get("memory");
-                JSONObject chain    = (JSONObject)zStatusJSON.get("chain");
-                JSONObject network  = (JSONObject)zStatusJSON.get("network");
-                JSONObject traffic  = (JSONObject)network.get("traffic");
+                try{
+                    //Get the Header details..
+                    JSONObject memory   = (JSONObject)zStatusJSON.get("memory");
+                    JSONObject chain    = (JSONObject)zStatusJSON.get("chain");
+                    JSONObject network  = (JSONObject)zStatusJSON.get("network");
+                    JSONObject traffic  = (JSONObject)network.get("traffic");
 
-                //Set it..
-                ((TextView)mRoot.findViewById(R.id.text_home_time)).setText(chain.getString("time"));
-                ((TextView)mRoot.findViewById(R.id.text_home_block)).setText(""+chain.get("block"));
-                ((TextView)mRoot.findViewById(R.id.text_home_version)).setText(zStatusJSON.getString("version"));
-                ((TextView)mRoot.findViewById(R.id.text_home_ram)).setText(memory.getString("ram"));
-                ((TextView)mRoot.findViewById(R.id.text_home_diskspace)).setText(memory.getString("disk"));
-                //((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
-                ((TextView)mRoot.findViewById(R.id.text_home_connections)).setText(""+network.get("connected"));
+                    //Set it..
+                    ((TextView)mRoot.findViewById(R.id.text_home_time)).setText(chain.getString("time"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_block)).setText(""+chain.get("block"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_version)).setText(zStatusJSON.getString("version"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_ram)).setText(memory.getString("ram"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_diskspace)).setText(memory.getString("disk"));
+                    //((TextView)mRoot.findViewById(R.id.text_home_devices)).setText(zStatusJSON.getString("devices"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_connections)).setText(""+network.get("connected"));
 
-                //Network Stats
-                ((TextView)mRoot.findViewById(R.id.text_home_traffic_from)).setText(traffic.getString("from"));
-                ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalread)).setText(traffic.getString("totalread"));
-                ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalwrite)).setText(traffic.getString("totalwrite"));
-                ((TextView)mRoot.findViewById(R.id.text_home_read)).setText(traffic.getString("read"));
-                ((TextView)mRoot.findViewById(R.id.text_home_write)).setText(traffic.getString("write"));
+                    //Network Stats
+                    ((TextView)mRoot.findViewById(R.id.text_home_traffic_from)).setText(traffic.getString("from"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalread)).setText(traffic.getString("totalread"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_traffic_totalwrite)).setText(traffic.getString("totalwrite"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_read)).setText(traffic.getString("read"));
+                    ((TextView)mRoot.findViewById(R.id.text_home_write)).setText(traffic.getString("write"));
 
-                ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("https://"+network.getString("host")+":9003");
+                    ((TextView)mRoot.findViewById(R.id.text_home_ip)).setText("https://"+network.getString("host")+":9003");
+
+                }catch(Exception exc){
+                    MinimaLogger.log(exc);
+                }
             }
         });
    }
@@ -129,30 +134,35 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
 
-                //Get the contacts
-                JSONArray contacts = (JSONArray) zMaxcontacts.get("contacts");
+                try{
+                    //Get the contacts
+                    JSONArray contacts = (JSONArray) zMaxcontacts.get("contacts");
 
-                //How many are we in sync with
-                long acceptable = System.currentTimeMillis() - (1000 * 60 * 30);
-                int valid   = 0;
-                int net     = 0;
-                for(Object obj : contacts){
-                    JSONObject contact = (JSONObject) obj;
-                    boolean samechain = (boolean) contact.get("samechain");
-                    if(samechain){
-                        valid++;
+                    //How many are we in sync with
+                    long acceptable = System.currentTimeMillis() - (1000 * 60 * 30);
+                    int valid   = 0;
+                    int net     = 0;
+                    for(Object obj : contacts){
+                        JSONObject contact = (JSONObject) obj;
+                        boolean samechain = (boolean) contact.get("samechain");
+                        if(samechain){
+                            valid++;
+                        }
+
+                        long lastseen = (long) contact.get("lastseen");
+                        if(lastseen > acceptable){
+                            net++;
+                        }
                     }
 
-                    long lastseen = (long) contact.get("lastseen");
-                    if(lastseen > acceptable){
-                        net++;
-                    }
+                    //Set it..
+                    ((TextView)mRoot.findViewById(R.id.text_home_contacts)).setText(""+contacts.size());
+                    ((TextView)mRoot.findViewById(R.id.text_home_valid)).setText(""+valid);
+                    ((TextView)mRoot.findViewById(R.id.text_home_net)).setText(""+net);
+
+                }catch(Exception exc){
+                    MinimaLogger.log(exc);
                 }
-
-                //Set it..
-                ((TextView)mRoot.findViewById(R.id.text_home_contacts)).setText(""+contacts.size());
-                ((TextView)mRoot.findViewById(R.id.text_home_valid)).setText(""+valid);
-                ((TextView)mRoot.findViewById(R.id.text_home_net)).setText(""+net);
             }
         });
     }
@@ -162,14 +172,19 @@ public class HomeFragment extends Fragment {
             @Override
             public void run() {
 
-                //Get the contacts
-                JSONArray mdsapps = (JSONArray) zMDS.get("minidapps");
+                try{
+                    //Get the contacts
+                    JSONArray mdsapps = (JSONArray) zMDS.get("minidapps");
 
-                String password   = zMDS.getString("password");
+                    String password   = zMDS.getString("password");
 
-                //Set it..
-                ((TextView)mRoot.findViewById(R.id.text_home_dapps)).setText(""+mdsapps.size());
-                ((TextView)mRoot.findViewById(R.id.text_mds_password)).setText(password);
+                    //Set it..
+                    ((TextView)mRoot.findViewById(R.id.text_home_dapps)).setText(""+mdsapps.size());
+                    ((TextView)mRoot.findViewById(R.id.text_mds_password)).setText(password);
+
+                }catch(Exception exc){
+                   MinimaLogger.log(exc);
+                }
             }
         });
     }
