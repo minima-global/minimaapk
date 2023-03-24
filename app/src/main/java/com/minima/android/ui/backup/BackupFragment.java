@@ -58,6 +58,8 @@ public class BackupFragment extends Fragment {
     EditText mInput1;
     EditText mInput2;
 
+    EditText mInputRestore;
+
 //    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
 //            new ActivityResultContracts.StartActivityForResult(),
 //            (ActivityResultCallback<ActivityResult>) result -> {
@@ -146,10 +148,10 @@ public class BackupFragment extends Fragment {
         }else{
 
             //Just one input..
-            mInput1 = new EditText(mMain);
-            mInput1.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            mInputRestore = new EditText(mMain);
+            mInputRestore.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
 
-            builder.setView(mInput1);
+            builder.setView(mInputRestore);
         }
 
         // Set up the buttons
@@ -157,9 +159,9 @@ public class BackupFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                mPassword = mInput1.getText().toString().trim();
-
                 if(zBackup) {
+                    mPassword = mInput1.getText().toString().trim();
+
                     String passcheck = mInput2.getText().toString().trim();
 
                     //MUST be the same
@@ -173,6 +175,7 @@ public class BackupFragment extends Fragment {
                         return;
                     }
                 }else{
+                    mPassword = new String(mInputRestore.getText().toString().trim());
                     if(mPassword.equals("")){
                         mPassword = "minima";
                     }

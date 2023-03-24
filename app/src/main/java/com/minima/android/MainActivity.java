@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     /**
      * The MiniDAPP we are trying to update
      */
-    String mExtraFileData = "";
+    String mExtraFileData   = "";
 
     /**
      * Main Minmia Service
@@ -755,7 +755,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void openFile(int zRequest) {
-        openFile("",zRequest);
+        openFile(mExtraFileData,zRequest);
     }
 
     public void openFile(String zExtraData, int zRequest) {

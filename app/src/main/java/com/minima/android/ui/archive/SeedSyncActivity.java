@@ -267,19 +267,27 @@ public class SeedSyncActivity extends AppCompatActivity implements ServiceConnec
         builder.show();
     }
 
+    public static int updatecounter = 0;
+
     @Override
     public void updateArchiveStatus(String zStatus) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(mLoader != null && mLoader.isShowing()){
-                    mLoader.setMessage(zStatus);
+        updatecounter++;
+
+        if(updatecounter % 10 == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mLoader != null && mLoader.isShowing()) {
+                        mLoader.setMessage(zStatus);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void runArchiveSync(String zSeedPhrase){
+        updatecounter = 0;
+
         Runnable sync = new Runnable() {
             @Override
             public void run() {

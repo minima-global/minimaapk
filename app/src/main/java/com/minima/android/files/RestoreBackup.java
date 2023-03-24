@@ -1,12 +1,15 @@
 package com.minima.android.files;
 
 import android.net.Uri;
+import android.widget.Toast;
 
 import com.minima.android.MainActivity;
 import com.minima.android.Utils;
 
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONObject;
+import org.minima.utils.json.parser.JSONParser;
 
 import java.io.File;
 import java.io.InputStream;
@@ -19,7 +22,7 @@ public class RestoreBackup implements Runnable {
 
     public RestoreBackup(Uri zFilePath,String zPassword, MainActivity zMain){
         mFileUri   = zFilePath;
-        mPassword  = zPassword;
+        mPassword  = new String(zPassword);
         mMain      = zMain;
     }
 
@@ -45,8 +48,20 @@ public class RestoreBackup implements Runnable {
             //Now delete the file..
             dapp.delete();
 
-            //Now shut down..
-            mMain.shutdown();
+            JSONObject res = (JSONObject) new JSONParser().parse(result);
+            boolean status = (boolean)res.get("status");
+            if(!status){
+                //Show a Toast
+                mMain.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(mMain,"Invalid Password!",Toast.LENGTH_LONG).show();
+                    }
+                });
+            }else{
+                //Now shut down..
+                mMain.shutdown();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();

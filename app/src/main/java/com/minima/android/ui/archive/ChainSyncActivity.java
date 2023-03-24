@@ -48,6 +48,8 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
 
+    public static int updatecounter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,17 +120,23 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
 
     @Override
     public void updateArchiveStatus(String zStatus) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if(mLoader != null && mLoader.isShowing()){
-                    mLoader.setMessage(zStatus);
+        updatecounter++;
+
+        if(updatecounter % 10 == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mLoader != null && mLoader.isShowing()) {
+                        mLoader.setMessage(zStatus);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     public void runArchiveSync(){
+        updatecounter = 0;
+
         Runnable sync = new Runnable() {
             @Override
             public void run() {
