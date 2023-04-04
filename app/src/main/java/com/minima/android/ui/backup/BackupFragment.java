@@ -1,5 +1,6 @@
 package com.minima.android.ui.backup;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.app.Activity;
 import android.content.Context;
@@ -37,6 +38,8 @@ import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserNotSignedInYet;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
 import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
+import com.minima.android.ui.archive.ArchiveListener;
+import com.minima.android.ui.archive.SeedSyncActivity;
 
 import org.minima.database.wallet.Wallet;
 import org.minima.system.Main;
@@ -46,7 +49,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class BackupFragment extends Fragment {
+public class BackupFragment extends Fragment implements ArchiveListener {
 
     MainActivity mMain;
 
@@ -60,15 +63,9 @@ public class BackupFragment extends Fragment {
 
     EditText mInputRestore;
 
-//    ActivityResultLauncher<Intent> authResultLauncher = registerForActivityResult(
-//            new ActivityResultContracts.StartActivityForResult(),
-//            (ActivityResultCallback<ActivityResult>) result -> {
-//                if (result.getResultCode() == Activity.RESULT_OK && getContext() != null) {
-//                    updateGDriveTexts(getContext());
-//                    backup(getContext());
-//                }
-//            }
-//    );
+
+    //Loader while connecting to Minima
+    ProgressDialog mLoader = null;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -185,6 +182,9 @@ public class BackupFragment extends Fragment {
                     Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
                     makeBackup();
                 }else{
+                    //Set the Archive Listener
+                    mMain.getMinimaService().mArchiveListener = BackupFragment.this;
+
                     Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
                     mMain.openFile(mPassword, MainActivity.REQUEST_RESTORE);
                 }
@@ -204,51 +204,41 @@ public class BackupFragment extends Fragment {
         //builder.show();
     }
 
-//    public void showInputDialog(boolean zBackup){
-//        AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
-//        if(zBackup){
-//            builder.setTitle("Choose Password");
-//        }else{
-//            builder.setTitle("Set Password");
-//        }
-//
-//        // Set up the input
-//        final EditText input = new EditText(mMain);
-//
-//        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-//        input.setInputType(InputType.TYPE_CLASS_TEXT);
-//        builder.setView(input);
-//
-//        // Set up the buttons
-//        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                mPassword = input.getText().toString().trim();
-//                if(zBackup && mPassword.equals("")){
-//                    Toast.makeText(mMain,"Cannot have a blank password", Toast.LENGTH_SHORT).show();
-//                    return;
-//                }else if(mPassword.equals("")){
-//                    mPassword = "minima";
-//                }
-//
-//                if(zBackup){
-//                    Toast.makeText(mMain,"Creating a backup.. pls wait",Toast.LENGTH_SHORT).show();
-//                    makeBackup();
-//                }else{
-//                    Toast.makeText(mMain,"Restoring Minima.. pls wait",Toast.LENGTH_SHORT).show();
-//                    mMain.openFile(mPassword, MainActivity.REQUEST_RESTORE);
-//                }
-//            }
-//        });
-//        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.cancel();
-//            }
-//        });
-//
-//        builder.show();
-//    }
+    public static int updatecounter = 0;
+
+    @Override
+    public void updateArchiveStatus(String zStatus) {
+        updatecounter++;
+
+        if(mLoader == null){
+            updatecounter = 0;
+
+            //Show a loader
+            mMain.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    //Wait for Minima to fully start up..
+                    mLoader = new ProgressDialog(mMain);
+                    mLoader.setTitle("Syncing..");
+                    mLoader.setMessage("Please wait..");
+                    mLoader.setCanceledOnTouchOutside(false);
+                    mLoader.setCancelable(false);
+                    mLoader.show();
+                }
+            });
+        }
+
+        if(updatecounter % 10 == 0) {
+            mMain.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mLoader != null && mLoader.isShowing()) {
+                        mLoader.setMessage(zStatus);
+                    }
+                }
+            });
+        }
+    }
 
     public void makeBackup(){
 
@@ -311,6 +301,15 @@ public class BackupFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+
+        if(mLoader != null && mLoader.isShowing()){
+            mLoader.cancel();
+        }
     }
 
     private void updateGDriveTexts(Context context) {
