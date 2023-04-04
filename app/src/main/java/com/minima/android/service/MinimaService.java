@@ -250,6 +250,8 @@ public class MinimaService extends Service {
 
         vars.add("-mdsenable");
 
+        //vars.add("-nosyncibd");
+
         vars.add("-noshutdownhook");
 
         if(CLEAN) {

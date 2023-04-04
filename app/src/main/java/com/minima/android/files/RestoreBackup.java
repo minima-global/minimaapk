@@ -43,7 +43,12 @@ public class RestoreBackup implements Runnable {
             MiniFile.writeDataToFile(dapp,data);
 
             //Now restore from that
-            String result = mMain.getMinima().runMinimaCMD("restore password:\""+mPassword+"\" file:\""+dapp.getAbsolutePath()+"\"",false);
+            String result = null;
+            if(mPassword.trim().equals("")){
+                result = mMain.getMinima().runMinimaCMD("restore file:\""+dapp.getAbsolutePath()+"\"",false);
+            }else{
+                result = mMain.getMinima().runMinimaCMD("restore password:\""+mPassword+"\" file:\""+dapp.getAbsolutePath()+"\"",false);
+            }
 
             //Now delete the file..
             dapp.delete();
