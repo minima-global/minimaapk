@@ -115,23 +115,21 @@ public class BackupFragment extends Fragment implements ArchiveListener {
         AlertDialog.Builder builder = new AlertDialog.Builder(mMain);
         builder.setTitle("Password Entry");
 
+        //Are all the keys created..?
+        if(!Main.getInstance().getAllKeysCreated()){
+            String current = "Currently ("+Main.getInstance().getAllDefaultKeysSize()+"/"+ Wallet.NUMBER_GETADDRESS_KEYS+")";
+            new AlertDialog.Builder(mMain)
+                    .setTitle("MiniDAPP")
+                    .setMessage("Please wait for ALL your Minima keys to be created\n\n" +
+                            "This process can take up to 5 mins\n\n" +
+                            "Once that is done you can make a backup or restore!\n\n" +current)
+                    .setIcon(R.drawable.ic_minima)
+                    .setNegativeButton("Close", null)
+                    .show();
+            return;
+        }
+
         if(zBackup) {
-
-            //Are all the keys created..?
-            if(!Main.getInstance().getAllKeysCreated()){
-                String current = "Currently ("+Main.getInstance().getAllDefaultKeysSize()+"/"+ Wallet.NUMBER_GETADDRESS_KEYS+")";
-                new AlertDialog.Builder(mMain)
-                        .setTitle("MiniDAPP")
-                        .setMessage("Please wait for ALL your Minima keys to be created\n\n" +
-                                "This process can take up to 5 mins\n\n" +
-                                "Once that is done you can make a backup!\n\n" +current)
-                        .setIcon(R.drawable.ic_minima)
-                        .setNegativeButton("Close", null)
-                        .show();
-
-                return;
-            }
-
 
             LayoutInflater inflater = mMain.getLayoutInflater();
             View dialogView = inflater.inflate(R.layout.password_view, null);
