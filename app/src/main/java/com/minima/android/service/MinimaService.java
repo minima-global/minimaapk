@@ -96,6 +96,8 @@ public class MinimaService extends Service {
     Object mSyncLogObject = new Object();
     ArrayList<String> mLogs = new ArrayList<>();
 
+    int mUpdateCounter=-1;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -224,6 +226,28 @@ public class MinimaService extends Service {
 
                     }else if(event.equals("ARCHIVEUPDATE")){
                         String message = data.getString("message");
+
+                        //Are we shutting down..
+                        if(message.equals("SHUTDOWN")){
+                            MinimaLogger.log("ARCHIVE_UPDATE SHUTDOWN requested..");
+
+                            //Shut down..
+                            if(MainActivity.getMainActivity() != null){
+                                MainActivity.getMainActivity().shutdown();
+                            }else{
+                                //Stop the service
+                                stopSelf();
+                            }
+
+                            return;
+                        }
+
+                        //Send to status
+                        mUpdateCounter++;
+                        if(mUpdateCounter % 5 == 0) {
+                            startForeground(1, createNotification(message));
+                        }
+
                         if(mArchiveListener!=null){
                             mArchiveListener.updateArchiveStatus(message);
                         }

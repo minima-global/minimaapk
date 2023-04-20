@@ -50,6 +50,8 @@ import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.service.MinimaService;
+import com.minima.android.ui.archive.ArchiveListener;
+import com.minima.android.ui.archive.ChainSyncActivity;
 import com.minima.android.ui.files.FilesFragment;
 import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.logs.LogsFragment;
@@ -68,7 +70,7 @@ import org.minima.utils.json.JSONObject;
 import org.minima.utils.json.parser.JSONParser;
 import org.minima.utils.json.parser.ParseException;
 
-public class MainActivity extends AppCompatActivity  implements ServiceConnection {
+public class MainActivity extends AppCompatActivity  implements ServiceConnection, ArchiveListener {
 
     /**
      * Open File operations
@@ -112,6 +114,9 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
     //Loader while connecting to Minima
     ProgressDialog mLoader = null;
+
+    //Loader to show SYNC status
+    ProgressDialog mSyncLoader = null;
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
@@ -165,6 +170,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         mLoader.setTitle("Connecting to Minima");
         mLoader.setMessage("Please wait..");
         mLoader.setCanceledOnTouchOutside(false);
+        mLoader.setCancelable(false);
         mLoader.show();
     }
 
@@ -347,7 +353,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         shutdown(false);
     }
 
+
+    boolean mShuttingDown = false;
     public void shutdown(boolean zCompact){
+
+        //Check not called twice..
+        if(!mShuttingDown){
+            mShuttingDown = true;
+        }else{
+            return;
+        }
 
         MinimaLogger.log("SHUTDOWN REQUESTED");
 
@@ -467,6 +482,39 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     }
                     MinimaLogger.log("Status true.. ");
 
+                    //Are we restoring
+                    if(Main.getInstance().isRestoring()){
+
+                        //OK - Lets update the views..
+                        MainActivity.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                //Hide the Loader
+                                try {
+                                    if(mLoader != null && mLoader.isShowing()){
+                                        mLoader.cancel();
+                                    }
+
+                                    //New Loader
+                                    mLoader = new ProgressDialog(MainActivity.this);
+                                    mLoader.setTitle("Syncing..");
+                                    mLoader.setMessage("Please wait..");
+                                    mLoader.setCanceledOnTouchOutside(false);
+                                    mLoader.setCancelable(false);
+                                    mLoader.show();
+
+                                    //Tell service to send messages here
+                                    getMinimaService().mArchiveListener = MainActivity.this;
+
+                                } catch (Exception exc) {
+                                    MinimaLogger.log(exc);
+                                }
+                            }
+                        });
+
+                        return;
+                    }
+
                     //Install the MiniDApps..
                     installMiniDAPPs();
 
@@ -477,7 +525,6 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             //Hide the Loader
                             try{
                                 if(mLoader != null && mLoader.isShowing()){
-                                    MinimaLogger.log("Remove Loader");
                                     mLoader.cancel();
                                 }
                             }catch(Exception exc){
@@ -650,6 +697,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             mLoader.cancel();
         }
 
+        mStaticLink = null;
+
         //Unbind from the service..
         if(mMinima != null){
             unbindService(this);
@@ -799,6 +848,24 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             startActivityForResult(chooserIntent, zRequest);
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getApplicationContext(), "No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    int updatecounter = -1;
+    @Override
+    public void updateArchiveStatus(String zStatus) {
+
+        updatecounter++;
+
+        if(updatecounter % 10 == 0) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (mLoader != null && mLoader.isShowing()) {
+                        mLoader.setMessage(zStatus);
+                    }
+                }
+            });
         }
     }
 }

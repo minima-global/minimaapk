@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Editable;
@@ -30,6 +31,8 @@ import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
+import org.minima.database.wallet.Wallet;
+import org.minima.system.Main;
 import org.minima.utils.BIP39;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
@@ -74,12 +77,31 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
     }
 
     public void showArchiveHostDialog(){
+
+        //Are all the keys created..?
+        if(!Main.getInstance().getAllKeysCreated()){
+            String current = "Currently ("+Main.getInstance().getAllDefaultKeysSize()+"/"+ Wallet.NUMBER_GETADDRESS_KEYS+")";
+            new AlertDialog.Builder(this)
+                    .setTitle("MiniDAPP")
+                    .setMessage("Please wait for ALL your Minima keys to be created\n\n" +
+                            "This process can take up to 5 mins\n\n" +
+                            "Once that is done you can resync!\n\n" +current)
+                    .setIcon(R.drawable.ic_minima)
+                    .setNegativeButton("Close", null)
+                    .show();
+            return;
+        }
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Archive Node Host");
 
+        //Do we have a preference
+        SharedPreferences pref = getPreferences(Context.MODE_PRIVATE);
+        String chainsyncnode = pref.getString("chainsynchost","auto");
+
         // Set up the input
         final EditText input = new EditText(this);
-        input.setText("auto");
+        input.setText(chainsyncnode);
 
         // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
         input.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -93,6 +115,11 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
                 if(mArchiveNode.equals("")){
                     return;
                 }
+
+                //Set this as the default
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putString("chainsynchost", mArchiveNode);
+                edit.apply();
 
                 Toast.makeText(ChainSyncActivity.this,"Resyncing.. please wait..", Toast.LENGTH_LONG).show();
 
@@ -122,7 +149,7 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
     public void updateArchiveStatus(String zStatus) {
         updatecounter++;
 
-        if(updatecounter % 10 == 0) {
+        if(updatecounter % 5 == 0) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -158,7 +185,9 @@ public class ChainSyncActivity extends AppCompatActivity implements ServiceConne
 
                         //Close both
                         ChainSyncActivity.this.finishAffinity();
-                        MainActivity.getMainActivity().shutdown();
+                        if(MainActivity.getMainActivity() != null){
+                            MainActivity.getMainActivity().shutdown();
+                        }
 
                     }else{
                         ChainSyncActivity.this.runOnUiThread(new Runnable() {
