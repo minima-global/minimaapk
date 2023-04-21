@@ -453,39 +453,11 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             @Override
             public void run() {
                 try{
-                    //Wait for Maxima..
-                    MaximaManager max = Main.getInstance().getMaxima();
-                    while(max == null || !max.isInited()) {
-                        Thread.sleep(2000);
-                        max = Main.getInstance().getMaxima();
-                        MinimaLogger.log("Waiting for Maxima.. ");
-                    }
-                    MinimaLogger.log("Maxima started.. ");
-
-                    //Run Status..
-                    String status = mMinima.getMinima().runMinimaCMD("status",false);
-
-                    //Make a JSON
-                    JSONObject json = (JSONObject) new JSONParser().parse(status);
-
-                    //Get the status..
-                    while(!(boolean)json.get("status")){
-                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-
-                        Thread.sleep(2000);
-
-                        //Run Status..
-                        status = mMinima.getMinima().runMinimaCMD("status");
-
-                        //Make a JSON
-                        json = (JSONObject) new JSONParser().parse(status);
-                    }
-                    MinimaLogger.log("Status true.. ");
 
                     //Are we restoring
                     if(Main.getInstance().isRestoring()){
 
-                        //OK - Lets update the views..
+                        //Are we restoring..
                         MainActivity.this.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
@@ -514,6 +486,35 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                         return;
                     }
+
+                    //Wait for Maxima..
+                    MaximaManager max = Main.getInstance().getMaxima();
+                    while(max == null || !max.isInited()) {
+                        Thread.sleep(2000);
+                        max = Main.getInstance().getMaxima();
+                        MinimaLogger.log("Waiting for Maxima.. ");
+                    }
+                    MinimaLogger.log("Maxima started.. ");
+
+                    //Run Status..
+                    String status = mMinima.getMinima().runMinimaCMD("status",false);
+
+                    //Make a JSON
+                    JSONObject json = (JSONObject) new JSONParser().parse(status);
+
+                    //Get the status..
+                    while(!(boolean)json.get("status")){
+                        MinimaLogger.log("Waiting for Status .. "+json.toString());
+
+                        Thread.sleep(2000);
+
+                        //Run Status..
+                        status = mMinima.getMinima().runMinimaCMD("status");
+
+                        //Make a JSON
+                        json = (JSONObject) new JSONParser().parse(status);
+                    }
+                    MinimaLogger.log("Status true.. ");
 
                     //Install the MiniDApps..
                     installMiniDAPPs();

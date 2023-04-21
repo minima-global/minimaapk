@@ -461,7 +461,14 @@ public class MinimaService extends Service {
             }
         };
         IntentFilter filter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
-        registerReceiver(mBatteryReceiver, filter);
+
+        //Seen an error here
+        try{
+            registerReceiver(mBatteryReceiver, filter);
+        }catch(Exception exc){
+            MinimaLogger.log("ERROR adding Battery listener..");
+            getMinima().getMain().setLowPowAutoMineSpeed();
+        }
     }
 }
 
