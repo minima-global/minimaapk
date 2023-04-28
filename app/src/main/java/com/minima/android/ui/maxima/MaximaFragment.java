@@ -148,6 +148,8 @@ public class MaximaFragment extends Fragment {
                 Intent shareIntent = Intent.createChooser(sendIntent, null);
                 startActivity(shareIntent);
 
+                return true;
+
             case R.id.action_maxima_refresh:
                 refreshMaxima();
                 return true;
