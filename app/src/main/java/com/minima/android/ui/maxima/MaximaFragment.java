@@ -57,8 +57,12 @@ public class MaximaFragment extends Fragment {
         mMainList = root.findViewById(R.id.maxima_list);
 
         //Get the Main Activity
-        mMain = (MainActivity)getActivity();
-        mMain.setMaximaFragment(this);
+        try{
+            mMain = (MainActivity)getActivity();
+            mMain.setMaximaFragment(this);
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+        }
 
         //If it's Empty
         //mMainList.setEmptyView(root.findViewById(R.id.empty_list_item));

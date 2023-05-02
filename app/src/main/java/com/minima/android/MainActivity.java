@@ -331,6 +331,8 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Toast.makeText(MainActivity.this, "Shutting down Minima..", Toast.LENGTH_LONG).show();
+
                         shutdown(true);
                     }
                 });
@@ -427,8 +429,10 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     }
 
     public void setMaximaFragment(MaximaFragment zMaxima){
-        mMaximaFragment         = zMaxima;
-        mMinima.mContactsFrag   = zMaxima;
+        mMaximaFragment  = zMaxima;
+        if(mMinima != null){
+            mMinima.mContactsFrag = zMaxima;
+        }
     }
 
     @Override
