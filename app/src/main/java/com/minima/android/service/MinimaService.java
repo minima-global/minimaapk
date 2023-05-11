@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.net.wifi.WifiManager;
@@ -276,7 +277,7 @@ public class MinimaService extends Service {
 
         //TESTER HACK
         //vars.add("-noconnect");
-        //vars.add("-nosyncibd");
+        vars.add("-nosyncibd");
 
         vars.add("-noshutdownhook");
 
@@ -368,9 +369,18 @@ public class MinimaService extends Service {
     }
 
     private void setMinimaNotification(){
+
+//        int perm =  ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION |
+//                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA |
+//                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
+
         //Set the default message
         if(mTxPowJSON == null){
-            startForeground(1, createNotification("Starting up.. please wait.."));
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                startForeground(1, createNotification("Starting up.. please wait.."),perm);
+//            }else{
+                startForeground(1, createNotification("Starting up.. please wait.."));
+//            }
 
         }else{
             JSONObject header = (JSONObject)mTxPowJSON.get("header");
@@ -378,7 +388,11 @@ public class MinimaService extends Service {
             String block    = (String) header.get("block");
             String date     = (String) header.get("date");
 
-            startForeground(1, createNotification("Block " + block + " @ " + date));
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                startForeground(1, createNotification("Block " + block + " @ " + date),perm);
+//            }else{
+                startForeground(1, createNotification("Block " + block + " @ " + date));
+//            }
         }
     }
 

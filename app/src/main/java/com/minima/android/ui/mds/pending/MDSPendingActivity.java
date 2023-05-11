@@ -11,6 +11,7 @@ import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -89,7 +90,7 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
         }
 
         if(accept){
-            new AlertDialog.Builder(this)
+            AlertDialog.Builder builder = new AlertDialog.Builder(this)
                     .setTitle("Accept Command")
                     .setMessage("Are you sure ?\n\nThis will run the command..\n\n"+pendingitem.getString("command"))
                     .setIcon(android.R.drawable.ic_dialog_alert)
@@ -97,7 +98,12 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
                         public void onClick(DialogInterface dialog, int whichButton) {
                             acceptCommand(uid);
                         }})
-                    .setNegativeButton(android.R.string.no, null).show();
+                    .setNegativeButton(android.R.string.no, null);
+
+            AlertDialog dlg = builder.create();
+            dlg.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+            dlg.show();
+
         }else{
 
             //Delete this Command
@@ -131,14 +137,17 @@ public class MDSPendingActivity extends AppCompatActivity implements ServiceConn
                             showText.setTextIsSelectable(true);
 
                             //Show the results
-                            new AlertDialog.Builder(MDSPendingActivity.this)
+                            AlertDialog.Builder builder = new AlertDialog.Builder(MDSPendingActivity.this)
                                     .setTitle("Command Output")
                                     .setView(showText)
 //                                .setMessage(commandstr)
                                     .setIcon(R.drawable.ic_minima)
                                     .setCancelable(true)
-                                    .setNegativeButton("Close", null)
-                                    .show();
+                                    .setNegativeButton("Close", null);
+
+                            AlertDialog dlg = builder.create();
+                            dlg.getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
+                            dlg.show();
 
                             //And reset the list
                             updateList();

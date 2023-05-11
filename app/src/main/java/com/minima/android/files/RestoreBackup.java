@@ -42,6 +42,8 @@ public class RestoreBackup implements Runnable {
             //Now save to da file..
             MiniFile.writeDataToFile(dapp,data);
 
+            //MinimaLogger.log("PASSWORD RESYNC : "+mPassword);
+
             //Now restore from that
             String result = null;
             if(mPassword.trim().equals("")){

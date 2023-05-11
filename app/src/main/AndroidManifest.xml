@@ -84,12 +84,12 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Store"/>
 
-        <activity   android:name=".ui.backup.Bip39Activity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Archive"/>
+<!--        <activity   android:name=".ui.backup.Bip39Activity"-->
+<!--            android:exported="true"-->
+<!--            android:launchMode="singleInstance"-->
+<!--            android:configChanges="keyboardHidden|orientation|screenSize"-->
+<!--            android:theme="@style/Theme.MinimaAndroid.NoActionBar"-->
+<!--            android:label="Archive"/>-->
 
         <activity   android:name=".ui.archive.ChainSyncActivity"
             android:exported="true"
@@ -106,7 +106,10 @@
             android:label="Seed Phrase Re-Sync"/>
 
         <!-- SERVICES -->
-        <service android:name="com.minima.android.service.MinimaService" android:enabled="true" android:exported="true"></service>
+        <service
+            android:name="com.minima.android.service.MinimaService"
+            android:enabled="true"
+            android:exported="true"></service>
 
         <!-- RECEIVERS -->
         <receiver android:name="com.minima.android.service.BootReceiver" android:exported="true">
