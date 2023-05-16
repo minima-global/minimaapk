@@ -107,6 +107,18 @@ The Minima Team</string>
         Your wallet and keys will be reset to the chosen seed phrase and all blocks re-downloaded.
     </string>
 
+    <string name="minima_network_info">
+        The first time you connect to the Minima network you must know the ip address of someone / anyone on the network.\n
+        \n
+        All Minima users have a list that they can share with you.\n
+        \n
+        Health->Share Peers.\n
+        \n
+        You can do this at any stage later on as well..\n
+        \n
+        Health->Import Peers
+    </string>
+
     <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
     <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
 

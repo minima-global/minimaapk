@@ -21,6 +21,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.minima.android.MainActivity;
 import com.minima.android.R;
+import com.minima.android.SetPeersActivity;
 import com.minima.android.dynamite.HelperClasses.SliderAdapter;
 import com.minima.android.service.MinimaService;
 
@@ -69,7 +70,7 @@ public class OnboardingOne extends AppCompatActivity implements ServiceConnectio
             public void onClick(View view) {
 
                 if(mFromBoot) {
-                    Intent intent = new Intent(view.getContext(), MainActivity.class);
+                    Intent intent = new Intent(view.getContext(), SetPeersActivity.class);
                     view.getContext().startActivity(intent);
                 }
 

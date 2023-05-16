@@ -285,36 +285,41 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
             case R.id.action_importpeers:
 
-                AlertDialog.Builder pbuilder = new AlertDialog.Builder(this);
-                pbuilder.setTitle("Import Peers");
+                Intent sharepeers = new Intent(MainActivity.this, SetPeersActivity.class);
+                sharepeers.putExtra("FROMBOOT", false);
+                startActivity(sharepeers);
 
-                // Set up the input
-                final EditText input = new EditText(this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT);
-                pbuilder.setView(input);
 
-                pbuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        //Get the peers list
-                        String peers = input.getText().toString().trim();
-
-                        //Import these peers..
-                        String addpeer = mMinima.getMinima().runMinimaCMD("peers action:addpeers peerslist:"+peers,false);
-
-                        MinimaLogger.log(addpeer);
-
-                        Toast.makeText(MainActivity.this, "Peers Imported", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                pbuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-                pbuilder.show();
+//                AlertDialog.Builder pbuilder = new AlertDialog.Builder(this);
+//                pbuilder.setTitle("Import Peers");
+//
+//                // Set up the input
+//                final EditText input = new EditText(this);
+//                input.setInputType(InputType.TYPE_CLASS_TEXT);
+//                pbuilder.setView(input);
+//
+//                pbuilder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        //Get the peers list
+//                        String peers = input.getText().toString().trim();
+//
+//                        //Import these peers..
+//                        String addpeer = mMinima.getMinima().runMinimaCMD("peers action:addpeers peerslist:"+peers,false);
+//
+//                        MinimaLogger.log(addpeer);
+//
+//                        Toast.makeText(MainActivity.this, "Peers Imported", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                pbuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        dialog.cancel();
+//                    }
+//                });
+//                pbuilder.show();
 
                 return true;
 
@@ -568,6 +573,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                             requestBatteryCheck();
                         }
                     });
+
+//                    //DO you have any peers..
+//                    String peers    = mMinima.getMinima().runMinimaCMD("peers",false);
+//                    JSONObject json = (JSONObject) new JSONParser().parse(peers);
+//
+//                    boolean havepeers = false;
+//                    if(!havepeers){
+//                        Intent sharepeers = new Intent(MainActivity.this, SetPeersActivity.class);
+//                        startActivity(sharepeers);
+//                    }
 
                 }catch(Exception exc) {
                     MinimaLogger.log(exc);

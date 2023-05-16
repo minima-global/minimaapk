@@ -276,7 +276,7 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-        //vars.add("-noconnect");
+        vars.add("-noconnect");
         vars.add("-nosyncibd");
 
         vars.add("-noshutdownhook");

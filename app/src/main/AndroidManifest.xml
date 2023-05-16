@@ -105,6 +105,13 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Seed Phrase Re-Sync"/>
 
+        <activity   android:name=".SetPeersActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="Onboarding"/>
+
         <!-- SERVICES -->
         <service
             android:name="com.minima.android.service.MinimaService"

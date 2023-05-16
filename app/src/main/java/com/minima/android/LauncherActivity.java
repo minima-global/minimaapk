@@ -24,9 +24,9 @@ public class LauncherActivity extends AppCompatActivity {
 
         }else{
 
-            SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
-            sharedPreferencesEditor.apply();
+//            SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+//            sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
+//            sharedPreferencesEditor.apply();
 
             Intent intent = new Intent(this, OnboardingOne.class);
             startActivity(intent);
