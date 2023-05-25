@@ -36,17 +36,21 @@
         android:theme="@style/Theme.MinimaAndroid"
         tools:targetApi="31">
 
+        <!--            android:theme="@android:style/Theme.NoDisplay">-->
+
         <activity
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".LauncherActivity"
+            android:name=".mdshub.MDSBrowserInit"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@android:style/Theme.NoDisplay">
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
 
         <activity   android:name=".ui.maxima.MyDetailsActivity"
@@ -144,6 +148,15 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>
+
+<!--        <activity-->
+<!--            android:launchMode="singleInstance"-->
+<!--            android:configChanges="keyboardHidden|orientation|screenSize"-->
+<!--            android:name=".mdshub.MDSBrowserInit"-->
+<!--            android:exported="true"-->
+<!--            android:label="MDSINIT"-->
+<!--            android:theme="@style/Theme.MinimaAndroid.NoActionBar">-->
+<!--        </activity>-->
 
         <!--DYNAMITE-->
 

@@ -2,12 +2,10 @@ package com.minima.android;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -16,11 +14,9 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.preference.PreferenceManager;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
 import android.text.InputType;
@@ -35,7 +31,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -49,9 +44,9 @@ import com.minima.android.files.InstallAssetMiniDAPP;
 import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.files.UpdateMiniDAPP;
+import com.minima.android.mdshub.MDSBrowserInit;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.archive.ArchiveListener;
-import com.minima.android.ui.archive.ChainSyncActivity;
 import com.minima.android.ui.files.FilesFragment;
 import com.minima.android.ui.home.HomeFragment;
 import com.minima.android.ui.logs.LogsFragment;
@@ -522,6 +517,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
 
                     //Install the MiniDApps..
                     installMiniDAPPs();
+
+                    //Jump..
+                    //Show your details
+                    Intent intent = new Intent(MainActivity.this, MDSBrowserInit.class);
+                    startActivity(intent);
+
+                    if(true){
+                        return;
+                    }
 
                     //OK - Lets update the views..
                     MainActivity.this.runOnUiThread(new Runnable() {
