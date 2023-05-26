@@ -13,6 +13,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.JsResult;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -94,6 +95,7 @@ public class MDSBrowserInit extends AppCompatActivity {
         settings.setAllowFileAccessFromFileURLs(true);
         settings.setAllowContentAccess(true);
         settings.setBuiltInZoomControls(true);
+        settings.setSupportMultipleWindows(true);
 
         //settings.setBuiltInZoomControls(true);
         //mWebView.addJavascriptInterface(new WebAppInterface(this), "");
@@ -101,13 +103,36 @@ public class MDSBrowserInit extends AppCompatActivity {
         mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                view.loadUrl(request.getUrl().toString());
+                String url = request.getUrl().toString();
+                MinimaLogger.log("PAGE : "+url);
+
+                //view.loadUrl(request.getUrl().toString());
+                loadPage(view);
+
                 return false;
             }
         });
 
         //mWebView.setWebViewClient(new WebViewClient() {
         mWebView.setWebChromeClient(new WebChromeClient() {
+
+            @Override
+            public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg)
+            {
+                WebView.HitTestResult result    = view.getHitTestResult();
+                String data                     = result.getExtra();
+                Context context                 = view.getContext();
+
+                MinimaLogger.log("Create Window : "+data);
+
+                Intent intent = new Intent(context, MDSBrowserInit.class);
+                context.startActivity(intent);
+
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(data));
+//                context.startActivity(browserIntent);
+                return false;
+            }
+
             @Override
             public boolean onJsAlert(WebView view, String url, String message, final android.webkit.JsResult result)
             {
@@ -128,6 +153,33 @@ public class MDSBrowserInit extends AppCompatActivity {
 
                 return true;
             };
+
+            @Override
+            public boolean onJsConfirm(WebView view, String url, String message, final JsResult result) {
+                new AlertDialog.Builder(MDSBrowserInit.this)
+                        .setTitle("App Titler")
+                        .setMessage(message)
+                        .setPositiveButton(android.R.string.ok,
+                                new DialogInterface.OnClickListener()
+                                {
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        result.confirm();
+                                    }
+                                })
+                        .setNegativeButton(android.R.string.cancel,
+                                new DialogInterface.OnClickListener()
+                                {
+                                    public void onClick(DialogInterface dialog, int which)
+                                    {
+                                        result.cancel();
+                                    }
+                                })
+                        .create()
+                        .show();
+
+                return true;
+            }
 
             @Override
             public boolean onShowFileChooser (WebView webView, ValueCallback<Uri[]> filePathCallback,
@@ -226,28 +278,41 @@ public class MDSBrowserInit extends AppCompatActivity {
         return "https://127.0.0.1:9003/";
     }
 
+    int pagecount = 0;
     public void loadInit(){
-        mWebView.clearHistory();
+        pagecount = 0;
+
         mWebView.clearCache(true);
+        loadPage(mWebView);
+
+        mWebView.clearHistory();
+
+        //mWebView.loadUrl(getIndexURL());
+    }
+
+    public void loadPage(WebView zWebView){
+        pagecount++;
 
         String summary =
                 "<html><body>" +
-                "You scored <b>192</b> points." +
-                "<input type=\"file\"\n" +
+                        "Page Count:" +pagecount+
+                        "<input type=\"file\"\n" +
                         "       id=\"avatar\" name=\"avatar\"\n" +
-                        "       accept=\"image/png, image/jpeg\">" +
-                "<input type=\"button\" value=\"Say hello\" onClick=\"showAndroidToast('Hello Android!')\" />\n" +
-                        "\n" +
-                        "<script type=\"text/javascript\">\n" +
-                        "    function showAndroidToast(toast) {\n" +
-                        "        alert(toast);\n" +
-                        "    }\n" +
-                        "</script>" +
-                "</body></html>";
+                        "       accept=\"image/png, image/jpeg\"><br><br>" +
+                        "<input type=\"button\" value=\"Show Alert\" onClick=\"alert('Works!');\" />\n" +
+                        "<br><br>" +
+                        "<input type=\"button\" value=\"Show Confirm\" onClick=\"confirm('Works!');\" />\n" +
+                        "<br><br>" +
+                        "<a href=\"http://hello.com/somepage.html\">OPEN SAME WINDOW</a><br><br>" +
+                        "<a href=\"http://hello.com/somepage.html\" target='_blank'>OPEN NEW WINDOW</a><br><br>" +
+//                        "<script type=\"text/javascript\">\n" +
+//                        "    function showAndroidToast(toast) {\n" +
+//                        "        \n" +
+//                        "    }\n" +
+//                        "</script>" +
+                        "</body></html>";
 
-        mWebView.loadData(summary, "text/html; charset=utf-8", "utf-8");
-
-        //mWebView.loadUrl(getIndexURL());
+        zWebView.loadData(summary, "text/html; charset=utf-8", "utf-8");
     }
 
     @Override

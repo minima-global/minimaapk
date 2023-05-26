@@ -34,6 +34,7 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.MainActivity;
 import com.minima.android.R;
+import com.minima.android.mdshub.MiniBrowser;
 import com.minima.android.ui.mds.pending.MDSPendingActivity;
 
 import org.bouncycastle.pqc.crypto.rainbow.Layer;
@@ -95,25 +96,31 @@ public class MDSFragment extends Fragment {
                 //Is this an internal or external MiniDAPP..
                 String browsertype = conf.getString("browser","internal");
 
-               if(browsertype.equals("internal")){
+                //Open the new Browwer
+                String minipage = "https://127.0.0.1:9003/"+uid+"/index.html?uid="+sessionid;
+                Intent intent = new Intent(mMain, MiniBrowser.class);
+                intent.putExtra("url",minipage);
+                startActivity(intent);
 
-                   //Open internally..
-                   Intent intent = new Intent(mMain, MDSBrowser.class);
-                   intent.putExtra("name", conf.getString("name"));
-                   intent.putExtra("uid", uid);
-                   startActivity(intent);
-
-               }else{
-
-                   //The URL page
-                   Uri minipage = Uri.parse("https://127.0.0.1:9003/"+uid+"/index.html?uid="+sessionid);
-
-                   //Start the browser
-                   Intent browser = new Intent(Intent.ACTION_VIEW);
-                   browser.putExtra(Browser.EXTRA_APPLICATION_ID, "MiniDAPP_"+uid);
-                   browser.setData(minipage);
-                   startActivity(browser);
-               }
+//               if(browsertype.equals("internal")){
+//
+//                   //Open internally..
+//                   Intent intent = new Intent(mMain, MDSBrowser.class);
+//                   intent.putExtra("name", conf.getString("name"));
+//                   intent.putExtra("uid", uid);
+//                   startActivity(intent);
+//
+//               }else{
+//
+//                   //The URL page
+//                   Uri minipage = Uri.parse("https://127.0.0.1:9003/"+uid+"/index.html?uid="+sessionid);
+//
+//                   //Start the browser
+//                   Intent browser = new Intent(Intent.ACTION_VIEW);
+//                   browser.putExtra(Browser.EXTRA_APPLICATION_ID, "MiniDAPP_"+uid);
+//                   browser.setData(minipage);
+//                   startActivity(browser);
+//               }
             }
         });
 

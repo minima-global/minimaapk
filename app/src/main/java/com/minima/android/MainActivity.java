@@ -45,6 +45,7 @@ import com.minima.android.files.InstallMiniDAPP;
 import com.minima.android.files.RestoreBackup;
 import com.minima.android.files.UpdateMiniDAPP;
 import com.minima.android.mdshub.MDSBrowserInit;
+import com.minima.android.mdshub.MiniBrowser;
 import com.minima.android.service.MinimaService;
 import com.minima.android.ui.archive.ArchiveListener;
 import com.minima.android.ui.files.FilesFragment;
@@ -518,14 +519,25 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     //Install the MiniDApps..
                     installMiniDAPPs();
 
-                    //Jump..
-                    //Show your details
-                    Intent intent = new Intent(MainActivity.this, MDSBrowserInit.class);
-                    startActivity(intent);
-
-                    if(true){
-                        return;
-                    }
+//                    //Jump..
+//                    Intent intent = new Intent(MainActivity.this, MiniBrowser.class);
+//                    intent.putExtra("url","https://127.0.0.1:9003/");
+//                    startActivity(intent);
+//                    if(true){
+//                        //OK - Lets update the views..
+//                        MainActivity.this.runOnUiThread(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                //Hide the Loader
+//                                try {
+//                                    if (mLoader != null && mLoader.isShowing()) {
+//                                        mLoader.cancel();
+//                                    }
+//                                } catch (Exception exc) {}
+//                            }
+//                        });
+//                        return;
+//                    }
 
                     //OK - Lets update the views..
                     MainActivity.this.runOnUiThread(new Runnable() {
