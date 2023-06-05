@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
+import android.webkit.URLUtil;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -67,6 +68,9 @@ public class MiniBrowser extends AppCompatActivity {
         mWebView = (WebView) findViewById(R.id.mds_webview);
 
         WebSettings settings = mWebView.getSettings();
+
+        settings.setUserAgentString("Minima Browser v2.0");
+        settings.setDefaultTextEncodingName("utf-8");
         settings.setJavaScriptEnabled(true);
         settings.setDomStorageEnabled(true);
         settings.setJavaScriptCanOpenWindowsAutomatically(true);
@@ -78,7 +82,9 @@ public class MiniBrowser extends AppCompatActivity {
         settings.setAllowContentAccess(true);
         //settings.setBuiltInZoomControls(true);
         settings.setSupportMultipleWindows(true);
-        settings.setUserAgentString("Minima Browser v2.0");
+
+        //Listen for specific download bloc requests
+        mWebView.addJavascriptInterface(new MiniBrowserBlobDownload(this),"Android");
 
         //Set the Clients..
         mWebView.setWebViewClient(new MiniWebViewClient(this));
@@ -91,31 +97,29 @@ public class MiniBrowser extends AppCompatActivity {
             @Override
             public void onDownloadStart(String url, String useragent, String contentdisposition, String mimetype, long contentlength) {
 
-                String newurl  = "https://www.spartacusrex.com/images/spincube_promo.jpg";
-                String newmime = "image/*";
+//                MinimaLogger.log("DURL:"+url+"**");
+//                MinimaLogger.log("DUSERAGENT:"+useragent+"**");
+//                MinimaLogger.log("DCONTENT:"+contentdisposition+"**");
+//                MinimaLogger.log("DMIME:"+mimetype+"**");
+//                MinimaLogger.log("DLEN:"+contentlength+"**");
 
-                MinimaLogger.log("DURL:"+url+"**");
-                MinimaLogger.log("DUSERAGENT:"+useragent+"**");
-                MinimaLogger.log("DCONTENT:"+contentdisposition+"**");
-                MinimaLogger.log("DMIME:"+mimetype+"**");
-                MinimaLogger.log("DLEN:"+contentlength+"**");
+                String filename = URLUtil.guessFileName( url, contentdisposition, mimetype);
 
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(newurl));
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
 
-                request.setMimeType(newmime);
-                String cookies = CookieManager.getInstance().getCookie(newurl);
+                request.setMimeType(mimetype);
+                String cookies = CookieManager.getInstance().getCookie(url);
                 request.addRequestHeader("cookie", cookies);
                 request.addRequestHeader("User-Agent", useragent);
                 request.setDescription("Downloading File...");
 
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Filename");
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 dm.enqueue(request);
 
-                Toast.makeText(getApplicationContext(), "Downloading File", //To notify the Client that the file is being downloaded
-                        Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
             }
         });
 
