@@ -454,6 +454,11 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
             public void run() {
                 try{
 
+                    //Check..
+                    while(Main.getInstance() == null){
+                        Thread.sleep(500);
+                    }
+
                     //Are we restoring
                     if(Main.getInstance().isRestoring()){
 

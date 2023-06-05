@@ -17,6 +17,13 @@
 <!--        app:showAsAction="never" />-->
 
     <item
+        android:id="@+id/action_mdsconsole"
+        android:orderInCategory="100"
+        android:title="Console Messages"
+        android:icon="@android:drawable/edit_text"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_mdsopen"
         android:orderInCategory="100"
         android:title="Open in Browser"

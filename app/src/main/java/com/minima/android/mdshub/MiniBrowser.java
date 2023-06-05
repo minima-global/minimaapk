@@ -1,14 +1,18 @@
 package com.minima.android.mdshub;
 
 import android.Manifest;
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.webkit.CookieManager;
+import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -41,6 +45,9 @@ public class MiniBrowser extends AppCompatActivity {
     //File open Ops..
     ValueCallback<Uri[]> mFileCheckPath;
 
+    //The ChromeView Client
+    MiniChromViewClient mChromeClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,7 +61,7 @@ public class MiniBrowser extends AppCompatActivity {
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
-        MinimaLogger.log("BASE URL : "+mBaseURL);
+        //MinimaLogger.log("BASE URL : "+mBaseURL);
 
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
@@ -71,24 +78,63 @@ public class MiniBrowser extends AppCompatActivity {
         settings.setAllowContentAccess(true);
         //settings.setBuiltInZoomControls(true);
         settings.setSupportMultipleWindows(true);
+        settings.setUserAgentString("Minima Browser v2.0");
 
         //Set the Clients..
         mWebView.setWebViewClient(new MiniWebViewClient(this));
-        mWebView.setWebChromeClient(new MiniChromViewClient(this));
+
+        mChromeClient = new MiniChromViewClient(this);
+        mWebView.setWebChromeClient(mChromeClient);
+
+        //Set a Download Listener..
+        mWebView.setDownloadListener(new DownloadListener() {
+            @Override
+            public void onDownloadStart(String url, String useragent, String contentdisposition, String mimetype, long contentlength) {
+
+                String newurl  = "https://www.spartacusrex.com/images/spincube_promo.jpg";
+                String newmime = "image/*";
+
+                MinimaLogger.log("DURL:"+url+"**");
+                MinimaLogger.log("DUSERAGENT:"+useragent+"**");
+                MinimaLogger.log("DCONTENT:"+contentdisposition+"**");
+                MinimaLogger.log("DMIME:"+mimetype+"**");
+                MinimaLogger.log("DLEN:"+contentlength+"**");
+
+                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(newurl));
+
+                request.setMimeType(newmime);
+                String cookies = CookieManager.getInstance().getCookie(newurl);
+                request.addRequestHeader("cookie", cookies);
+                request.addRequestHeader("User-Agent", useragent);
+                request.setDescription("Downloading File...");
+
+                request.allowScanningByMediaScanner();
+                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "Filename");
+                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                dm.enqueue(request);
+
+                Toast.makeText(getApplicationContext(), "Downloading File", //To notify the Client that the file is being downloaded
+                        Toast.LENGTH_LONG).show();
+            }
+        });
 
         //And load the page
         mWebView.loadUrl(mBaseURL);
 
         //Get Files Permission
-        checkPermission(Manifest.permission.READ_EXTERNAL_STORAGE,99);
+        String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        checkPermission(perms,99);
     }
 
     // Function to check and request permission
-    public void checkPermission(String permission, int requestCode){
+    public void checkPermission(String[] permissions, int requestCode){
         // Checking if permission is not granted
-        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { permission }, requestCode);
-        }
+        ActivityCompat.requestPermissions(this, permissions , requestCode);
+
+//        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+//            ActivityCompat.requestPermissions(this, new String[] { permission }, requestCode);
+//        }
     }
 
     @Override
@@ -108,6 +154,14 @@ public class MiniBrowser extends AppCompatActivity {
 
             case R.id.action_mdsexit:
                 finish();
+                return true;
+
+            case R.id.action_mdsconsole:
+
+                Intent console = new Intent(this, ConsoleActivity.class);
+                console.putExtra("consoletext",mChromeClient.getConsoleMessages());
+                startActivity(console);
+
                 return true;
 
             case R.id.action_mdsopen:

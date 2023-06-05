@@ -27,8 +27,15 @@ public class MiniChromViewClient extends WebChromeClient {
     //The Main Activity
     MiniBrowser mMiniBrowser;
 
+    //The Console messages
+    String mConsoleMessages = new String();
+
     public MiniChromViewClient(MiniBrowser zActivity){
         mMiniBrowser = zActivity;
+    }
+
+    public String getConsoleMessages(){
+        return mConsoleMessages;
     }
 
     @Override
@@ -51,8 +58,8 @@ public class MiniChromViewClient extends WebChromeClient {
         view.requestFocusNodeHref(href);
         var url = href.getData().getString("url");
 
-        MinimaLogger.log("New Window Data : "+data);
-        MinimaLogger.log("New Window url : "+url);
+//        MinimaLogger.log("New Window Data : "+data);
+//        MinimaLogger.log("New Window url : "+url);
 
         Intent intent = new Intent(context, MiniBrowser.class);
         intent.putExtra("url",url);
@@ -63,6 +70,13 @@ public class MiniChromViewClient extends WebChromeClient {
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+
+        //Add a line to the Console output
+        mConsoleMessages += consoleMessage.message()
+                + " -- From line "
+                + consoleMessage.lineNumber()
+                + " of "+ consoleMessage.sourceId()+"\n\n";
+
         MinimaLogger.log(consoleMessage.message()
                 + " -- From line "
                 + consoleMessage.lineNumber()

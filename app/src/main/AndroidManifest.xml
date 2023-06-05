@@ -160,6 +160,14 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>
 
+        <activity
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name=".mdshub.ConsoleActivity"
+            android:exported="true"
+            android:label="Console"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
         <!--DYNAMITE-->
 
         <activity
