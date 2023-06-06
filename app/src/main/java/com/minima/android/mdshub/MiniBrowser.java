@@ -103,23 +103,33 @@ public class MiniBrowser extends AppCompatActivity {
 //                MinimaLogger.log("DMIME:"+mimetype+"**");
 //                MinimaLogger.log("DLEN:"+contentlength+"**");
 
-                String filename = URLUtil.guessFileName( url, contentdisposition, mimetype);
+                try{
+                    String filename = URLUtil.guessFileName( url, contentdisposition, mimetype);
 
-                DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    //Can't do blobs - USE JavaScriptInterface instead
+                    if(url.startsWith("blob")){
+                        Toast.makeText(getApplicationContext(), "Cannot download Blobs..", Toast.LENGTH_LONG).show();
+                        return;
+                    }
 
-                request.setMimeType(mimetype);
-                String cookies = CookieManager.getInstance().getCookie(url);
-                request.addRequestHeader("cookie", cookies);
-                request.addRequestHeader("User-Agent", useragent);
-                request.setDescription("Downloading File...");
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
 
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
-                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                dm.enqueue(request);
+                    request.setMimeType(mimetype);
+                    String cookies = CookieManager.getInstance().getCookie(url);
+                    request.addRequestHeader("cookie", cookies);
+                    request.addRequestHeader("User-Agent", useragent);
+                    request.setDescription("Downloading File...");
 
-                Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+                    request.allowScanningByMediaScanner();
+                    request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
+                    request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                    DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                    dm.enqueue(request);
+
+                    Toast.makeText(getApplicationContext(), "Downloading File", Toast.LENGTH_LONG).show();
+                }catch(Exception exc){
+                    MinimaLogger.log(exc);
+                }
             }
         });
 

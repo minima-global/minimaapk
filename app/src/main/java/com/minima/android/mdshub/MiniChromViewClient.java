@@ -77,10 +77,10 @@ public class MiniChromViewClient extends WebChromeClient {
                 + consoleMessage.lineNumber()
                 + " of "+ consoleMessage.sourceId()+"\n\n";
 
-        MinimaLogger.log(consoleMessage.message()
-                + " -- From line "
-                + consoleMessage.lineNumber()
-                + " of "+ consoleMessage.sourceId());
+//        MinimaLogger.log(consoleMessage.message()
+//                + " -- From line "
+//                + consoleMessage.lineNumber()
+//                + " of "+ consoleMessage.sourceId());
 
         return super.onConsoleMessage(consoleMessage);
     }
@@ -137,7 +137,7 @@ public class MiniChromViewClient extends WebChromeClient {
         //What types do you want..
         String[] types = fileChooserParams.getAcceptTypes();
 
-        MinimaLogger.log("OPEN FILES MIME TYPES "+Arrays.toString(types));
+        //MinimaLogger.log("OPEN FILES MIME TYPES "+Arrays.toString(types));
 
         //Open a file..
         mMiniBrowser.openFile(types,filePathCallback);
