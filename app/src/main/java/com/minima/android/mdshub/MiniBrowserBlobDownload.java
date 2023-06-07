@@ -16,9 +16,9 @@ import java.nio.file.Paths;
 
 public class MiniBrowserBlobDownload {
 
-    private Context mContext;
+    private MiniBrowser mContext;
 
-    public MiniBrowserBlobDownload(Context zContext){
+    public MiniBrowserBlobDownload(MiniBrowser zContext){
         mContext = zContext;
     }
 
@@ -48,12 +48,23 @@ public class MiniBrowserBlobDownload {
             MinimaLogger.log(e);
 
             //Small message
-            Toast.makeText(mContext,"Error saving file..",Toast.LENGTH_SHORT).show();
+            mContext.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext,"Error saving file..",Toast.LENGTH_SHORT).show();
+                }
+            });
 
             return;
         }
 
         //Small message
-        Toast.makeText(mContext,"File saved : "+filename,Toast.LENGTH_SHORT).show();
+        final String finalfile = filename;
+        mContext.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mContext, "File saved : " + finalfile, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
@@ -12,7 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/MinimaActionBar"
-            tools:title="This is the title"/>
+            tools:title="This is the title">
+
+<!--                <ImageView-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    app:logo="@drawable/minima_200_200_black"/>-->
+
+        </androidx.appcompat.widget.Toolbar>
 
         <WebView
             android:id="@+id/mds_webview"

@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Message;
 import android.text.TextUtils;
@@ -44,6 +47,18 @@ public class MiniChromViewClient extends WebChromeClient {
         if (!TextUtils.isEmpty(title)) {
             mMiniBrowser.setTitle(title);
         }
+    }
+
+    @Override
+    public void onReceivedIcon(WebView view, Bitmap icon){
+
+        int height = mMiniBrowser.getToolBar().getHeight();
+        height = (int)((float)height * 0.8);
+
+        Bitmap bitmapResized = Bitmap.createScaledBitmap(icon, height, height, true);
+        Drawable dicon = new BitmapDrawable( mMiniBrowser.getResources(), bitmapResized);
+
+        mMiniBrowser.getToolBar().setNavigationIcon(dicon);
     }
 
     @Override

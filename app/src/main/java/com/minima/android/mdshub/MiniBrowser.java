@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.DownloadListener;
 import android.webkit.URLUtil;
@@ -49,13 +50,19 @@ public class MiniBrowser extends AppCompatActivity {
     //The ChromeView Client
     MiniChromViewClient mChromeClient;
 
+    //The ToolBar
+    Toolbar mToolBar;
+
+    //Are we hidin the bar..
+    boolean mHidingBar = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_browser);
 
-        Toolbar mToolBar = findViewById(R.id.minidapp_toolbar);
+        mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
 
         setTitle("Minima Browser");
@@ -66,6 +73,16 @@ public class MiniBrowser extends AppCompatActivity {
 
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
+
+        mWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int scrollX, int scrolly, int oldScrollX, int oldScrollY) {
+                //Show toolbar on scroll
+                if(scrolly<oldScrollY){
+                    showToolbar();
+                }
+            }
+        });
 
         WebSettings settings = mWebView.getSettings();
 
@@ -139,6 +156,50 @@ public class MiniBrowser extends AppCompatActivity {
         //Get Files Permission
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
+
+        hideToolBar();
+    }
+
+    public void showToolbar(){
+
+        //Only if hidden
+        if(!getSupportActionBar().isShowing() && !mHidingBar) {
+            getSupportActionBar().show();
+
+            //And hide it after a delay
+            hideToolBar();
+        }
+    }
+
+    public void hideToolBar(){
+
+        //We are hiding
+        mHidingBar = true;
+
+        //Hide toolbar after a few secs..
+        Runnable hider = new Runnable() {
+            @Override
+            public void run() {
+
+                //Wait 5 secs
+                try {Thread.sleep(10000);} catch (InterruptedException e) {}
+
+                //Now hide it..
+                MiniBrowser.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHidingBar = false;
+                        MiniBrowser.this.getSupportActionBar().hide();
+                    }
+                });
+            }
+        };
+        Thread tt = new Thread(hider);
+        tt.start();
+    }
+
+    public Toolbar getToolBar(){
+        return mToolBar;
     }
 
     // Function to check and request permission
@@ -194,6 +255,9 @@ public class MiniBrowser extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(mWebView.canGoBack()) {
+            //Show the toolbar
+            showToolbar();
+
             mWebView.goBack();
         } else {
             mWebView.loadUrl("");
