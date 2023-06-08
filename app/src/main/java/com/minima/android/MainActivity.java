@@ -497,7 +497,12 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     while(max == null || !max.isInited()) {
                         Thread.sleep(2000);
                         max = Main.getInstance().getMaxima();
-                        MinimaLogger.log("Waiting for Maxima.. ");
+
+                        if(max==null){
+                            MinimaLogger.log("Waiting for Maxima.. max null");
+                        }else{
+                            MinimaLogger.log("Waiting for Maxima.. ");
+                        }
                     }
                     MinimaLogger.log("Maxima started.. ");
 

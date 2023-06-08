@@ -182,7 +182,7 @@ public class MiniBrowser extends AppCompatActivity {
             public void run() {
 
                 //Wait 5 secs
-                try {Thread.sleep(10000);} catch (InterruptedException e) {}
+                try {Thread.sleep(5000);} catch (InterruptedException e) {}
 
                 //Now hide it..
                 MiniBrowser.this.runOnUiThread(new Runnable() {
