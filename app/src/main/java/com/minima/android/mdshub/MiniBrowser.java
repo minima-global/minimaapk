@@ -2,10 +2,7 @@ package com.minima.android.mdshub;
 
 import android.Manifest;
 import android.app.DownloadManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,17 +18,13 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.minima.android.R;
 
 import org.minima.utils.MinimaLogger;
-
-import java.util.Arrays;
 
 public class MiniBrowser extends AppCompatActivity {
 
@@ -101,7 +94,7 @@ public class MiniBrowser extends AppCompatActivity {
         settings.setSupportMultipleWindows(true);
 
         //Listen for specific download bloc requests
-        mWebView.addJavascriptInterface(new MiniBrowserBlobDownload(this),"Android");
+        mWebView.addJavascriptInterface(new MiniBrowserJSInterface(this),"Android");
 
         //Set the Clients..
         mWebView.setWebViewClient(new MiniWebViewClient(this));
