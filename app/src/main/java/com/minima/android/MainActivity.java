@@ -527,7 +527,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                     MinimaLogger.log("Status true.. ");
 
                     //Install the MiniDApps..
-                    installMiniDAPPs();
+                    //installMiniDAPPs();
 
 //                    //Jump..
 //                    Intent intent = new Intent(MainActivity.this, MiniBrowser.class);
