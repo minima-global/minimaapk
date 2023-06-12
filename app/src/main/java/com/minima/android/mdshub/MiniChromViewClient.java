@@ -14,7 +14,9 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -63,24 +65,49 @@ public class MiniChromViewClient extends WebChromeClient {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
-        WebView.HitTestResult result    = view.getHitTestResult();
-        String data                     = result.getExtra();
-        Context context                 = view.getContext();
 
-        Message href = view.getHandler().obtainMessage();
-        //MinimaLogger.log("New Window Message : "+href.toString());
+        WebView newWebView = new WebView(view.getContext());
+        WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+        transport.setWebView(newWebView);
+        resultMsg.sendToTarget();
+        newWebView.setWebViewClient(new WebViewClient() {
 
-        view.requestFocusNodeHref(href);
-        var url = href.getData().getString("url");
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (url != null && !url.isEmpty()) {
 
-//        MinimaLogger.log("New Window Data : "+data);
-//        MinimaLogger.log("New Window url : "+url);
+                    //Open a new window..
+                    Intent intent = new Intent(view.getContext(), MiniBrowser.class);
+                    intent.putExtra("url",url);
+                    view.getContext().startActivity(intent);
+                }else{
+                    MinimaLogger.log("BLANK NEW Window!!");
+                }
 
-        Intent intent = new Intent(context, MiniBrowser.class);
-        intent.putExtra("url",url);
-        context.startActivity(intent);
+                return false;
+            }
+        });
+        return true;
 
-        return false;
+
+//        WebView.HitTestResult result    = view.getHitTestResult();
+//        String data                     = result.getExtra();
+//        Context context                 = view.getContext();
+//
+//        Message href = view.getHandler().obtainMessage();
+//        //MinimaLogger.log("New Window Message : "+href.toString());
+//
+//        view.requestFocusNodeHref(href);
+//        var url = href.getData().getString("url");
+//
+////        MinimaLogger.log("New Window Data : "+data);
+////        MinimaLogger.log("New Window url : "+url);
+//
+//        Intent intent = new Intent(context, MiniBrowser.class);
+//        intent.putExtra("url",url);
+//        context.startActivity(intent);
+//        return false;
     }
 
     @Override
@@ -92,12 +119,7 @@ public class MiniChromViewClient extends WebChromeClient {
                 + consoleMessage.lineNumber()
                 + " of "+ consoleMessage.sourceId()+"\n\n";
 
-//        MinimaLogger.log(consoleMessage.message()
-//                + " -- From line "
-//                + consoleMessage.lineNumber()
-//                + " of "+ consoleMessage.sourceId());
-
-        return super.onConsoleMessage(consoleMessage);
+        return true;
     }
 
     @Override
