@@ -67,14 +67,27 @@ public class MiniBrowserJSInterface {
     }
 
     @JavascriptInterface
-    public void closeBrowser() {
+    public void closeWindow() {
+
+        MinimaLogger.log("MiniBrowser JS - Close Window");
 
         //Close this WebView
-        mMiniBrowser.finish();
+        mMiniBrowser.shutWindow();
+    }
+
+    @JavascriptInterface
+    public void shutdownMinima() {
+
+        MinimaLogger.log("MiniBrowser JS - ShutDown Minima");
+
+        //Close this WebView
+        mMiniBrowser.finishAffinity();
     }
 
     @JavascriptInterface
     public void showTitleBar() {
+
+        MinimaLogger.log("MiniBrowser JS - Show Title Bar");
 
         mMiniBrowser.runOnUiThread(new Runnable() {
             @Override

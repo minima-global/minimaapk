@@ -153,6 +153,17 @@ public class MiniBrowser extends AppCompatActivity {
         hideToolBar();
     }
 
+    public void shutWindow(){
+        MinimaLogger.log("MINIBROWSER SHUT WINDOW ");
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mWebView.loadUrl("");
+                MiniBrowser.super.onBackPressed();
+            }
+        });
+    }
+
     public void showToolbar(){
 
         //Only if hidden
