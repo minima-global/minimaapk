@@ -57,6 +57,13 @@
 
         </activity>
 
+        <activity   android:name=".StartMinimaActivity"
+            android:exported="true"
+            android:launchMode="singleInstance"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
+            android:label="Starting up.."/>
+
         <activity   android:name=".ui.maxima.MyDetailsActivity"
             android:exported="true"
             android:launchMode="singleInstance"

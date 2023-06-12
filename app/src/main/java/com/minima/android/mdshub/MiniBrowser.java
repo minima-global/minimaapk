@@ -166,6 +166,8 @@ public class MiniBrowser extends AppCompatActivity {
 
     public void hideToolBar(){
 
+        MinimaLogger.log("Start HIDE TOOLBAR");
+
         //We are hiding
         mHidingBar = true;
 
@@ -183,6 +185,7 @@ public class MiniBrowser extends AppCompatActivity {
                     public void run() {
                         mHidingBar = false;
                         MiniBrowser.this.getSupportActionBar().hide();
+                        MinimaLogger.log("HIDE TOOLBAR");
                     }
                 });
             }

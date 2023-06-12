@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     public void setMaximaFragment(MaximaFragment zMaxima){
         mMaximaFragment  = zMaxima;
         if(mMinima != null){
-            mMinima.mContactsFrag = zMaxima;
+            //mMinima.mContactsFrag = zMaxima;
         }
     }
 
@@ -481,7 +481,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                                     mLoader.show();
 
                                     //Tell service to send messages here
-                                    getMinimaService().mArchiveListener = MainActivity.this;
+                                    //getMinimaService().mArchiveListener = MainActivity.this;
 
                                 } catch (Exception exc) {
                                     MinimaLogger.log(exc);
@@ -642,7 +642,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     @Override
     public void onServiceDisconnected(ComponentName componentName) {
         MinimaLogger.log("DISCONNECTED TO SERVICE");
-        mMinima.mContactsFrag = null;
+        //mMinima.mContactsFrag = null;
         mMinima = null;
     }
 

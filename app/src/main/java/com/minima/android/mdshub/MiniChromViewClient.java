@@ -63,15 +63,18 @@ public class MiniChromViewClient extends WebChromeClient {
 
     @Override
     public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
+
         WebView.HitTestResult result    = view.getHitTestResult();
         String data                     = result.getExtra();
         Context context                 = view.getContext();
 
         Message href = view.getHandler().obtainMessage();
-        //MinimaLogger.log("New Window Message : "+href.toString());
 
         view.requestFocusNodeHref(href);
         var url = href.getData().getString("url");
+
+        MinimaLogger.log("MiniBrowser NEW Window : "+url);
+
 
 //        MinimaLogger.log("New Window Data : "+data);
 //        MinimaLogger.log("New Window url : "+url);

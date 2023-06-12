@@ -37,6 +37,7 @@ import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
 
+import com.minima.android.StartMinimaActivity;
 import com.minima.android.ui.archive.ArchiveListener;
 import com.minima.android.ui.maxima.MaximaFragment;
 
@@ -88,16 +89,15 @@ public class MinimaService extends Service {
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
 
-    //the archive Listener
+//    //the archive Listener
     public ArchiveListener mArchiveListener = null;
-
-    //The Contacts Fragment
-    public MaximaFragment mContactsFrag = null;
-
-    Object mSyncLogObject = new Object();
-    ArrayList<String> mLogs = new ArrayList<>();
-
-    int mUpdateCounter=-1;
+//
+//    //The Contacts Fragment
+//    public MaximaFragment mContactsFrag = null;
+//
+//    Object mSyncLogObject = new Object();
+//    ArrayList<String> mLogs = new ArrayList<>();
+    //int mUpdateCounter=-1;
 
     @Override
     public void onCreate() {
@@ -134,7 +134,7 @@ public class MinimaService extends Service {
         mNotificationManager = getSystemService(NotificationManager.class);
         mNotificationManager.createNotificationChannel(serviceChannel);
 
-        Intent NotificationIntent = new Intent(getBaseContext(), MainActivity.class);
+        Intent NotificationIntent = new Intent(getBaseContext(), StartMinimaActivity.class);
 //        mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
 //                , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -182,30 +182,6 @@ public class MinimaService extends Service {
                             }
                         });
 
-                    }else if(event.equals("MINIMALOG")){
-
-                        //Get the message
-                        synchronized (mSyncLogObject) {
-                            String message = data.getString("message");
-                            mLogs.add(message);
-
-                            //Check size..
-                            while (mLogs.size() > 250) {
-                                mLogs.remove(0);
-                            }
-                        }
-
-                    }else if(event.equals("MAXIMACONTACTS")){
-
-                        //MinimaLogger.log("MAXIMACONTACTS CHANGED!");
-                        try{
-                            if(mContactsFrag!=null){
-                                mContactsFrag.updateUIOnUIThread();
-                            }
-                        }catch(Exception exc){
-                            MinimaLogger.log(exc);
-                        }
-
                     }else if(event.equals("NEWBALANCE")){
 
                         //Notify the User
@@ -223,34 +199,6 @@ public class MinimaService extends Service {
                             createMiniDAPPNotification(uid, title, text);
                         }else{
                             cancelNotification(uid);
-                        }
-
-                    }else if(event.equals("ARCHIVEUPDATE")){
-                        String message = data.getString("message");
-
-                        //Are we shutting down..
-                        if(message.equals("SHUTDOWN")){
-                            MinimaLogger.log("ARCHIVE_UPDATE SHUTDOWN requested..");
-
-                            //Shut down..
-                            if(MainActivity.getMainActivity() != null){
-                                MainActivity.getMainActivity().shutdown();
-                            }else{
-                                //Stop the service
-                                stopSelf();
-                            }
-
-                            return;
-                        }
-
-                        //Send to status
-                        mUpdateCounter++;
-                        if(mUpdateCounter % 5 == 0) {
-                            startForeground(1, createNotification(message));
-                        }
-
-                        if(mArchiveListener!=null){
-                            mArchiveListener.updateArchiveStatus(message);
                         }
                     }
                 }
@@ -276,9 +224,9 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-//        vars.add("-noconnect");
-//        vars.add("-mdspassword");
-//        vars.add("123");
+        vars.add("-noconnect");
+        vars.add("-mdspassword");
+        vars.add("123");
 
         vars.add("-nosyncibd");
 
@@ -316,13 +264,14 @@ public class MinimaService extends Service {
    }
 
    public String getFullLogs(){
-       synchronized (mSyncLogObject) {
-           String fulllogs = "";
-           for(String log : mLogs){
-               fulllogs += log+"\n";
-           }
-           return fulllogs;
-       }
+//       synchronized (mSyncLogObject) {
+//           String fulllogs = "";
+//           for(String log : mLogs){
+//               fulllogs += log+"\n";
+//           }
+//           return fulllogs;
+//       }
+       return "";
    }
 
    public Minima getMinima(){
