@@ -14,7 +14,9 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -64,26 +66,44 @@ public class MiniChromViewClient extends WebChromeClient {
     @Override
     public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {
 
-        WebView.HitTestResult result    = view.getHitTestResult();
-        String data                     = result.getExtra();
-        Context context                 = view.getContext();
+        WebView newWebView = new WebView(view.getContext());
+        WebView.WebViewTransport transport = (WebView.WebViewTransport) resultMsg.obj;
+        transport.setWebView(newWebView);
+        resultMsg.sendToTarget();
+        newWebView.setWebViewClient(new WebViewClient() {
 
-        Message href = view.getHandler().obtainMessage();
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+                String url = request.getUrl().toString();
+                if (url != null && !url.isEmpty()) {
+                    //MinimaLogger.log("URL : "+url);
 
-        view.requestFocusNodeHref(href);
-        var url = href.getData().getString("url");
+                    Intent intent = new Intent(view.getContext(), MiniBrowser.class);
+                    intent.putExtra("url",url);
+                    view.getContext().startActivity(intent);
+                }
+                return false;
+            }
+        });
+        return true;
 
-        MinimaLogger.log("MiniBrowser NEW Window : "+url);
-
-
+//        WebView.HitTestResult result    = view.getHitTestResult();
+//        String data                     = result.getExtra();
+//        Context context                 = view.getContext();
+//
+//        Message href = view.getHandler().obtainMessage();
+//
+//        view.requestFocusNodeHref(href);
+//        String url = href.getData().getString("url");
+//
 //        MinimaLogger.log("New Window Data : "+data);
 //        MinimaLogger.log("New Window url : "+url);
-
-        Intent intent = new Intent(context, MiniBrowser.class);
-        intent.putExtra("url",url);
-        context.startActivity(intent);
-
-        return false;
+//
+//        Intent intent = new Intent(context, MiniBrowser.class);
+//        intent.putExtra("url",url);
+//        context.startActivity(intent);
+//
+//        return false;
     }
 
     @Override
