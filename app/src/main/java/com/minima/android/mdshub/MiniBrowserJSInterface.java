@@ -72,4 +72,17 @@ public class MiniBrowserJSInterface {
         //Close this WebView
         mMiniBrowser.finish();
     }
+
+    @JavascriptInterface
+    public void showTitleBar() {
+
+        mMiniBrowser.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //Show the Title bar
+                mMiniBrowser.showToolbar();
+            }
+        });
+
+    }
 }
