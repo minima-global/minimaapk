@@ -59,9 +59,9 @@ public class MiniBrowser extends AppCompatActivity {
         mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
 
-        mToolBar.setVisibility(View.GONE);
+        //mToolBar.setVisibility(View.GONE);
 
-        setTitle("Minima Browser");
+        setTitle("");
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
