@@ -62,7 +62,6 @@ public class MiniBrowser extends AppCompatActivity {
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
-        //MinimaLogger.log("BASE URL : "+mBaseURL);
 
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);

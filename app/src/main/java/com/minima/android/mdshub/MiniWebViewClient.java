@@ -54,14 +54,13 @@ public class MiniWebViewClient extends WebViewClient  {
         SharedPreferences prefs = mMainContext.getSharedPreferences(SHARED_PREFS,Context.MODE_PRIVATE);
         mHaveCheckedSSL         = prefs.getBoolean(SHARED_PREFS_VALUE,false);
 
-        MinimaLogger.log("Have Checked SSL : "+mHaveCheckedSSL);
+        //MinimaLogger.log("Have Checked SSL : "+mHaveCheckedSSL);
     }
 
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         String url = request.getUrl().toString();
-        MinimaLogger.log("Load URL : "+url);
         view.loadUrl(request.getUrl().toString());
         return false;
     }
