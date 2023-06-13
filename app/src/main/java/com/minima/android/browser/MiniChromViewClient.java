@@ -38,25 +38,25 @@ public class MiniChromViewClient extends WebChromeClient {
         return mConsoleMessages;
     }
 
-    @Override
-    public void onReceivedTitle(WebView view, String title) {
-        super.onReceivedTitle(view, title);
-        if (!TextUtils.isEmpty(title)) {
-            mMiniBrowser.setTitle(title);
-        }
-    }
-
-    @Override
-    public void onReceivedIcon(WebView view, Bitmap icon){
-
-        int height = mMiniBrowser.getToolBar().getHeight();
-        height = (int)((float)height * 0.8);
-
-        Bitmap bitmapResized = Bitmap.createScaledBitmap(icon, height, height, true);
-        Drawable dicon = new BitmapDrawable( mMiniBrowser.getResources(), bitmapResized);
-
-        mMiniBrowser.getToolBar().setNavigationIcon(dicon);
-    }
+//    @Override
+//    public void onReceivedTitle(WebView view, String title) {
+//        super.onReceivedTitle(view, title);
+//        if (!TextUtils.isEmpty(title)) {
+//            mMiniBrowser.setTitle(title);
+//        }
+//    }
+//
+//    @Override
+//    public void onReceivedIcon(WebView view, Bitmap icon){
+//
+//        int height = mMiniBrowser.getToolBar().getHeight();
+//        height = (int)((float)height * 0.8);
+//
+//        Bitmap bitmapResized = Bitmap.createScaledBitmap(icon, height, height, true);
+//        Drawable dicon = new BitmapDrawable( mMiniBrowser.getResources(), bitmapResized);
+//
+//        mMiniBrowser.getToolBar().setNavigationIcon(dicon);
+//    }
 
     @Override
     public boolean onCreateWindow(WebView view, boolean dialog, boolean userGesture, android.os.Message resultMsg) {

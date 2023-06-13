@@ -50,8 +50,6 @@ public class MiniWebViewClient extends WebViewClient  {
         //Have we checked it..
         SharedPreferences prefs = mMainContext.getSharedPreferences(SHARED_PREFS,Context.MODE_PRIVATE);
         mHaveCheckedSSL         = prefs.getBoolean(SHARED_PREFS_VALUE,false);
-
-        //MinimaLogger.log("Have Checked SSL : "+mHaveCheckedSSL);
     }
 
 

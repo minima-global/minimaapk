@@ -58,7 +58,9 @@ public class MiniBrowser extends AppCompatActivity {
         mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
 
-        setTitle("");
+        mToolBar.setVisibility(View.GONE);
+
+        setTitle("Minima Browser");
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
@@ -149,7 +151,9 @@ public class MiniBrowser extends AppCompatActivity {
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
 
-        hideToolBar();
+        if(getSupportActionBar().isShowing()){
+            hideToolBar();
+        }
     }
 
     public void shutWindow(){
