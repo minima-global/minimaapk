@@ -117,23 +117,6 @@
             android:exported="true">
         </activity>
 
-<!--        <activity-->
-<!--            android:name="com.minima.android.intro.OnboardingTwo"-->
-<!--            android:exported="true">-->
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name="com.minima.android.intro.OnboardingThree"-->
-<!--            android:exported="true">-->
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name="com.minima.android.intro.OnboardingFour"-->
-<!--            android:exported="true">-->
-<!--        </activity>-->
-<!--        <activity-->
-<!--            android:name="com.minima.android.intro.OnboardingFive"-->
-<!--            android:exported="true">-->
-<!--        </activity>-->
-
         <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
 
     </application>

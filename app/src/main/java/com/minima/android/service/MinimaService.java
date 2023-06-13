@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -22,6 +23,8 @@ import android.widget.Toast;
 import androidx.core.app.NotificationCompat;
 
 import org.minima.Minima;
+import org.minima.database.MinimaDB;
+import org.minima.objects.TxPoW;
 import org.minima.system.Main;
 import org.minima.system.mds.MDSManager;
 import org.minima.system.network.webhooks.NotifyManager;
@@ -232,10 +235,30 @@ public class MinimaService extends Service {
         addBatteryListener();
    }
 
-   public String getFullLogs(){return "";}
-
     public Minima getMinima(){
         return minima;
+    }
+
+    public void setTopBlock(){
+        try{
+            //Get the Tip
+            TxPoW tip =  MinimaDB.getDB().getTxPoWTree().getTip().getTxPoW();
+
+            //Set it..
+            mTxPowJSON = tip.toJSON();
+
+            //Show a notification
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    //Set status Bar notification
+                    setMinimaNotification();
+                }
+            });
+
+        }catch(Exception exc){
+            //MinimaLogger.log(exc);
+        }
     }
 
     private PendingIntent createDynamicPendingIntent(String zUID){

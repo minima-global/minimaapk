@@ -16,6 +16,8 @@ import com.minima.android.service.MinimaService;
 
 public class LauncherActivity extends AppCompatActivity implements ServiceConnection {
 
+    boolean mServiceConnected = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,8 +48,22 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
     }
 
     @Override
-    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {}
+    public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+        mServiceConnected = true;
+    }
 
     @Override
-    public void onServiceDisconnected(ComponentName componentName) {}
+    public void onServiceDisconnected(ComponentName componentName) {
+        mServiceConnected = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        //Unbind from the service..
+        if(mServiceConnected) {
+            unbindService(this);
+        }
+    }
 }
