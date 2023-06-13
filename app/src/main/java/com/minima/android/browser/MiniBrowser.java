@@ -23,6 +23,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import com.minima.android.R;
+import com.minima.android.service.MinimaService;
 
 import org.minima.utils.MinimaLogger;
 
@@ -32,7 +33,7 @@ public class MiniBrowser extends AppCompatActivity {
     boolean mHaveCheckedSSL;
 
     //Main WebView
-    WebView mWebView;
+    protected WebView mWebView;
 
     //The BASE URL
     String mBaseURL;
@@ -145,7 +146,7 @@ public class MiniBrowser extends AppCompatActivity {
         });
 
         //And load the page
-        mWebView.loadUrl(mBaseURL);
+        loadWebPage(mBaseURL);
 
         //Get Files Permission
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -156,15 +157,29 @@ public class MiniBrowser extends AppCompatActivity {
         }
     }
 
+    public void loadWebPage(String zURL){
+        mWebView.loadUrl(zURL);
+    }
+
     public void shutWindow(){
         MinimaLogger.log("MINIBROWSER SHUT WINDOW ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                mWebView.loadUrl("");
+                loadWebPage("");
                 MiniBrowser.super.onBackPressed();
             }
         });
+    }
+
+    public void shutdownMinima(){
+
+        //Stop the service..
+        Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+        stopService(minimaintent);
+
+        //And close all windows
+        finishAffinity();
     }
 
     public void showToolbar(){
@@ -231,7 +246,7 @@ public class MiniBrowser extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_mdsrefresh:
                 //And load the page
-                mWebView.loadUrl(mBaseURL);
+                loadWebPage(mBaseURL);
                 return true;
 
             case R.id.action_mdsexit:
@@ -267,7 +282,7 @@ public class MiniBrowser extends AppCompatActivity {
 
             mWebView.goBack();
         } else {
-            mWebView.loadUrl("");
+            loadWebPage("");
             super.onBackPressed();
         }
     }
@@ -325,7 +340,5 @@ public class MiniBrowser extends AppCompatActivity {
         if(data == null){
             return;
         }
-
-        MinimaLogger.log("OPENFILE : "+data.getData().toString());
     }
 }

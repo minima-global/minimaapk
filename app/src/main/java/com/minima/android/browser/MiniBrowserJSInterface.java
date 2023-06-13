@@ -81,7 +81,7 @@ public class MiniBrowserJSInterface {
         MinimaLogger.log("MiniBrowser JS - ShutDown Minima");
 
         //Close this WebView
-        mMiniBrowser.finishAffinity();
+        mMiniBrowser.shutdownMinima();
     }
 
     @JavascriptInterface

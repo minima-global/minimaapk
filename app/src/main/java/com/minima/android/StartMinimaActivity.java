@@ -20,6 +20,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.minima.android.browser.MDSBrowserTest;
 import com.minima.android.browser.MiniBrowser;
 import com.minima.android.service.MinimaService;
 
@@ -190,6 +191,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //Start her up..
         Intent intent = new Intent(StartMinimaActivity.this, MiniBrowser.class);
+//        Intent intent = new Intent(StartMinimaActivity.this, MDSBrowserTest.class);
         intent.putExtra("url",minihub);
         startActivity(intent);
 

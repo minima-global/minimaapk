@@ -196,9 +196,9 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-        vars.add("-noconnect");
-        vars.add("-mdspassword");
-        vars.add("123");
+//        vars.add("-noconnect");
+//        vars.add("-mdspassword");
+//        vars.add("123");
 
         vars.add("-nosyncibd");
 
@@ -373,7 +373,11 @@ public class MinimaService extends Service {
         MinimaLogger.log("Minima Service onDestroy start");
 
         //QUIT nicely..
-        String resp = minima.runMinimaCMD("quit");
+        try{
+            String resp = minima.runMinimaCMD("quit");
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+        }
 
         //Not listening anymore..
         Main.setMinimaListener(null);

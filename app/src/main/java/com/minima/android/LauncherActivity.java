@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.minima.android.browser.MDSBrowserTest;
 import com.minima.android.intro.OnboardingOne;
 import com.minima.android.service.MinimaService;
 

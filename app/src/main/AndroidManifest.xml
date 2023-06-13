@@ -100,6 +100,14 @@
 
         <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name=".browser.MDSBrowserTest"
+            android:exported="true"
+            android:label="MDSINIT"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
+        <activity
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".browser.ConsoleActivity"
             android:exported="true"
             android:label="Console"
