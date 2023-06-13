@@ -58,6 +58,7 @@ import com.minima.android.ui.vault.VaultFragment;
 
 import org.minima.Minima;
 import org.minima.system.Main;
+import org.minima.system.mds.MDSManager;
 import org.minima.system.network.maxima.MaximaManager;
 import org.minima.system.params.GlobalParams;
 import org.minima.utils.MinimaLogger;
@@ -455,7 +456,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                 try{
 
                     //Check..
-                    while(Main.getInstance() == null){
+                    while(Main.getInstance() == null || mMinima == null){
                         Thread.sleep(500);
                     }
 
@@ -492,62 +493,16 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
                         return;
                     }
 
-                    //Wait for Maxima..
-                    MaximaManager max = Main.getInstance().getMaxima();
-                    while(max == null || !max.isInited()) {
-                        Thread.sleep(2000);
-                        max = Main.getInstance().getMaxima();
-
-                        if(max==null){
-                            MinimaLogger.log("Waiting for Maxima.. max null");
-                        }else{
-                            MinimaLogger.log("Waiting for Maxima.. ");
-                        }
-                    }
-                    MinimaLogger.log("Maxima started.. ");
-
-                    //Run Status..
-                    String status = mMinima.getMinima().runMinimaCMD("status",false);
-
-                    //Make a JSON
-                    JSONObject json = (JSONObject) new JSONParser().parse(status);
-
-                    //Get the status..
-                    while(!(boolean)json.get("status")){
-                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-
+                    //Wait for MDS..
+                    MDSManager mds = Main.getInstance().getMDSManager();
+                    while(mds == null || !mds.hasStarted()) {
+                        //Wait a sec..
                         Thread.sleep(2000);
 
-                        //Run Status..
-                        status = mMinima.getMinima().runMinimaCMD("status");
-
-                        //Make a JSON
-                        json = (JSONObject) new JSONParser().parse(status);
+                        //Try Again
+                        mds = Main.getInstance().getMDSManager();
                     }
-                    MinimaLogger.log("Status true.. ");
-
-                    //Install the MiniDApps..
-                    //installMiniDAPPs();
-
-//                    //Jump..
-//                    Intent intent = new Intent(MainActivity.this, MiniBrowser.class);
-//                    intent.putExtra("url","https://127.0.0.1:9003/");
-//                    startActivity(intent);
-//                    if(true){
-//                        //OK - Lets update the views..
-//                        MainActivity.this.runOnUiThread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                //Hide the Loader
-//                                try {
-//                                    if (mLoader != null && mLoader.isShowing()) {
-//                                        mLoader.cancel();
-//                                    }
-//                                } catch (Exception exc) {}
-//                            }
-//                        });
-//                        return;
-//                    }
+                    MinimaLogger.log("Minima started.. ");
 
                     //OK - Lets update the views..
                     MainActivity.this.runOnUiThread(new Runnable() {
