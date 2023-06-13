@@ -9,9 +9,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ServiceInfo;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Icon;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
 import android.os.Binder;
@@ -23,12 +20,10 @@ import android.os.PowerManager;
 import android.widget.Toast;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.graphics.drawable.IconCompat;
-
-import com.minima.android.MainActivity;
 
 import org.minima.Minima;
 import org.minima.system.Main;
+import org.minima.system.mds.MDSManager;
 import org.minima.system.network.webhooks.NotifyManager;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
@@ -38,8 +33,7 @@ import org.minima.utils.messages.MessageListener;
 import java.util.ArrayList;
 
 import com.minima.android.StartMinimaActivity;
-import com.minima.android.ui.archive.ArchiveListener;
-import com.minima.android.ui.maxima.MaximaFragment;
+import com.minima.android.browser.MiniBrowser;
 
 /** Foreground Service for the Minima Node
  *
@@ -78,9 +72,6 @@ public class MinimaService extends Service {
     NotificationManager mNotificationManager;
     android.app.Notification mNotification;
 
-    //Start Minima When Notification is clicked..
-    PendingIntent mPendingIntent;
-
     //Information for the Notification
     JSONObject mTxPowJSON = null;
 
@@ -88,16 +79,6 @@ public class MinimaService extends Service {
 
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
-
-//    //the archive Listener
-    public ArchiveListener mArchiveListener = null;
-//
-//    //The Contacts Fragment
-//    public MaximaFragment mContactsFrag = null;
-//
-//    Object mSyncLogObject = new Object();
-//    ArrayList<String> mLogs = new ArrayList<>();
-    //int mUpdateCounter=-1;
 
     @Override
     public void onCreate() {
@@ -134,25 +115,13 @@ public class MinimaService extends Service {
         mNotificationManager = getSystemService(NotificationManager.class);
         mNotificationManager.createNotificationChannel(serviceChannel);
 
-        Intent NotificationIntent = new Intent(getBaseContext(), StartMinimaActivity.class);
-//        mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
-//                , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
-                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
-        }else {
-            mPendingIntent = PendingIntent.getActivity(getBaseContext(), 0
-                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        }
 
         //Set the Alarm..
         mAlarm = new Alarm();
         mAlarm.cancelAlarm(this);
         mAlarm.setAlarm(this);
 
+        //Store this
         mService = this;
 
         //Add a Minima listener..
@@ -263,19 +232,59 @@ public class MinimaService extends Service {
         addBatteryListener();
    }
 
-   public String getFullLogs(){
-//       synchronized (mSyncLogObject) {
-//           String fulllogs = "";
-//           for(String log : mLogs){
-//               fulllogs += log+"\n";
-//           }
-//           return fulllogs;
-//       }
-       return "";
-   }
+   public String getFullLogs(){return "";}
 
-   public Minima getMinima(){
+    public Minima getMinima(){
         return minima;
+    }
+
+    private PendingIntent createDynamicPendingIntent(String zUID){
+
+        PendingIntent pending =  null;
+
+        //Get the MDS Manager - if it's started
+        String starturl = "";
+        if(Main.getInstance() != null){
+            if(Main.getInstance().getMDSManager()!=null){
+                if(Main.getInstance().getMDSManager().hasStarted()){
+
+                    MDSManager mds = Main.getInstance().getMDSManager();
+
+                    String miniid;
+                    if(zUID.equals("minihub")){
+                        miniid = mds.getDefaultMiniHUB();
+                    }else{
+                        miniid = zUID;
+                    }
+
+                    //Get the sessionid..
+                    String sessionid = mds.convertMiniDAPPID(miniid);
+
+                    starturl = "https://127.0.0.1:9003/"+miniid+"/index.html?uid="+sessionid;
+                }
+            }
+        }
+
+        Intent NotificationIntent = null;
+        if(!starturl.equals("")){
+            NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
+            NotificationIntent.putExtra("url",starturl);
+
+        }else{
+            NotificationIntent = new Intent(getBaseContext(), StartMinimaActivity.class);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            pending = PendingIntent.getActivity(getBaseContext(), 0
+                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+
+        }else {
+            pending = PendingIntent.getActivity(getBaseContext(), 0
+                    , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        }
+
+        return pending;
     }
 
     public Notification createNotification(String zText){
@@ -283,7 +292,7 @@ public class MinimaService extends Service {
                 .setContentTitle(zText)
                 .setContentText("Minima Status Channel")
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
-                .setContentIntent(mPendingIntent)
+                .setContentIntent(createDynamicPendingIntent("minihub"))
                 .build();
 
         return mNotification;
@@ -296,7 +305,7 @@ public class MinimaService extends Service {
                 .setContentText(zText)
                 .setAutoCancel(true)
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
-                .setContentIntent(mPendingIntent)
+                .setContentIntent(createDynamicPendingIntent(zMiniDAPPUID))
                 .build();
 
         mNotificationManager.notify(zMiniDAPPUID, 1, notification);
@@ -306,13 +315,8 @@ public class MinimaService extends Service {
         mNotificationManager.cancel(zMiniDAPPUID,1);
     }
 
-    int counter = 0;
-
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-
-//        counter++;
-//        createMiniDAPPNotification(counter,"Minima","onstart "+counter);
 
         //Set status Bar notification
         setMinimaNotification();
@@ -322,17 +326,11 @@ public class MinimaService extends Service {
 
     private void setMinimaNotification(){
 
-//        int perm =  ServiceInfo.FOREGROUND_SERVICE_TYPE_LOCATION |
-//                    ServiceInfo.FOREGROUND_SERVICE_TYPE_CAMERA |
-//                    ServiceInfo.FOREGROUND_SERVICE_TYPE_MICROPHONE;
-
         //Set the default message
         if(mTxPowJSON == null){
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                startForeground(1, createNotification("Starting up.. please wait.."),perm);
-//            }else{
-                startForeground(1, createNotification("Starting up.. please wait.."));
-//            }
+
+            //Basic message
+            startForeground(1, createNotification("Starting up.. please wait.."));
 
         }else{
             JSONObject header = (JSONObject)mTxPowJSON.get("header");
@@ -340,11 +338,8 @@ public class MinimaService extends Service {
             String block    = (String) header.get("block");
             String date     = (String) header.get("date");
 
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-//                startForeground(1, createNotification("Block " + block + " @ " + date),perm);
-//            }else{
-                startForeground(1, createNotification("Block " + block + " @ " + date));
-//            }
+            //Set block time message
+            startForeground(1, createNotification("Block " + block + " @ " + date));
         }
     }
 

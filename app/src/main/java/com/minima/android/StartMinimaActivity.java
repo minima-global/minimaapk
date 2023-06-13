@@ -1,30 +1,22 @@
 package com.minima.android;
 
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.minima.android.MainActivity;
-import com.minima.android.dynamite.OnboardingOne;
-import com.minima.android.mdshub.MiniBrowser;
+import com.minima.android.browser.MiniBrowser;
 import com.minima.android.service.MinimaService;
 
 import org.minima.system.Main;
 import org.minima.system.mds.MDSManager;
-import org.minima.system.network.maxima.MaximaManager;
 import org.minima.utils.MinimaLogger;
-import org.minima.utils.json.JSONObject;
-import org.minima.utils.json.parser.JSONParser;
 
 public class StartMinimaActivity extends AppCompatActivity implements ServiceConnection {
 
@@ -49,11 +41,12 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //show a Dialog
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//        builder.setCancelable(false);
+        builder.setCancelable(false);
         builder.setView(R.layout.progress);
 
         mDialog = builder.create();
         mDialog.show();
+
     }
 
     @Override
@@ -86,39 +79,16 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
                         Thread.sleep(500);
                     }
 
-                    //Wait for Maxima..
-                    MaximaManager max = Main.getInstance().getMaxima();
-                    while(max == null || !max.isInited()) {
-                        Thread.sleep(2000);
-                        max = Main.getInstance().getMaxima();
-
-                        if(max==null){
-                            MinimaLogger.log("Waiting for Maxima.. max null");
-                        }else{
-                            MinimaLogger.log("Waiting for Maxima.. ");
-                        }
-                    }
-                    MinimaLogger.log("Maxima started.. ");
-
-                    //Run Status..
-                    String status = mMinima.getMinima().runMinimaCMD("status",false);
-
-                    //Make a JSON
-                    JSONObject json = (JSONObject) new JSONParser().parse(status);
-
-                    //Get the status..
-                    while(!(boolean)json.get("status")){
-                        MinimaLogger.log("Waiting for Status .. "+json.toString());
-
+                    //Wait for MDS..
+                    MDSManager mds = Main.getInstance().getMDSManager();
+                    while(mds == null || !mds.hasStarted()) {
+                        //Wait a sec..
                         Thread.sleep(2000);
 
-                        //Run Status..
-                        status = mMinima.getMinima().runMinimaCMD("status");
-
-                        //Make a JSON
-                        json = (JSONObject) new JSONParser().parse(status);
+                        //Try Again
+                        mds = Main.getInstance().getMDSManager();
                     }
-                    MinimaLogger.log("Status true.. ");
+                    MinimaLogger.log("Minima started.. ");
 
                 }catch(Exception exc) {
                     MinimaLogger.log(exc);
@@ -138,9 +108,12 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
                 //Get the sessionid..
                 String sessionid = mds.convertMiniDAPPID(minihubid);
 
+                String minihub = "https://127.0.0.1:9003/"+minihubid+"/index.html?uid="+sessionid;
+                MinimaLogger.log("MINIHUB : "+minihub);
+
                 //Start her up..
                 Intent intent = new Intent(StartMinimaActivity.this, MiniBrowser.class);
-                intent.putExtra("url","https://127.0.0.1:9003/"+minihubid+"/index.html?uid="+sessionid);
+                intent.putExtra("url",minihub);
                 startActivity(intent);
 
                 //Close this window..

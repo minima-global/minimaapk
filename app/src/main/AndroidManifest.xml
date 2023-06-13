@@ -38,7 +38,6 @@
         tools:targetApi="31">
 
         <!--
-
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
             -->
 
@@ -64,62 +63,6 @@
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
             android:label="Starting up.."/>
 
-        <activity   android:name=".ui.maxima.MyDetailsActivity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Maxima Details"/>
-
-        <activity   android:name=".ui.maxima.contacts.ContactActivity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Maxima Contact"/>
-
-        <activity   android:name=".ui.mds.pending.MDSPendingActivity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Pending Commands"/>
-
-        <activity   android:name=".ui.mds.MDSBrowser"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="MiniDAPP"/>
-
-        <activity   android:name=".ui.store.StoreBrowser"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Store"/>
-
-<!--        <activity   android:name=".ui.backup.Bip39Activity"-->
-<!--            android:exported="true"-->
-<!--            android:launchMode="singleInstance"-->
-<!--            android:configChanges="keyboardHidden|orientation|screenSize"-->
-<!--            android:theme="@style/Theme.MinimaAndroid.NoActionBar"-->
-<!--            android:label="Archive"/>-->
-
-        <activity   android:name=".ui.archive.ChainSyncActivity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Chain Re-Sync"/>
-
-        <activity   android:name=".ui.archive.SeedSyncActivity"
-            android:exported="true"
-            android:launchMode="singleInstance"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar"
-            android:label="Seed Phrase Re-Sync"/>
-
         <!-- SERVICES -->
         <service
             android:name="com.minima.android.service.MinimaService"
@@ -137,10 +80,6 @@
 
         </receiver>
 
-        <receiver android:name=".dependencies.backupSync.recurring.BackupRecurringAlarmManager" android:exported="false">
-
-        </receiver>
-
         <provider
             android:authorities="com.minima.android.provider"
             android:name="androidx.core.content.FileProvider"
@@ -152,17 +91,8 @@
         </provider>
 
         <activity
-            android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
-        </activity>
-
-        <activity
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".mdshub.MiniBrowser"
+            android:name=".browser.MiniBrowser"
             android:exported="true"
             android:label="MDSINIT"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
@@ -170,7 +100,7 @@
 
         <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".mdshub.ConsoleActivity"
+            android:name=".browser.ConsoleActivity"
             android:exported="true"
             android:label="Console"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
@@ -179,7 +109,7 @@
         <!--DYNAMITE-->
 
         <activity
-            android:name="com.minima.android.dynamite.OnboardingOne"
+            android:name="com.minima.android.intro.OnboardingOne"
             android:launchMode="singleInstance"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar"
@@ -187,22 +117,22 @@
             android:exported="true">
         </activity>
 
-        <activity
-            android:name="com.minima.android.dynamite.OnboardingTwo"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name="com.minima.android.dynamite.OnboardingThree"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name="com.minima.android.dynamite.OnboardingFour"
-            android:exported="true">
-        </activity>
-        <activity
-            android:name="com.minima.android.dynamite.OnboardingFive"
-            android:exported="true">
-        </activity>
+<!--        <activity-->
+<!--            android:name="com.minima.android.intro.OnboardingTwo"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.minima.android.intro.OnboardingThree"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.minima.android.intro.OnboardingFour"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="com.minima.android.intro.OnboardingFive"-->
+<!--            android:exported="true">-->
+<!--        </activity>-->
 
         <meta-data android:name="preloaded_fonts" android:resource="@array/preloaded_fonts" />
 

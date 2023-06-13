@@ -11,7 +11,7 @@ import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.minima.android.dynamite.OnboardingOne;
+import com.minima.android.intro.OnboardingOne;
 import com.minima.android.service.MinimaService;
 
 public class LauncherActivity extends AppCompatActivity implements ServiceConnection {
@@ -27,12 +27,12 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        // Check if we need to display our Onboarding
-//        if (!sharedPreferences.getBoolean("FIRST_RUN", true)) {
-//            Intent intent = new Intent(this, StartMinimaActivity.class);
-//            startActivity(intent);
-//
-//        }else{
+        //Check if we need to display our Onboarding
+        if (!sharedPreferences.getBoolean("FIRST_RUN", true)) {
+            Intent intent = new Intent(this, StartMinimaActivity.class);
+            startActivity(intent);
+
+        }else{
 
             SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
             sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
@@ -40,7 +40,7 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
 
             Intent intent = new Intent(this, OnboardingOne.class);
             startActivity(intent);
-        //}
+        }
 
         finish();
     }
