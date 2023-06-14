@@ -9,7 +9,7 @@ android {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 32
-        versionCode 161
+        versionCode 162
         versionName "1.0.32"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
