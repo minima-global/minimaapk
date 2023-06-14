@@ -148,7 +148,7 @@ public class MiniBrowser extends AppCompatActivity {
         });
 
         //And load the page
-        loadWebPage(mBaseURL);
+        mWebView.loadUrl(mBaseURL);
 
         //Get Files Permission
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
@@ -159,16 +159,16 @@ public class MiniBrowser extends AppCompatActivity {
         }
     }
 
-    public void loadWebPage(String zURL){
-        mWebView.loadUrl(zURL);
-    }
+    //public void loadWebPage(String zURL){
+    //    mWebView.loadUrl(zURL);
+    //}
 
     public void shutWindow(){
         MinimaLogger.log("MINIBROWSER SHUT WINDOW ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                loadWebPage("");
+                mWebView.loadUrl("");
                 MiniBrowser.super.onBackPressed();
             }
         });
@@ -248,7 +248,7 @@ public class MiniBrowser extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_mdsrefresh:
                 //And load the page
-                loadWebPage(mBaseURL);
+                mWebView.loadUrl(mBaseURL);
                 return true;
 
             case R.id.action_mdsexit:
@@ -283,7 +283,7 @@ public class MiniBrowser extends AppCompatActivity {
         } else {
 
             //Reset Page
-            loadWebPage("");
+            mWebView.loadUrl("");
 
             //Leave MiniDAPP
             super.onBackPressed();
