@@ -678,7 +678,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     protected void onDestroy() {
         super.onDestroy();
 
-        MinimaLogger.log("MAINACTIVITY - ONDESTROY");
+        //MinimaLogger.log("MAINACTIVITY - ONDESTROY");
 
         if(mLoader != null && mLoader.isShowing()){
             mLoader.cancel();
@@ -696,7 +696,7 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     protected void onResume() {
         super.onResume();
 
-        MinimaLogger.log("MAINACTIVITY - ONRESUME");
+        //MinimaLogger.log("MAINACTIVITY - ONRESUME");
     }
 
     @Override

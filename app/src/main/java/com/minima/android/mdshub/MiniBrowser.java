@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat;
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
+import org.minima.Minima;
 import org.minima.utils.MinimaLogger;
 
 public class MiniBrowser extends AppCompatActivity {
@@ -47,6 +48,8 @@ public class MiniBrowser extends AppCompatActivity {
     //The ToolBar
     Toolbar mToolBar;
 
+    //The Title
+
     //Are we hidin the bar..
     boolean mHidingBar = false;
 
@@ -56,12 +59,10 @@ public class MiniBrowser extends AppCompatActivity {
 
         setContentView(R.layout.activity_browser);
 
+        //Set Our Toolbar
         mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
-
-        //mToolBar.setVisibility(View.GONE);
-
-        setTitle("");
+        getSupportActionBar().hide();
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
@@ -79,6 +80,7 @@ public class MiniBrowser extends AppCompatActivity {
             }
         });
 
+        //Browser Web Settings..
         WebSettings settings = mWebView.getSettings();
 
         settings.setUserAgentString("Minima Browser v2.0");
@@ -277,19 +279,18 @@ public class MiniBrowser extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if(mWebView.canGoBack()) {
-            //Show the toolbar
-            showToolbar();
-
             mWebView.goBack();
         } else {
+
+            //Reset Page
             loadWebPage("");
+
+            //Leave MiniDAPP
             super.onBackPressed();
         }
     }
 
     public void openFile(String [] zMimeTypes, ValueCallback<Uri[]> zFilePathCallback) {
-
-        //MinimaLogger.log("OPEN FILE!");
 
         //Store for later
         mFileCheckPath = zFilePathCallback;

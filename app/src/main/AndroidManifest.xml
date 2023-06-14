@@ -157,7 +157,7 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".mdshub.MiniBrowser"
             android:exported="true"
-            android:label="MDSINIT"
+            android:label="Minima Browser"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>
 
