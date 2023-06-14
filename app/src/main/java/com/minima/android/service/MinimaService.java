@@ -42,7 +42,7 @@ import com.minima.android.ui.maxima.MaximaFragment;
 
 /** Foreground Service for the Minima Node
  *
- *  Elias Nemr
+ *  Spartacus
  *
  * 23 April 2020
  * */
