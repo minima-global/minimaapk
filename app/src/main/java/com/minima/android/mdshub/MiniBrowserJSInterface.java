@@ -1,16 +1,25 @@
 package com.minima.android.mdshub;
 
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
 import android.os.Environment;
+import android.provider.Browser;
 import android.webkit.JavascriptInterface;
 import android.widget.Toast;
+
+import androidx.core.content.FileProvider;
 
 import org.minima.objects.base.MiniData;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class MiniBrowserJSInterface {
 
@@ -90,6 +99,76 @@ public class MiniBrowserJSInterface {
                 mMiniBrowser.showToolbar();
             }
         });
+    }
 
+    @JavascriptInterface
+    public void openExternalBrowser(String zUrl, String zTarget) {
+
+        //The URL page
+        Uri minipage = Uri.parse(zUrl);
+
+        //Start the browser
+        Intent browser = new Intent(Intent.ACTION_VIEW);
+        browser.putExtra(Browser.EXTRA_APPLICATION_ID, zTarget);
+        browser.setData(minipage);
+        mMiniBrowser.startActivity(browser);
+
+    }
+
+    @JavascriptInterface
+    public void shareText(String zText) {
+
+        //Create share Intent
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, zText);
+        sendIntent.setType("text/plain");
+
+        Intent shareIntent = Intent.createChooser(sendIntent, null);
+        mMiniBrowser.startActivity(shareIntent);
+    }
+
+    @JavascriptInterface
+    public void shareFile(String zFilePath, String zMimeType) {
+
+        //Create the file..
+        File backup = new File(zFilePath);
+
+        //HACK
+        //backup = SSLManager.getKeystoreFile();
+
+        //Check exists..
+        if(!backup.exists()){
+
+            mMiniBrowser.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mMiniBrowser, "File does not exist", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            return;
+        }
+
+        //Get the URi
+        Uri backupuri = FileProvider.getUriForFile(mMiniBrowser,"com.minima.android.provider",backup);
+
+        //Now share that file..
+        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+        intentShareFile.setType(zMimeType);
+        intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Share file from Minima");
+        //intentShareFile.putExtra(Intent.EXTRA_TEXT, "Share file");
+        intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+        Intent chooser = Intent.createChooser(intentShareFile, "Share File");
+
+        List<ResolveInfo> resInfoList = mMiniBrowser.getPackageManager().queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            mMiniBrowser.grantUriPermission(packageName, backupuri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
+
+        mMiniBrowser.startActivity(chooser);
     }
 }
