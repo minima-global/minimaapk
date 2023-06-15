@@ -90,18 +90,21 @@
                 android:resource="@xml/file_path"/>
         </provider>
 
+<!--        <meta-data android:name="android.webkit.WebView.EnableSafeBrowsing" android:value="true" />-->
+
         <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".browser.MiniBrowser"
-            android:exported="true"
-            android:label="MDSINIT"
+            android:exported="false"
+            android:label="Minima Browser"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+
         </activity>
 
         <activity
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:name=".browser.MDSBrowserTest"
-            android:exported="true"
+            android:exported="false"
             android:label="MDSINIT"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>

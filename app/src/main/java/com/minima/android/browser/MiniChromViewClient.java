@@ -38,14 +38,19 @@ public class MiniChromViewClient extends WebChromeClient {
         return mConsoleMessages;
     }
 
-//    @Override
-//    public void onReceivedTitle(WebView view, String title) {
-//        super.onReceivedTitle(view, title);
-//        if (!TextUtils.isEmpty(title)) {
-//            mMiniBrowser.setTitle(title);
-//        }
-//    }
-//
+    @Override
+    public void onReceivedTitle(WebView view, String title) {
+        super.onReceivedTitle(view, title);
+        if (!TextUtils.isEmpty(title)) {
+            mMiniBrowser.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mMiniBrowser.setTitle(title);
+                }
+            });
+        }
+    }
+
 //    @Override
 //    public void onReceivedIcon(WebView view, Bitmap icon){
 //

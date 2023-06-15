@@ -36,7 +36,13 @@ import java.util.Arrays;
 public class MDSBrowserTest extends MiniBrowser {
 
     @Override
-    public void loadWebPage(String zURL){
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        loadBasePage();
+    }
+
+    private void loadBasePage(){
         String summary =
                 "<html><body>" +
                         "<input type=\"file\"\n" +
@@ -50,13 +56,14 @@ public class MDSBrowserTest extends MiniBrowser {
                         "<br><br>" +
                         "<input type=\"button\" value=\"Shut Down\" onClick=\"Android.shutdownMinima();\" />\n" +
                         "<br><br>" +
+                        "<input type=\"button\" value=\"External Window\" onClick=\"Android.openExternalBrowser('http://www.google.com','google');\" />\n" +
+                        "<br><br>" +
+                        "<input type=\"button\" value=\"Share Text\" onClick=\"Android.shareText('Hello you!');\" />\n" +
+                        "<br><br>" +
+                        "<input type=\"button\" value=\"Share File\" onClick=\"Android.shareFile('/file', 'application/zip');\" />\n" +
+                        "<br><br>" +
                         "<a href=\"http://hello.com/somepage.html\">OPEN SAME WINDOW</a><br><br>" +
                         "<a href=\"http://hello.com/somepage.html\" target='_blank'>OPEN NEW WINDOW</a><br><br>" +
-//                        "<script type=\"text/javascript\">\n" +
-//                        "    function showAndroidToast(toast) {\n" +
-//                        "        \n" +
-//                        "    }\n" +
-//                        "</script>" +
                         "</body></html>";
 
         mWebView.loadData(summary, "text/html; charset=utf-8", "utf-8");
