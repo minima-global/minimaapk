@@ -32,11 +32,11 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
 
         //Check if we need to display our Onboarding
         if (!sharedPreferences.getBoolean("FIRST_RUN", true)) {
-            //Intent intent = new Intent(this, StartMinimaActivity.class);
-            //startActivity(intent);
-
-            Intent intent = new Intent(this, MDSBrowserTest.class);
+            Intent intent = new Intent(this, StartMinimaActivity.class);
             startActivity(intent);
+
+            //Intent intent = new Intent(this, MDSBrowserTest.class);
+            //startActivity(intent);
 
         }else{
 

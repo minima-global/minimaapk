@@ -172,6 +172,12 @@ public class MinimaService extends Service {
                         }else{
                             cancelNotification(uid);
                         }
+
+                    }else if(event.equals("SHUTDOWN")){
+
+                        MinimaLogger.log("SERVICE Received SHUTDOWN!");
+
+                        stopSelf();
                     }
                 }
             }
@@ -196,9 +202,9 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-        vars.add("-noconnect");
-        vars.add("-mdspassword");
-        vars.add("123");
+//        vars.add("-noconnect");
+//        vars.add("-mdspassword");
+//        vars.add("123");
 
         vars.add("-nosyncibd");
 

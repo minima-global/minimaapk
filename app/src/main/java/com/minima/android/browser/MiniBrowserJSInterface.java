@@ -12,8 +12,11 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 
 import org.minima.objects.base.MiniData;
+import org.minima.system.commands.Command;
 import org.minima.utils.MiniFile;
+import org.minima.utils.MiniFormat;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.json.JSONArray;
 import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
@@ -88,6 +91,25 @@ public class MiniBrowserJSInterface {
         //Close this WebView
         mMiniBrowser.shutdownMinima();
     }
+
+//    @JavascriptInterface
+//    public void quitTestMinima() {
+//
+//        MinimaLogger.log("TEST QUIT");
+//
+//        //Run it..
+//        JSONArray res = Command.runMultiCommand("quit");
+//
+//        //Get the result..
+//        String result = MiniFormat.JSONPretty(res);
+//        if(res.size() == 1) {
+//            result = res.get(0).toString();
+//        }else {
+//            result = res.toJSONString();
+//        }
+//
+//        MinimaLogger.log(result);
+//    }
 
     @JavascriptInterface
     public void showTitleBar() {
