@@ -182,6 +182,12 @@ public class MinimaService extends Service {
                             }
                         });
 
+                    }else if(event.equals("SHUTDOWN")){
+
+                        MinimaLogger.log("SERVICE Received SHUTDOWN!");
+
+                        stopSelf();
+
                     }else if(event.equals("MINIMALOG")){
 
                         //Get the message
@@ -276,9 +282,9 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-//        vars.add("-noconnect");
-//        vars.add("-mdspassword");
-//        vars.add("123");
+        //vars.add("-noconnect");
+        //vars.add("-mdspassword");
+        //vars.add("123");
 
         vars.add("-nosyncibd");
 
@@ -406,7 +412,13 @@ public class MinimaService extends Service {
         MinimaLogger.log("Minima Service onDestroy start");
 
         //QUIT nicely..
-        String resp = minima.runMinimaCMD("quit");
+        try{
+            if(minima != null){
+                String resp = minima.runMinimaCMD("quit");
+            }
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+        }
 
         //Not listening anymore..
         Main.setMinimaListener(null);

@@ -123,11 +123,15 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
         return mStaticLink;
     }
 
+    public static boolean mShutDownRequest = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mStaticLink = this;
+
+        mShutDownRequest = false;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -696,7 +700,17 @@ public class MainActivity extends AppCompatActivity  implements ServiceConnectio
     protected void onResume() {
         super.onResume();
 
-        //MinimaLogger.log("MAINACTIVITY - ONRESUME");
+        //Are we shutting down..
+        if(mShutDownRequest){
+            MinimaLogger.log("MAINACTIVITY - ONRESUME (shut down request)");
+
+            //Stop the service..
+            Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+            stopService(minimaintent);
+
+            //Shut us down..
+            finishAffinity();
+        }
     }
 
     @Override

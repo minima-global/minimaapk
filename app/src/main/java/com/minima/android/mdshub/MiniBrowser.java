@@ -22,6 +22,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.minima.android.MainActivity;
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
@@ -175,6 +176,9 @@ public class MiniBrowser extends AppCompatActivity {
     }
 
     public void shutdownMinima(){
+
+        //Set for Main Activity
+        MainActivity.mShutDownRequest = true;
 
         //Stop the service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
