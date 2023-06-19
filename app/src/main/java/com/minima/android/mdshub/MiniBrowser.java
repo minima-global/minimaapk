@@ -165,7 +165,7 @@ public class MiniBrowser extends AppCompatActivity {
     //}
 
     public void shutWindow(){
-        MinimaLogger.log("MINIBROWSER SHUT WINDOW ");
+
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
