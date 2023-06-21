@@ -92,25 +92,6 @@ public class MiniBrowserJSInterface {
         mMiniBrowser.shutdownMinima();
     }
 
-//    @JavascriptInterface
-//    public void quitTestMinima() {
-//
-//        MinimaLogger.log("TEST QUIT");
-//
-//        //Run it..
-//        JSONArray res = Command.runMultiCommand("quit");
-//
-//        //Get the result..
-//        String result = MiniFormat.JSONPretty(res);
-//        if(res.size() == 1) {
-//            result = res.get(0).toString();
-//        }else {
-//            result = res.toJSONString();
-//        }
-//
-//        MinimaLogger.log(result);
-//    }
-
     @JavascriptInterface
     public void showTitleBar() {
 
@@ -134,7 +115,6 @@ public class MiniBrowserJSInterface {
         browser.putExtra(Browser.EXTRA_APPLICATION_ID, zTarget);
         browser.setData(minipage);
         mMiniBrowser.startActivity(browser);
-
     }
 
     @JavascriptInterface
@@ -155,9 +135,6 @@ public class MiniBrowserJSInterface {
 
         //Create the file..
         File backup = new File(zFilePath);
-
-        //HACK
-        //backup = SSLManager.getKeystoreFile();
 
         //Check exists..
         if(!backup.exists()){
@@ -193,7 +170,4 @@ public class MiniBrowserJSInterface {
 
         mMiniBrowser.startActivity(chooser);
     }
-
-
-
 }

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,7 +26,14 @@ import androidx.core.app.ActivityCompat;
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
+import org.minima.objects.base.MiniData;
+import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+
+import java.io.File;
+import java.net.URI;
+import java.nio.file.Paths;
+import java.util.Base64;
 
 public class MiniBrowser extends AppCompatActivity {
 
@@ -102,19 +110,17 @@ public class MiniBrowser extends AppCompatActivity {
         //Set the Clients..
         mWebView.setWebViewClient(new MiniWebViewClient(this));
 
+        //Chrome client gives extra things
         mChromeClient = new MiniChromViewClient(this);
         mWebView.setWebChromeClient(mChromeClient);
+
+        //Register for the Download Image Context
+        registerForContextMenu(mWebView);
 
         //Set a Download Listener..
         mWebView.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String useragent, String contentdisposition, String mimetype, long contentlength) {
-
-//                MinimaLogger.log("DURL:"+url+"**");
-//                MinimaLogger.log("DUSERAGENT:"+useragent+"**");
-//                MinimaLogger.log("DCONTENT:"+contentdisposition+"**");
-//                MinimaLogger.log("DMIME:"+mimetype+"**");
-//                MinimaLogger.log("DLEN:"+contentlength+"**");
 
                 try{
                     String filename = URLUtil.guessFileName( url, contentdisposition, mimetype);
@@ -125,17 +131,20 @@ public class MiniBrowser extends AppCompatActivity {
                         return;
                     }
 
-                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
-
-                    request.setMimeType(mimetype);
+                    //Get the Cookies
                     String cookies = CookieManager.getInstance().getCookie(url);
+
+                    //Create a Download request
+                    DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
+                    request.setMimeType(mimetype);
                     request.addRequestHeader("cookie", cookies);
                     request.addRequestHeader("User-Agent", useragent);
                     request.setDescription("Downloading File...");
-
                     request.allowScanningByMediaScanner();
                     request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED); //Notify client once download is completed!
                     request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+
+                    //And send to Download Manager
                     DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                     dm.enqueue(request);
 
@@ -158,12 +167,93 @@ public class MiniBrowser extends AppCompatActivity {
         }
     }
 
-    //public void loadWebPage(String zURL){
-    //    mWebView.loadUrl(zURL);
-    //}
+    @Override
+    public void onCreateContextMenu(ContextMenu contextMenu, View view, ContextMenu.ContextMenuInfo contextMenuInfo){
+        super.onCreateContextMenu(contextMenu, view, contextMenuInfo);
+
+        final WebView.HitTestResult webViewHitTestResult = mWebView.getHitTestResult();
+
+        MinimaLogger.log("Create Context Menu "+webViewHitTestResult.getType());
+
+        if (    webViewHitTestResult.getType() == WebView.HitTestResult.IMAGE_TYPE ||
+                webViewHitTestResult.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
+
+            //contextMenu.setHeaderTitle("Download Image");
+
+            contextMenu.add(0, 1, 0, "Save Image").setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+
+                    //What are we downloading
+                    String DownloadImageURL = webViewHitTestResult.getExtra();
+
+                    //Is it a blob
+                    if(DownloadImageURL.startsWith("data:")){
+
+                        //Convert to HEX
+                        downloadImageDataURL(DownloadImageURL);
+
+                    }else{
+                        if(URLUtil.isValidUrl(DownloadImageURL)){
+
+                            DownloadManager.Request request = new DownloadManager.Request(Uri.parse(DownloadImageURL));
+                            request.allowScanningByMediaScanner();
+                            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                            DownloadManager downloadManager = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+                            downloadManager.enqueue(request);
+
+                            Toast.makeText(MiniBrowser.this,"Downloading image..",Toast.LENGTH_SHORT).show();
+
+                        }else {
+                            Toast.makeText(MiniBrowser.this,"Sorry.. Something Went Wrong.",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    return true;
+                }
+            });
+        }
+    }
+
+    public void downloadImageDataURL(String zURL){
+
+        try{
+            //First get the type..
+            int indexstart  = zURL.indexOf(":");
+            int indexend    = zURL.indexOf(";");
+            int indexdata   = zURL.indexOf(",");
+
+            //Get the type and base64 data
+            String type     =  zURL.substring(indexstart+1,indexend);
+            String data     =  zURL.substring(indexdata+1);
+
+            //Convert Base64 to Hex
+            byte[] hexdata = Base64.getDecoder().decode(data);
+
+            //And pick a filename..
+            String filename = MiniData.getRandomData(8).to0xString();
+            if(type.equals("image/jpeg")){
+                filename = filename+".jpeg";
+            }else if(type.equals("image/png")){
+                filename = filename+".png";
+            }else if(type.equals("image/gif")){
+                filename = filename+".gif";
+            }else if(type.equals("image/svg+xml")){
+                filename = filename+".svg";
+            }else if(type.equals("image/ico")){
+                filename = filename+".ico";
+            }
+
+            //And finally save the data
+            saveFile(filename,hexdata);
+
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+        }
+    }
 
     public void shutWindow(){
-        MinimaLogger.log("MINIBROWSER SHUT WINDOW ");
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -229,7 +319,6 @@ public class MiniBrowser extends AppCompatActivity {
     public void checkPermission(String[] permissions, int requestCode){
         // Checking if permission is not granted
         ActivityCompat.requestPermissions(this, permissions , requestCode);
-
 //        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
 //            ActivityCompat.requestPermissions(this, new String[] { permission }, requestCode);
 //        }
@@ -340,5 +429,47 @@ public class MiniBrowser extends AppCompatActivity {
         if(data == null){
             return;
         }
+    }
+
+    //Save HEX data to a file..
+    public void saveFile(String zFilename, byte[] zHexData){
+
+        //Create a MiniData object
+        MiniData data = new MiniData(zHexData);
+
+        //Save to Downloads..
+        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File mindownloads = new File(downloads, "Minima");
+
+        //And save..
+        try {
+
+            //Now create the full file..
+            File fullfile = new File(mindownloads, zFilename);
+
+            //Write data to file..
+            MiniFile.writeDataToFile(fullfile, data.getBytes());
+
+        } catch (Exception e) {
+            MinimaLogger.log(e);
+
+            //Small message
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(MiniBrowser.this, "Error saving file..", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            return;
+        }
+
+        //Small message
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MiniBrowser.this, "File saved to Minima folder : " + zFilename, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
