@@ -115,7 +115,7 @@ The Minima Team</string>
         -archive : Run an archive node on your phone\n
         -mdspassword : Specify your mds password\n
         -rpcenable : enable RPC (use with SSL)\n
-        -connect host:port : Disable P2P and only connect to specified hosts\n
+        -connect : Disable P2P and only connect to specified hosts\n
         ..\n
         \n
         You will need to restart Minima for changes to take effect.
