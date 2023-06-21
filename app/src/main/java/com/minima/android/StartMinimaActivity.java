@@ -113,13 +113,12 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
                         //Try Again
                         mds = Main.getInstance().getMDSManager();
                     }
-                    MinimaLogger.log("Minima started.. ");
 
                 }catch(Exception exc) {
                     MinimaLogger.log(exc);
                 }
 
-                MinimaLogger.log("MAINACTIVITY - Minima StartUp complete..");
+                MinimaLogger.log("Minima StartUp complete..");
 
                 //Set the first Notification
                 mMinima.setTopBlock();
@@ -191,8 +190,8 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //Start her up..
         Intent intent = new Intent(StartMinimaActivity.this, MiniBrowser.class);
-//        Intent intent = new Intent(StartMinimaActivity.this, MDSBrowserTest.class);
         intent.putExtra("url",minihub);
+        intent.putExtra("ishub",true);
         startActivity(intent);
 
         //Close this window..

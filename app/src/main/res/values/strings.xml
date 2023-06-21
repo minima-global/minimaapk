@@ -107,6 +107,19 @@ The Minima Team</string>
         Your wallet and keys will be reset to the chosen seed phrase and all blocks re-downloaded.
     </string>
 
+    <string name="params_dialog_text">
+        Here you can set extra startup params for Minima.\n
+        \n
+        Do NOT touch this unless you are sure you know what you are doing.\n
+        \n
+        -archive : Run an archive node on your phone\n
+        -mdspassword : Specify your mds password\n
+        -rpcenable : enable RPC (use with SSL)\n
+        ..\n
+        \n
+        You will need to restart Minima for changes to take effect.
+    </string>
+
     <string name="minima_gdrive_backup_explanation_not_signed_in">Activate daily GDrive backups </string>
     <string name="minima_gdrive_backup_button_not_signed_in">Sign in to Google</string>
 

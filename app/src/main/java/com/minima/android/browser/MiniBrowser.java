@@ -2,11 +2,15 @@ package com.minima.android.browser;
 
 import android.Manifest;
 import android.app.DownloadManager;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,8 +21,10 @@ import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -55,7 +61,8 @@ public class MiniBrowser extends AppCompatActivity {
     //The ToolBar
     Toolbar mToolBar;
 
-    //The Title
+    //Is this the MiniHUB
+    boolean mIsMiniHUB = false;
 
     //Are we hidin the bar..
     boolean mHidingBar = false;
@@ -66,13 +73,22 @@ public class MiniBrowser extends AppCompatActivity {
 
         setContentView(R.layout.activity_browser);
 
+        //Get the Base URL
+        mBaseURL = getIntent().getStringExtra("url");
+
+        //Is this the MiniHUB
+        mIsMiniHUB = getIntent().getBooleanExtra("ishub",false);
+
         //Set Our Toolbar
         mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().hide();
 
-        //Get the Base URL
-        mBaseURL = getIntent().getStringExtra("url");
+        if(!mIsMiniHUB) {
+            getSupportActionBar().hide();
+        }
+
+        //Blank the title
+        setTitle("");
 
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
@@ -115,7 +131,7 @@ public class MiniBrowser extends AppCompatActivity {
         mWebView.setWebChromeClient(mChromeClient);
 
         //Register for the Download Image Context
-        registerForContextMenu(mWebView);
+        //registerForContextMenu(mWebView);
 
         //Set a Download Listener..
         mWebView.setDownloadListener(new DownloadListener() {
@@ -161,10 +177,6 @@ public class MiniBrowser extends AppCompatActivity {
         //Get Files Permission
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
-
-        if(getSupportActionBar().isShowing()){
-            hideToolBar();
-        }
     }
 
     @Override
@@ -173,8 +185,7 @@ public class MiniBrowser extends AppCompatActivity {
 
         final WebView.HitTestResult webViewHitTestResult = mWebView.getHitTestResult();
 
-        MinimaLogger.log("Create Context Menu "+webViewHitTestResult.getType());
-
+        //Is it an image
         if (    webViewHitTestResult.getType() == WebView.HitTestResult.IMAGE_TYPE ||
                 webViewHitTestResult.getType() == WebView.HitTestResult.SRC_IMAGE_ANCHOR_TYPE) {
 
@@ -275,6 +286,10 @@ public class MiniBrowser extends AppCompatActivity {
 
     public void showToolbar(){
 
+        if(mIsMiniHUB){
+           return;
+        }
+
         //Only if hidden
         if(!getSupportActionBar().isShowing() && !mHidingBar) {
             getSupportActionBar().show();
@@ -284,7 +299,7 @@ public class MiniBrowser extends AppCompatActivity {
         }
     }
 
-    public void hideToolBar(){
+    private void hideToolBar(){
 
         //We are hiding
         mHidingBar = true;
@@ -326,7 +341,14 @@ public class MiniBrowser extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.minibrowser, menu);
+
+        //Different Menu for Main MiniHUB
+        if(mIsMiniHUB){
+            getMenuInflater().inflate(R.menu.minibrowserhub, menu);
+        }else{
+            getMenuInflater().inflate(R.menu.minibrowser, menu);
+        }
+
         return true;
     }
 
@@ -359,9 +381,62 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_mdsparams:
+
+                //Show the Initial extra params
+                showExtraInitialParams();
+
+                return true;
+
+            case R.id.action_mdsshutdown:
+
+                //Show the Initial extra params
+                shutdownMinima();
+
+                return true;
+
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showExtraInitialParams(){
+
+        AlertDialog.Builder pbuilder = new AlertDialog.Builder(this);
+        pbuilder.setTitle("Minima Startup Params");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.params_view, null);
+        pbuilder.setView(dialogView);
+
+        // Set up the input
+        final EditText input = dialogView.findViewById(R.id.params_initial);
+
+        //Load the current prefs..
+        SharedPreferences pref  = getSharedPreferences("startup_params",MODE_PRIVATE);
+        String prefstring       = pref.getString("extra_params","");
+        input.setText(prefstring);
+
+        pbuilder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                //Get the text
+                String text = input.getText().toString().trim();
+
+                //Save to Prefs..
+                SharedPreferences.Editor edit = pref.edit();
+                edit.putString("extra_params",text);
+                edit.apply();
+            }
+        });
+        pbuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        pbuilder.show();
     }
 
     @Override

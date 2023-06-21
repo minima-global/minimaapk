@@ -9,6 +9,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.BatteryManager;
@@ -34,6 +35,7 @@ import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import com.minima.android.StartMinimaActivity;
 import com.minima.android.browser.MiniBrowser;
@@ -45,11 +47,6 @@ import com.minima.android.browser.MiniBrowser;
  * 23 April 2020
  * */
 public class MinimaService extends Service {
-
-    static boolean CLEAN        = false;
-    static boolean NOCONNECT    = false;
-    static boolean TEST         = false;
-    static boolean GENESIS      = false;
 
     //Currently Binding doesn't work as we run in a separate process..
     public class MyBinder extends Binder {
@@ -202,36 +199,26 @@ public class MinimaService extends Service {
         vars.add("-mdsenable");
 
         //TESTER HACK
-//        vars.add("-noconnect");
-//        vars.add("-mdspassword");
-//        vars.add("123");
+        //vars.add("-noconnect");
+        //vars.add("-mdspassword");
+        //vars.add("123");
 
         vars.add("-nosyncibd");
 
         vars.add("-noshutdownhook");
 
-        if(CLEAN) {
-            vars.add("-clean");
+        //Are there any EXTRA params..
+        SharedPreferences pref  = getSharedPreferences("startup_params",MODE_PRIVATE);
+        String prefstring       = pref.getString("extra_params","");
+        if(!prefstring.equals("")){
+            StringTokenizer strtok  = new StringTokenizer(prefstring," ");
+            while(strtok.hasMoreTokens()){
+                String param = strtok.nextToken();
+                vars.add(param);
+            }
         }
 
-        if(NOCONNECT) {
-            vars.add("-noconnect");
-        }
-
-        if(TEST) {
-            vars.add("-nop2p");
-            vars.add("-test");
-        }
-
-        if(GENESIS) {
-//            vars.add("-nop2p");
-            vars.add("-genesis");
-        }
-
-        //vars.add("-connect");
-        //vars.add("35.228.18.150:9001");
-        //vars.add("10.0.2.2:9001");
-
+        //Start her up!
         minima.mainStarter(vars.toArray(new String[0]));
 
         //Notify User service is now running!
