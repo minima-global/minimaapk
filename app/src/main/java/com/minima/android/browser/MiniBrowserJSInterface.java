@@ -79,6 +79,20 @@ public class MiniBrowserJSInterface {
     }
 
     @JavascriptInterface
+    public void disableDefaultContextMenu() {
+
+        //Don't handle long press automatically
+        mMiniBrowser.unregisterDefaultContextMenu();
+    }
+
+    @JavascriptInterface
+    public void enableDefaultContextMenu() {
+
+        //Enable Context menu for long press..
+        mMiniBrowser.registerDefaultContextMenu();
+    }
+
+    @JavascriptInterface
     public void closeWindow() {
 
         //Close this WebView

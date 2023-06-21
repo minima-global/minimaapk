@@ -62,7 +62,9 @@ public class MDSBrowserTest extends MiniBrowser {
                         "<br><br>" +
                         "<input type=\"button\" value=\"Share File\" onClick=\"Android.shareFile('/file', 'application/zip');\" />\n" +
                         "<br><br>" +
-                        "<input type=\"button\" value=\"Shutdown Quit\" onClick=\"Android.quitTestMinima();\" />\n" +
+                        "<input type=\"button\" value=\"Prompt\" onClick=\"var tt = prompt('Hello','you');console.log(tt);\" />\n" +
+                        "<br><br>" +
+                        "<input type=\"button\" value=\"Disable Context\" onClick=\"Android.disableDefaultContextMenu();\" />\n" +
                         "<br><br>" +
                         "<a href=\"http://hello.com/somepage.html\">OPEN SAME WINDOW</a><br><br>" +
                         "<a href=\"http://hello.com/somepage.html\" target='_blank'>OPEN NEW WINDOW</a><br><br>" +

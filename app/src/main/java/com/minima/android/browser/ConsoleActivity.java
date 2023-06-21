@@ -2,6 +2,7 @@ package com.minima.android.browser;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +26,15 @@ public class ConsoleActivity extends AppCompatActivity {
         Toolbar mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
 
-        setTitle("Console");
+        setTitle("Console Logs");
 
         //Now get the text
         mConsoleText = getIntent().getStringExtra("consoletext");
 
+        //Set up TextView
         TextView tv = findViewById(R.id.console_text);
-        tv.setMovementMethod(new ScrollingMovementMethod());
-        tv.setText(mConsoleText);
+        //tv.setText(mConsoleText);
+        tv.setText(Html.fromHtml(mConsoleText,Html.FROM_HTML_MODE_COMPACT));
         tv.setTextIsSelectable(true);
     }
     @Override

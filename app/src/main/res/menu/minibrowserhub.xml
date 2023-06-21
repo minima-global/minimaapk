@@ -2,53 +2,61 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item
-        android:id="@+id/action_mdsrefresh"
-        android:orderInCategory="100"
-        android:title="Refresh"
-        android:icon="@android:drawable/ic_menu_revert"
-        app:showAsAction="never" />
+    <group android:id="@+id/grp1">
 
-<!--    <item-->
-<!--        android:id="@+id/action_mdsreset"-->
-<!--        android:orderInCategory="100"-->
-<!--        android:title="Reset"-->
-<!--        android:icon="@android:drawable/ic_menu_revert"-->
-<!--        app:showAsAction="never" />-->
+        <item
+            android:id="@+id/action_mdsrefresh"
+            android:orderInCategory="100"
+            android:title="Refresh"
+            android:icon="@android:drawable/ic_menu_revert"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_mdsconsole"
-        android:orderInCategory="100"
-        android:title="Console Messages"
-        android:icon="@android:drawable/edit_text"
-        app:showAsAction="never" />
+    <!--    <item-->
+    <!--        android:id="@+id/action_mdsreset"-->
+    <!--        android:orderInCategory="100"-->
+    <!--        android:title="Reset"-->
+    <!--        android:icon="@android:drawable/ic_menu_revert"-->
+    <!--        app:showAsAction="never" />-->
 
-    <item
-        android:id="@+id/action_mdsopen"
-        android:orderInCategory="100"
-        android:title="Open in Browser"
-        android:icon="@android:drawable/btn_radio"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/action_mdsconsole"
+            android:orderInCategory="100"
+            android:title="Console Messages"
+            android:icon="@android:drawable/edit_text"
+            app:showAsAction="never" />
 
-<!--    <item-->
-<!--        android:id="@+id/action_mdsexit"-->
-<!--        android:orderInCategory="100"-->
-<!--        android:title="Exit MiniDAPP"-->
-<!--        android:icon="@android:drawable/presence_away"-->
-<!--        app:showAsAction="never" />-->
+        <item
+            android:id="@+id/action_mdsopen"
+            android:orderInCategory="100"
+            android:title="Open in Browser"
+            android:icon="@android:drawable/btn_radio"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_mdsparams"
-        android:orderInCategory="100"
-        android:title="Extra Startup Params"
-        android:icon="@android:drawable/ic_dialog_info"
-        app:showAsAction="never" />
+        <item
+            android:id="@+id/action_mdsexit"
+            android:orderInCategory="100"
+            android:title="Close MiniHUB"
+            android:icon="@android:drawable/presence_away"
+            app:showAsAction="never" />
 
-    <item
-        android:id="@+id/action_mdsshutdown"
-        android:orderInCategory="100"
-        android:title="Shutdown"
-        android:icon="@android:drawable/ic_menu_close_clear_cancel"
-        app:showAsAction="never" />
+    </group>
+
+    <group android:id="@+id/grp2">
+
+        <item
+            android:id="@+id/action_mdsparams"
+            android:orderInCategory="100"
+            android:title="Extra Startup Params"
+            android:icon="@android:drawable/ic_dialog_info"
+            app:showAsAction="never" />
+
+        <item
+            android:id="@+id/action_mdsshutdown"
+            android:orderInCategory="100"
+            android:title="Shutdown"
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            app:showAsAction="never" />
+
+    </group>
 
 </menu>

@@ -8,12 +8,14 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.webkit.ConsoleMessage;
+import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -45,7 +47,11 @@ public class MiniChromViewClient extends WebChromeClient {
             mMiniBrowser.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    mMiniBrowser.setTitle(title);
+                    if(title.equalsIgnoreCase("minihub")){
+                        mMiniBrowser.setTitle("Minima");
+                    }else{
+                        mMiniBrowser.setTitle(title);
+                    }
                 }
             });
         }
@@ -114,10 +120,7 @@ public class MiniChromViewClient extends WebChromeClient {
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
 
         //Add a line to the Console output
-        mConsoleMessages += consoleMessage.message()
-                + " -- From line "
-                + consoleMessage.lineNumber()
-                + " of "+ consoleMessage.sourceId()+"\n\n";
+        mConsoleMessages += "<b>Line "+consoleMessage.lineNumber()+"</b> - "+consoleMessage.message()+"<br><br>";
 
         return true;
     }
@@ -158,6 +161,36 @@ public class MiniChromViewClient extends WebChromeClient {
                                 result.cancel();
                             }
                         })
+                .create()
+                .show();
+
+        return true;
+    }
+
+    @Override
+    public boolean onJsPrompt (WebView view, String url, String message, String defaultValue, JsPromptResult result){
+
+        final EditText inputfield = new EditText(mMiniBrowser);
+        inputfield.setText(defaultValue);
+
+        new AlertDialog.Builder(view.getContext())
+                .setTitle(message)
+                .setView(inputfield)
+                .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+
+                        //Get the Input
+                        String input = inputfield.getText().toString().trim();
+
+                        //And respond..
+                        result.confirm(input);
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel,new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int which){
+                        result.cancel();
+                    }
+                })
                 .create()
                 .show();
 

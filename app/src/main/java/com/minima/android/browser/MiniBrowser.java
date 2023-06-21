@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.text.InputType;
@@ -131,7 +132,9 @@ public class MiniBrowser extends AppCompatActivity {
         mWebView.setWebChromeClient(mChromeClient);
 
         //Register for the Download Image Context
-        //registerForContextMenu(mWebView);
+        if(!mIsMiniHUB) {
+            registerForContextMenu(mWebView);
+        }
 
         //Set a Download Listener..
         mWebView.setDownloadListener(new DownloadListener() {
@@ -177,6 +180,15 @@ public class MiniBrowser extends AppCompatActivity {
         //Get Files Permission
         String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
+    }
+
+    //Register a Context Menu - long press image download
+    public void registerDefaultContextMenu(){
+        registerForContextMenu(mWebView);
+    }
+
+    public void unregisterDefaultContextMenu(){
+        unregisterForContextMenu(mWebView);
     }
 
     @Override
@@ -341,6 +353,11 @@ public class MiniBrowser extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
+        //Only works on certain version..
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            menu.setGroupDividerEnabled(true);
+        }
 
         //Different Menu for Main MiniHUB
         if(mIsMiniHUB){
