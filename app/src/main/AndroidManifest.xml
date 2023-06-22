@@ -98,7 +98,6 @@
             android:exported="false"
             android:label="Minima Browser"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
-
         </activity>
 
         <activity
@@ -114,6 +113,14 @@
             android:name=".browser.ConsoleActivity"
             android:exported="true"
             android:label="Console"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
+        <activity
+            android:name=".browser.NotifyBrowser"
+            android:launchMode="singleTask"
+            android:taskAffinity=""
+            android:excludeFromRecents="true"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>
 

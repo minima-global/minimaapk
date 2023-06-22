@@ -29,6 +29,7 @@ import org.minima.objects.TxPoW;
 import org.minima.system.Main;
 import org.minima.system.mds.MDSManager;
 import org.minima.system.network.webhooks.NotifyManager;
+import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.messages.Message;
@@ -39,6 +40,7 @@ import java.util.StringTokenizer;
 
 import com.minima.android.StartMinimaActivity;
 import com.minima.android.browser.MiniBrowser;
+import com.minima.android.browser.NotifyBrowser;
 
 /** Foreground Service for the Minima Node
  *
@@ -210,12 +212,22 @@ public class MinimaService extends Service {
         //Are there any EXTRA params..
         SharedPreferences pref  = getSharedPreferences("startup_params",MODE_PRIVATE);
         String prefstring       = pref.getString("extra_params","");
-        if(!prefstring.equals("")){
-            StringTokenizer strtok  = new StringTokenizer(prefstring," ");
-            while(strtok.hasMoreTokens()){
-                String param = strtok.nextToken();
-                vars.add(param);
+
+        //Check if Valid!
+        boolean validparams = ParamConfigurer.checkParams(prefstring);
+
+        if(validparams) {
+            if (!prefstring.equals("")) {
+                StringTokenizer strtok = new StringTokenizer(prefstring, " ");
+                while (strtok.hasMoreTokens()) {
+                    String param = strtok.nextToken();
+                    vars.add(param);
+                }
             }
+        }else{
+
+            //Notify User service is now running!
+            Toast.makeText(this, "[!] Minima EXTRA Params Error.. pls fix", Toast.LENGTH_LONG).show();
         }
 
         //Start her up!
@@ -256,48 +268,79 @@ public class MinimaService extends Service {
 
     private PendingIntent createDynamicPendingIntent(String zUID){
 
-        PendingIntent pending =  null;
-
-        //Get the MDS Manager - if it's started
-        String starturl = "";
-        if(Main.getInstance() != null){
-            if(Main.getInstance().getMDSManager()!=null){
-                if(Main.getInstance().getMDSManager().hasStarted()){
-
-                    MDSManager mds = Main.getInstance().getMDSManager();
-
-                    String miniid;
-                    if(zUID.equals("minihub")){
-                        miniid = mds.getDefaultMiniHUB();
-                    }else{
-                        miniid = zUID;
-                    }
-
-                    //Get the sessionid..
-                    String sessionid = mds.convertMiniDAPPID(miniid);
-
-                    starturl = "https://127.0.0.1:9003/"+miniid+"/index.html?uid="+sessionid;
+        //Has the MDS even started..
+        boolean validmds = false;
+        if(Main.getInstance() != null) {
+            if (Main.getInstance().getMDSManager() != null) {
+                if (Main.getInstance().getMDSManager().hasStarted()) {
+                    validmds = true;
                 }
             }
         }
 
-        Intent NotificationIntent = null;
-        if(!starturl.equals("")){
-            NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
-            NotificationIntent.putExtra("url",starturl);
+        if(!validmds || zUID.equals("minihub")){
 
-        }else{
-            NotificationIntent = new Intent(getBaseContext(), StartMinimaActivity.class);
+            //What to start
+            return createDefaultPending();
         }
 
+        //What is the UID
+        String uid = zUID;
+
+        //Is it the MiniHUb
+        PendingIntent pending =  null;
+        try{
+
+            //It's a MiniDAPP..
+            MDSManager mds = Main.getInstance().getMDSManager();
+
+            //Get the sessionid..
+            String sessionid = mds.convertMiniDAPPID(uid);
+
+            //What is the start URL
+            String starturl = "https://127.0.0.1:9003/"+uid+"/index.html?uid="+sessionid;
+
+            //Now create the
+            Intent NotificationIntent = null;
+            if(zUID.equals("minihub")){
+                NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
+            }else{
+                NotificationIntent = new Intent(getBaseContext(), NotifyBrowser.class);
+                NotificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            }
+
+            //Set the URL
+            NotificationIntent.putExtra("url",starturl);
+
+            //And build the pending..
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                pending = PendingIntent.getActivity(getBaseContext(), 0
+                        , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+            }else {
+                pending = PendingIntent.getActivity(getBaseContext(), 0
+                        , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+            }
+
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
+
+            //What to start
+            pending = createDefaultPending();
+        }
+
+        return pending;
+    }
+
+    private PendingIntent createDefaultPending(){
+        //What to start
+        PendingIntent pending =  null;
+        Intent NotificationIntent = new Intent(getBaseContext(), StartMinimaActivity.class);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             pending = PendingIntent.getActivity(getBaseContext(), 0
                     , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-
         }else {
             pending = PendingIntent.getActivity(getBaseContext(), 0
                     , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-
         }
 
         return pending;

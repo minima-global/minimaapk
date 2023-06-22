@@ -34,6 +34,7 @@ import com.minima.android.R;
 import com.minima.android.service.MinimaService;
 
 import org.minima.objects.base.MiniData;
+import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
 
@@ -441,10 +442,19 @@ public class MiniBrowser extends AppCompatActivity {
                 //Get the text
                 String text = input.getText().toString().trim();
 
-                //Save to Prefs..
-                SharedPreferences.Editor edit = pref.edit();
-                edit.putString("extra_params",text);
-                edit.apply();
+                //Check It
+                boolean validparams = ParamConfigurer.checkParams(text);
+
+                if(validparams) {
+                    //Save to Prefs..
+                    SharedPreferences.Editor edit = pref.edit();
+                    edit.putString("extra_params", text);
+                    edit.apply();
+
+                    Toast.makeText(MiniBrowser.this, "Extra startup params set..", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MiniBrowser.this, "Invalid Params!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
         pbuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
