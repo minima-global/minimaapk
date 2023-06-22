@@ -367,7 +367,7 @@ public class MinimaService extends Service {
 
         //QUIT nicely..
         try{
-            String resp = minima.runMinimaCMD("quit");
+            String resp = minima.runMinimaCMD("quit compact:true");
         }catch(Exception exc){
             MinimaLogger.log(exc);
         }
