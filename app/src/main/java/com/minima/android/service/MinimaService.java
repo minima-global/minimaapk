@@ -278,7 +278,7 @@ public class MinimaService extends Service {
             }
         }
 
-        if(!validmds || zUID.equals("minihub")){
+        if(!validmds){
 
             //What to start
             return createDefaultPending();
@@ -286,6 +286,12 @@ public class MinimaService extends Service {
 
         //What is the UID
         String uid = zUID;
+
+        if(zUID.equals("0x00")){
+
+            //Jump to MiniHUB
+            uid = Main.getInstance().getMDSManager().getDefaultMiniHUB();
+        }
 
         //Is it the MiniHUb
         PendingIntent pending =  null;
@@ -302,9 +308,11 @@ public class MinimaService extends Service {
 
             //Now create the
             Intent NotificationIntent = null;
-            if(zUID.equals("minihub")){
+            if(zUID.equals("0x00")){
+                //Popup the MAIN window
                 NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
             }else{
+                //Open a NEW Window
                 NotificationIntent = new Intent(getBaseContext(), NotifyBrowser.class);
                 NotificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             }
@@ -351,7 +359,7 @@ public class MinimaService extends Service {
                 .setContentTitle(zText)
                 .setContentText("Minima Status Channel")
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
-                .setContentIntent(createDynamicPendingIntent("minihub"))
+                .setContentIntent(createDynamicPendingIntent("0x00"))
                 .build();
 
         return mNotification;
