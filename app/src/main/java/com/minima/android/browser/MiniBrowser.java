@@ -406,6 +406,19 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
+            case R.id.action_mdsshare:
+
+                //Create share Intent
+                Intent sendIntent = new Intent();
+                sendIntent.setAction(Intent.ACTION_SEND);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.minima.android");
+                sendIntent.setType("text/plain");
+
+                Intent shareIntent = Intent.createChooser(sendIntent, null);
+                startActivity(shareIntent);
+
+                return true;
+
             case R.id.action_mdsshutdown:
 
                 //Show the Initial extra params

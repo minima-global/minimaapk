@@ -21,7 +21,7 @@
         <item
             android:id="@+id/action_mdsconsole"
             android:orderInCategory="100"
-            android:title="Console Messages"
+            android:title="Console Logs"
             android:icon="@android:drawable/edit_text"
             app:showAsAction="never" />
 
@@ -44,9 +44,16 @@
     <group android:id="@+id/grp2">
 
         <item
+            android:id="@+id/action_mdsshare"
+            android:orderInCategory="100"
+            android:title="Share this App"
+            android:icon="@android:drawable/ic_menu_share"
+            app:showAsAction="never" />
+
+        <item
             android:id="@+id/action_mdsparams"
             android:orderInCategory="100"
-            android:title="Extra Startup Params"
+            android:title="Startup Params"
             android:icon="@android:drawable/ic_dialog_info"
             app:showAsAction="never" />
 

@@ -19,7 +19,7 @@
     <item
         android:id="@+id/action_mdsconsole"
         android:orderInCategory="100"
-        android:title="Console Messages"
+        android:title="Console Logs"
         android:icon="@android:drawable/edit_text"
         app:showAsAction="never" />
 

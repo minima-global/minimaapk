@@ -6,10 +6,12 @@ import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsPromptResult;
 import android.webkit.JsResult;
+import android.webkit.PermissionRequest;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
@@ -39,6 +41,14 @@ public class MiniChromViewClient extends WebChromeClient {
     public String getConsoleMessages(){
         return mConsoleMessages;
     }
+
+//    @Override
+//    public void onPermissionRequest(PermissionRequest request) {
+//        MinimaLogger.log("PERMISSION REQUEST : "+request.toString());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            request.grant(request.getResources());
+//        }
+//    }
 
     @Override
     public void onReceivedTitle(WebView view, String title) {
