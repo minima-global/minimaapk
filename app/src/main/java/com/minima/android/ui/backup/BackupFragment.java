@@ -33,17 +33,10 @@ import androidx.fragment.app.Fragment;
 
 import com.minima.android.MainActivity;
 import com.minima.android.R;
-import com.minima.android.dependencies.backupSync.BackupSyncProvider;
-import com.minima.android.dependencies.backupSync.minima.MinimaBackupUtils;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserNotSignedInYet;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleDriveUserSignedInModel;
-import com.minima.android.dependencies.backupSync.providers.drive.model.userModel.GoogleStateUserModel;
 import com.minima.android.ui.archive.ArchiveListener;
-import com.minima.android.ui.archive.SeedSyncActivity;
 
 import org.minima.database.wallet.Wallet;
 import org.minima.system.Main;
-import org.minima.utils.MinimaLogger;
 
 import java.io.File;
 import java.util.Date;
