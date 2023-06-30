@@ -311,6 +311,7 @@ public class MinimaService extends Service {
             if(zUID.equals("0x00")){
                 //Popup the MAIN window
                 NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
+                NotificationIntent.putExtra("ishub",true);
             }else{
                 //Open a NEW Window
                 NotificationIntent = new Intent(getBaseContext(), NotifyBrowser.class);

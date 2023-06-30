@@ -95,12 +95,19 @@ public class MiniBrowserJSInterface {
     @JavascriptInterface
     public void closeWindow() {
 
+        MinimaLogger.log("JS CLOSE WINDOW");
+
+        //Close this WebView
+        //mMiniBrowser.shutdownMinima();
+
         //Close this WebView
         mMiniBrowser.shutWindow();
     }
 
     @JavascriptInterface
     public void shutdownMinima() {
+
+        MinimaLogger.log("JS SHUTDOWN MINIMA");
 
         //Close this WebView
         mMiniBrowser.shutdownMinima();

@@ -5,6 +5,7 @@ import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.minima.android.R;
 import com.minima.android.service.MinimaService;
@@ -68,6 +70,9 @@ public class MiniBrowser extends AppCompatActivity {
 
     //Are we hidin the bar..
     boolean mHidingBar = false;
+
+    //Are we in shutdown mode..
+    public static boolean mShutDownMode = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -289,12 +294,27 @@ public class MiniBrowser extends AppCompatActivity {
 
     public void shutdownMinima(){
 
+        //Now in shutdopwn mode..
+        mShutDownMode = true;
+        MinimaLogger.log("MINIBROWSER SHUTDOWN MODE STARTED");
+
         //Stop the service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
         stopService(minimaintent);
 
         //And close all windows
         finishAffinity();
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        //Are we in shutdown mode..
+        MinimaLogger.log("MINIBROWSER ON RESUME.. SHUTDOWN MODE "+mShutDownMode);
+        if(mShutDownMode){
+            finishAffinity();
+        }
     }
 
     public void showToolbar(){
@@ -345,11 +365,20 @@ public class MiniBrowser extends AppCompatActivity {
 
     // Function to check and request permission
     public void checkPermission(String[] permissions, int requestCode){
-        // Checking if permission is not granted
-        ActivityCompat.requestPermissions(this, permissions , requestCode);
-//        if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[] { permission }, requestCode);
-//        }
+
+        //Check all the requested permissions
+        boolean allok = true;
+        for(String perm : permissions){
+            if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED){
+                allok = false;
+                break;
+            }
+        }
+
+        //Ask for all the permissions
+        if(!allok){
+            ActivityCompat.requestPermissions(this, permissions , requestCode);
+        }
     }
 
     @Override

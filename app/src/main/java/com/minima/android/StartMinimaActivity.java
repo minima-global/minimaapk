@@ -188,6 +188,9 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         String minihub = "https://127.0.0.1:9003/"+minihubid+"/index.html?uid="+sessionid;
 
+        //Set shutdown mode.. to FALSE
+        MiniBrowser.mShutDownMode = false;
+
         //Start her up..
         Intent intent = new Intent(StartMinimaActivity.this, MiniBrowser.class);
         intent.putExtra("url",minihub);
