@@ -56,7 +56,7 @@ public class MiniWebViewClient extends WebViewClient  {
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
         String url = request.getUrl().toString();
-        view.loadUrl(request.getUrl().toString());
+        view.loadUrl(url);
         return false;
     }
 
@@ -85,6 +85,22 @@ public class MiniWebViewClient extends WebViewClient  {
                 //All good
                 handler.proceed();
             }else{
+
+                //Try once to re-load..
+                try{
+                    mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
+                    cert2 = new MiniData(mMinimaSSLCert.getPublicKey().getEncoded());
+                    if(cert1.isEqual(cert2)){
+                        //All good
+                        handler.proceed();
+                    }
+
+                    return;
+                }catch(Exception exc){
+                    //Something wrong..
+                    MinimaLogger.log(exc);
+                }
+
                 MinimaLogger.log("INCORRECT SSL!");
                 handler.cancel();
             }
