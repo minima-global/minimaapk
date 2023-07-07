@@ -26,6 +26,8 @@ import java.util.List;
 
 public class MiniBrowserJSInterface {
 
+    public boolean DEBUG_LOGS = false;
+
     private MiniBrowser mMiniBrowser;
 
     public MiniBrowserJSInterface(MiniBrowser zMiniBrowser) {
@@ -34,6 +36,10 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void blobDownload(String zMdsfile, String zHexData) {
+
+        if(DEBUG_LOGS){
+            MinimaLogger.log("JS BLOBDOWNLOAD "+zMdsfile+" size:"+zHexData.length());
+        }
 
         //Create a MiniData object
         MiniData data = new MiniData(zHexData);
@@ -80,6 +86,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void disableDefaultContextMenu() {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS DISABLE CONTEXT MENU");
+        }
 
         //Don't handle long press automatically
         mMiniBrowser.unregisterDefaultContextMenu();
@@ -87,6 +96,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void enableDefaultContextMenu() {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS ENABLE CONTEXT MENU");
+        }
 
         //Enable Context menu for long press..
         mMiniBrowser.registerDefaultContextMenu();
@@ -94,8 +106,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void closeWindow() {
-
-        MinimaLogger.log("JS CLOSE WINDOW");
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS CLOSE WINDOW");
+        }
 
         //Close this WebView
         //mMiniBrowser.shutdownMinima();
@@ -106,8 +119,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void shutdownMinima() {
-
-        MinimaLogger.log("JS SHUTDOWN MINIMA");
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS SHUTDOWN MINIMA");
+        }
 
         //Close this WebView
         mMiniBrowser.shutdownMinima();
@@ -115,6 +129,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void showTitleBar() {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS SHOW TITLEBAR");
+        }
 
         mMiniBrowser.runOnUiThread(new Runnable() {
             @Override
@@ -127,8 +144,10 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void openExternalBrowser(String zUrl, String zTarget) {
-
-        //The URL page
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS OPENEXTERNAL "+zUrl);
+        }
+            //The URL page
         Uri minipage = Uri.parse(zUrl);
 
         //Start the browser
@@ -140,6 +159,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void shareText(String zText) {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS SHARETEXT "+zText);
+        }
 
         //Create share Intent
         Intent sendIntent = new Intent();
@@ -153,6 +175,9 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void shareFile(String zFilePath, String zMimeType) {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS SHAREFILE "+zFilePath);
+        }
 
         //Create the file..
         File backup = new File(zFilePath);

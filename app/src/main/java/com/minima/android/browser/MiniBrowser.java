@@ -89,10 +89,7 @@ public class MiniBrowser extends AppCompatActivity {
         //Set Our Toolbar
         mToolBar = findViewById(R.id.minidapp_toolbar);
         setSupportActionBar(mToolBar);
-
-        if(!mIsMiniHUB) {
-            getSupportActionBar().hide();
-        }
+        getSupportActionBar().hide();
 
         //Blank the title
         setTitle("");
@@ -136,11 +133,6 @@ public class MiniBrowser extends AppCompatActivity {
         //Chrome client gives extra things
         mChromeClient = new MiniChromViewClient(this);
         mWebView.setWebChromeClient(mChromeClient);
-
-        //Register for the Download Image Context
-        if(!mIsMiniHUB) {
-            registerForContextMenu(mWebView);
-        }
 
         //Set a Download Listener..
         mWebView.setDownloadListener(new DownloadListener() {
@@ -303,7 +295,26 @@ public class MiniBrowser extends AppCompatActivity {
         stopService(minimaintent);
 
         //And close all windows
-        finishAffinity();
+        showShutdownmessage();
+        //finishAffinity();
+    }
+
+    private void showShutdownmessage(){
+        if(mIsMiniHUB){
+            new AlertDialog.Builder(this)
+                    .setTitle("Shutdown started..")
+                    .setCancelable(false)
+                    .setMessage("Minima is shutting down.\n\nPlease wait for the 'Service Stopped' Popup before restarting..")
+                    .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener(){
+                        public void onClick(DialogInterface dialog, int which){
+                            finishAffinity();
+                        }
+                    })
+                    .create()
+                    .show();
+        }else{
+            finishAffinity();
+        }
     }
 
     @Override
@@ -313,16 +324,11 @@ public class MiniBrowser extends AppCompatActivity {
         //Are we in shutdown mode..
         MinimaLogger.log("MINIBROWSER ON RESUME.. SHUTDOWN MODE "+mShutDownMode);
         if(mShutDownMode){
-            finishAffinity();
+            showShutdownmessage();
         }
     }
 
     public void showToolbar(){
-
-        if(mIsMiniHUB){
-           return;
-        }
-
         //Only if hidden
         if(!getSupportActionBar().isShowing() && !mHidingBar) {
             getSupportActionBar().show();
