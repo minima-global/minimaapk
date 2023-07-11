@@ -13,6 +13,8 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.minima.android.R;
 
+import org.minima.utils.MinimaLogger;
+
 public class ConsoleActivity extends AppCompatActivity {
 
     String mConsoleText;
@@ -49,11 +51,16 @@ public class ConsoleActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.console_share:
 
+                //Get the console text and remove the HTML tags
+                String consolelogs = mConsoleText.replaceAll("<br>","\n");
+                consolelogs = consolelogs.replaceAll("<b>","");
+                consolelogs = consolelogs.replaceAll("</b>","");
+
                 //Share the text
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Console Logs");
-                sendIntent.putExtra(Intent.EXTRA_TEXT, mConsoleText);
+                sendIntent.putExtra(Intent.EXTRA_TEXT, consolelogs);
                 sendIntent.setType("text/plain");
 
                 Intent shareIntent = Intent.createChooser(sendIntent, null);

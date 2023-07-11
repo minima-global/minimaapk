@@ -195,7 +195,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
         Intent intent = new Intent(StartMinimaActivity.this, MiniBrowser.class);
         intent.putExtra("url",minihub);
         intent.putExtra("ishub",true);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         startActivity(intent);
 
         //Close this window..

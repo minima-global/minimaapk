@@ -36,8 +36,8 @@
             android:id="@+id/action_mdsexit"
             android:orderInCategory="100"
             android:title="Close MiniHUB"
-            android:icon="@android:drawable/presence_away"
-            app:showAsAction="never" />
+            android:icon="@android:drawable/ic_menu_close_clear_cancel"
+            app:showAsAction="always" />
 
     </group>
 

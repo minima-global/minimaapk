@@ -33,9 +33,12 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import com.minima.android.R;
+import com.minima.android.StartMinimaActivity;
 import com.minima.android.service.MinimaService;
 
 import org.minima.objects.base.MiniData;
+import org.minima.system.Main;
+import org.minima.system.mds.MDSManager;
 import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
@@ -43,6 +46,7 @@ import org.minima.utils.MinimaLogger;
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Base64;
 
 public class MiniBrowser extends AppCompatActivity {
@@ -301,20 +305,11 @@ public class MiniBrowser extends AppCompatActivity {
 
     private void showShutdownmessage(){
         if(mIsMiniHUB){
-            new AlertDialog.Builder(this)
-                    .setTitle("Shutdown started..")
-                    .setCancelable(false)
-                    .setMessage("Minima is shutting down.\n\nPlease wait for the 'Service Stopped' Popup before restarting..")
-                    .setPositiveButton(android.R.string.ok,new DialogInterface.OnClickListener(){
-                        public void onClick(DialogInterface dialog, int which){
-                            finishAffinity();
-                        }
-                    })
-                    .create()
-                    .show();
-        }else{
-            finishAffinity();
+            Toast.makeText(this, "Minima is shutting down..", Toast.LENGTH_SHORT).show();
         }
+
+        //And shutdown..
+        finishAffinity();
     }
 
     @Override
@@ -324,6 +319,7 @@ public class MiniBrowser extends AppCompatActivity {
         //Are we in shutdown mode..
         MinimaLogger.log("MINIBROWSER ON RESUME.. SHUTDOWN MODE "+mShutDownMode);
         if(mShutDownMode){
+            //finishAffinity();
             showShutdownmessage();
         }
     }
@@ -536,10 +532,10 @@ public class MiniBrowser extends AppCompatActivity {
         //Open a file
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
-//        if(zMimeTypes.length>0) {
-//            MinimaLogger.log("Set Mime Types : "+ Arrays.toString(zMimeTypes)+" "+zMimeTypes.length);
-//            intent.putExtra(Intent.EXTRA_MIME_TYPES, zMimeTypes);
-//        }
+        /*if(zMimeTypes.length>0) {
+            MinimaLogger.log("Set Mime Types : "+ Arrays.toString(zMimeTypes)+" "+zMimeTypes.length);
+            intent.putExtra(Intent.EXTRA_MIME_TYPES, zMimeTypes);
+        }*/
         intent.addCategory(Intent.CATEGORY_OPENABLE);
 
         // special intent for Samsung file manager
