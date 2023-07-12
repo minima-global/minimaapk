@@ -21,6 +21,7 @@ import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -195,6 +196,13 @@ public class MiniBrowserJSInterface {
             return;
         }
 
+        String filename = "sharefile";
+        try {
+            filename = Paths.get(new URI(zFilePath).getPath()).getFileName().toString();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
         //Get the URi
         Uri backupuri = FileProvider.getUriForFile(mMiniBrowser,"com.minima.android.provider",backup);
 
@@ -202,8 +210,7 @@ public class MiniBrowserJSInterface {
         Intent intentShareFile = new Intent(Intent.ACTION_SEND);
         intentShareFile.setType(zMimeType);
         intentShareFile.putExtra(Intent.EXTRA_STREAM, backupuri);
-        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,"Share file from Minima");
-        //intentShareFile.putExtra(Intent.EXTRA_TEXT, "Share file");
+        intentShareFile.putExtra(Intent.EXTRA_SUBJECT,filename);
         intentShareFile.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         Intent chooser = Intent.createChooser(intentShareFile, "Share File");

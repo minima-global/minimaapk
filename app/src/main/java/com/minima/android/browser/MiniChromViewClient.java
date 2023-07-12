@@ -42,13 +42,13 @@ public class MiniChromViewClient extends WebChromeClient {
         return mConsoleMessages;
     }
 
-//    @Override
-//    public void onPermissionRequest(PermissionRequest request) {
-//        MinimaLogger.log("PERMISSION REQUEST : "+request.toString());
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//            request.grant(request.getResources());
-//        }
-//    }
+    @Override
+    public void onPermissionRequest(PermissionRequest request) {
+        MinimaLogger.log("MINIBROWSER PERMISSION REQUEST : "+request.toString());
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            request.grant(request.getResources());
+        }*/
+    }
 
     @Override
     public void onReceivedTitle(WebView view, String title) {

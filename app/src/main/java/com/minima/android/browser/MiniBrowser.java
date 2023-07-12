@@ -317,8 +317,9 @@ public class MiniBrowser extends AppCompatActivity {
         super.onResume();
 
         //Are we in shutdown mode..
-        MinimaLogger.log("MINIBROWSER ON RESUME.. SHUTDOWN MODE "+mShutDownMode);
         if(mShutDownMode){
+            MinimaLogger.log("MINIBROWSER ON RESUME.. SHUTDOWN MODE "+mShutDownMode);
+
             //finishAffinity();
             showShutdownmessage();
         }
@@ -514,6 +515,10 @@ public class MiniBrowser extends AppCompatActivity {
     public void onBackPressed() {
         if(mWebView.canGoBack()) {
             mWebView.goBack();
+
+            // And show the toolbar
+            showToolbar();
+
         } else {
 
             //Reset Page
