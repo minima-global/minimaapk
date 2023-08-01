@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MiniBrowserJSInterface {
 
-    public boolean DEBUG_LOGS = false;
+    public boolean DEBUG_LOGS = true;
 
     private MiniBrowser mMiniBrowser;
 
@@ -90,8 +90,12 @@ public class MiniBrowserJSInterface {
     public void fileDownload(String zSessionID, String zMdsfile) {
 
         if(DEBUG_LOGS){
-            MinimaLogger.log("JS FILEDOWNLOAD "+zMdsfile);
+            MinimaLogger.log("JS FILEDOWNLOAD "+zMdsfile+" "+zSessionID);
         }
+
+//        if(true){
+//            return;
+//        }
 
         //Save to Downloads..
         File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -114,7 +118,13 @@ public class MiniBrowserJSInterface {
             File actual = new File(root,zMdsfile);
 
             //Copy one to the other
-            MiniFile.copyFile(actual,fullfile);
+            FileCopy fc = new FileCopy(actual,fullfile);
+            Thread tt = new Thread(fc);
+            tt.start();
+
+//            MinimaLogger.log("Start Copy..");
+//            MiniFile.copyFile(actual,fullfile);
+//            MinimaLogger.log("End Copy..");
 
         } catch (Exception e) {
             MinimaLogger.log(e);

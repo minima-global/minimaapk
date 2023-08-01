@@ -29,23 +29,24 @@ public class MiniWebViewClient extends WebViewClient  {
     boolean mHaveCheckedSSL;
 
     //The Main Context
-    Context mMainContext;
+    MiniBrowser mMainContext;
 
     //The Shared Prefs Name
     String SHARED_PREFS         = "minima_ssl_checker_prefs";
     String SHARED_PREFS_VALUE   = "have_checked_ssl";
 
     //Main Constructor
-    public MiniWebViewClient(Context zContext){
+    public MiniWebViewClient(MiniBrowser zContext){
         mMainContext = zContext;
 
         //Get the Cert
-        try{
-            mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
-        }catch(Exception exc){
-            //Something wrong..
-            MinimaLogger.log(exc);
-        }
+        mMinimaSSLCert = mMainContext.getMinimaSSLCert();
+//        try{
+//            mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
+//        }catch(Exception exc){
+//            //Something wrong..
+//            MinimaLogger.log(exc);
+//        }
 
         //Have we checked it..
         SharedPreferences prefs = mMainContext.getSharedPreferences(SHARED_PREFS,Context.MODE_PRIVATE);

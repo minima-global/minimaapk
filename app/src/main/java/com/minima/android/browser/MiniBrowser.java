@@ -43,10 +43,12 @@ import org.minima.system.mds.MDSManager;
 import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
 import java.net.URI;
 import java.nio.file.Paths;
+import java.security.cert.Certificate;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -79,11 +81,25 @@ public class MiniBrowser extends AppCompatActivity {
     //Are we in shutdown mode..
     public static boolean mShutDownMode = false;
 
+    //Static ref to the SSL Cert
+    static private Certificate mMinimaSSLCert = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_browser);
+
+        //Is the Cert NULL
+        if(mMinimaSSLCert == null){
+            //Get the Cert
+            try{
+                mMinimaSSLCert = SSLManager.getSSLKeyStore().getCertificate("MINIMA_NODE");
+            }catch(Exception exc){
+                //Something wrong..
+                MinimaLogger.log(exc);
+            }
+        }
 
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
@@ -181,8 +197,14 @@ public class MiniBrowser extends AppCompatActivity {
         mWebView.loadUrl(mBaseURL);
 
         //Get Files Permission
-        String[] perms = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE,Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        String[] perms = new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
+    }
+
+    public Certificate getMinimaSSLCert(){
+        return mMinimaSSLCert;
     }
 
     //Register a Context Menu - long press image download

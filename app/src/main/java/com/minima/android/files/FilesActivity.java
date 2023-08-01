@@ -1,5 +1,6 @@
 package com.minima.android.files;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -7,6 +8,7 @@ import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.view.ContextMenu;
 import android.view.Menu;
@@ -21,11 +23,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.minima.android.R;
 
+import org.minima.objects.base.MiniData;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
@@ -105,7 +110,7 @@ public class FilesActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add("Download");
+        //menu.add("Download");
         menu.add("Share");
         menu.add("Delete");
     }
@@ -152,8 +157,7 @@ public class FilesActivity extends AppCompatActivity {
         }else if(item.getTitle().equals("Download")){
 
             //Download the file..
-
-
+            downloadFile(orig);
 
         }else if(item.getTitle().equals("Delete")){
             confirmDelete(name, orig.getAbsolutePath());
@@ -197,6 +201,34 @@ public class FilesActivity extends AppCompatActivity {
                         loadFiles();
                     }})
                 .setNegativeButton(android.R.string.no, null).show();
+    }
+
+    public void downloadFile(File zOrig){
+
+        //What is the file..
+        String filename = zOrig.getName();
+
+        //Save to Downloads..
+        File downloads      = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File mindownloads   = new File(downloads, "Minima");
+        File fullfile       = new File(mindownloads,filename);
+
+        if(fullfile.exists()){
+            fullfile.delete();
+        }
+
+        MinimaLogger.log("Copy : "+zOrig.getAbsolutePath()+" to:"+fullfile.getAbsolutePath()+" "+zOrig.exists());
+
+        //Now copy one to the other..
+        try {
+            MiniData testdata = new MiniData("0xFFEEFF");
+
+            MiniFile.writeDataToFile(fullfile,testdata.getBytes());
+
+            //MiniFile.copyFile(zOrig,fullfile);
+        } catch (Exception e) {
+            MinimaLogger.log(e);
+        }
     }
 
     public void loadFiles(){
