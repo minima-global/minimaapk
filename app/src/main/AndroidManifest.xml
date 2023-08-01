@@ -117,6 +117,14 @@
         </activity>
 
         <activity
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name=".files.FilesActivity"
+            android:exported="false"
+            android:label="Files"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
+        <activity
             android:name=".browser.NotifyBrowser"
             android:launchMode="singleTask"
             android:taskAffinity=""

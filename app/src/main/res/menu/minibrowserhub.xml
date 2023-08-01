@@ -51,6 +51,13 @@
             app:showAsAction="never" />
 
         <item
+            android:id="@+id/action_mdsfiles"
+            android:orderInCategory="100"
+            android:title="Files"
+            android:icon="@android:drawable/ic_dialog_info"
+            app:showAsAction="never" />
+
+        <item
             android:id="@+id/action_mdsparams"
             android:orderInCategory="100"
             android:title="Startup Params"

@@ -34,6 +34,7 @@ import androidx.core.content.ContextCompat;
 
 import com.minima.android.R;
 import com.minima.android.StartMinimaActivity;
+import com.minima.android.files.FilesActivity;
 import com.minima.android.service.MinimaService;
 
 import org.minima.objects.base.MiniData;
@@ -420,6 +421,13 @@ public class MiniBrowser extends AppCompatActivity {
                 Intent console = new Intent(this, ConsoleActivity.class);
                 console.putExtra("consoletext",mChromeClient.getConsoleMessages());
                 startActivity(console);
+
+                return true;
+
+            case R.id.action_mdsfiles:
+
+                Intent files = new Intent(this, FilesActivity.class);
+                startActivity(files);
 
                 return true;
 
