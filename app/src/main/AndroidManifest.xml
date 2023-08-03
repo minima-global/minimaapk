@@ -26,6 +26,7 @@
         android:usesCleartextTraffic="true"
         android:largeHeap="true"
         android:persistent="true"
+        android:requestLegacyExternalStorage="true"
         android:name=".MinimaApplication"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -120,6 +121,14 @@
             android:name=".files.FilesActivity"
             android:exported="false"
             android:label="Files"
+            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
+        </activity>
+
+        <activity
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:name=".PeersActivity"
+            android:exported="false"
+            android:label="Peers"
             android:theme="@style/Theme.MinimaAndroid.NoActionBar">
         </activity>
 

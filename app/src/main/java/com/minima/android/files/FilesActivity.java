@@ -7,9 +7,11 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
+import android.provider.Settings;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -35,7 +38,11 @@ import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
 import org.minima.utils.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,11 +54,17 @@ import java.util.List;
 
 public class FilesActivity extends AppCompatActivity {
 
+    public static int OPEN_FILE_REQUEST     = 90;
+    public static int CREATE_FILE_REQUEST   = 80;
+
+    public File mCopyFile = null;
+
     ListView mFileList;
 
     String          mBaseDir;
     JSONObject[]    mFiles;
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,7 +123,7 @@ public class FilesActivity extends AppCompatActivity {
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        //menu.add("Download");
+        menu.add("Download");
         menu.add("Share");
         menu.add("Delete");
     }
@@ -157,7 +170,7 @@ public class FilesActivity extends AppCompatActivity {
         }else if(item.getTitle().equals("Download")){
 
             //Download the file..
-            downloadFile(orig);
+            createFile("*/*",orig);
 
         }else if(item.getTitle().equals("Delete")){
             confirmDelete(name, orig.getAbsolutePath());
@@ -203,32 +216,17 @@ public class FilesActivity extends AppCompatActivity {
                 .setNegativeButton(android.R.string.no, null).show();
     }
 
-    public void downloadFile(File zOrig){
+    private void createFile(String mimeType, File zFile) {
 
-        //What is the file..
-        String filename = zOrig.getName();
+        //Store for later
+        mCopyFile = zFile;
 
-        //Save to Downloads..
-        File downloads      = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File mindownloads   = new File(downloads, "Minima");
-        File fullfile       = new File(mindownloads,filename);
-
-        if(fullfile.exists()){
-            fullfile.delete();
-        }
-
-        MinimaLogger.log("Copy : "+zOrig.getAbsolutePath()+" to:"+fullfile.getAbsolutePath()+" "+zOrig.exists());
-
-        //Now copy one to the other..
-        try {
-            MiniData testdata = new MiniData("0xFFEEFF");
-
-            MiniFile.writeDataToFile(fullfile,testdata.getBytes());
-
-            //MiniFile.copyFile(zOrig,fullfile);
-        } catch (Exception e) {
-            MinimaLogger.log(e);
-        }
+        //Start a save intent
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(mimeType);
+        intent.putExtra(Intent.EXTRA_TITLE, zFile.getName());
+        startActivityForResult(intent, CREATE_FILE_REQUEST);
     }
 
     public void loadFiles(){
@@ -332,7 +330,7 @@ public class FilesActivity extends AppCompatActivity {
         }
 
         try {
-            startActivityForResult(chooserIntent, 90);
+            startActivityForResult(chooserIntent, OPEN_FILE_REQUEST);
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getApplicationContext(), "No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
         }
@@ -352,39 +350,54 @@ public class FilesActivity extends AppCompatActivity {
         if(resultCode == RESULT_CANCELED){
             //Cancelled
         }else if(resultCode == RESULT_OK) {
+
             //Get the file URI
             Uri fileuri = data.getData();
 
-            //Get the filename..
-            String filename = getFileName(fileuri);
+            if(requestCode == OPEN_FILE_REQUEST) {
 
-            //MinimaLogger.log("OPENFILE: "+fileuri.getPath()+" "+filename);
+                //Get the filename..
+                String filename = getFileName(fileuri);
 
-            //Create the file
-            File newfile = new File(mBaseDir, filename);
+                //MinimaLogger.log("OPENFILE: "+fileuri.getPath()+" "+filename);
 
-            try {
-                //Copy the file
-                copyFile(fileuri, newfile);
+                //Create the file
+                File newfile = new File(mBaseDir, filename);
 
-                //Reload..
-                loadFiles();
+                try {
+                    //Copy the file
+                    copyFileToPrivate(fileuri, newfile);
 
-            } catch (Exception exc) {
-                MinimaLogger.log(exc);
+                    //Reload..
+                    loadFiles();
+
+                } catch (Exception exc) {
+                    MinimaLogger.log(exc);
+                }
+            }else if(requestCode == CREATE_FILE_REQUEST) {
+
+                try {
+                    OutputStream fileOutupStream = getContentResolver().openOutputStream(fileuri);
+
+                    copyFileFromPrivate(mCopyFile,fileOutupStream);
+
+                } catch (Exception e) {
+                    MinimaLogger.log(e);
+                }
             }
         }
     }
 
-    public void copyFile(Uri zFileURI, File zCopy) throws IOException {
+    public void copyFileToPrivate(Uri zFileURI, File zCopy) throws IOException {
 
         if(zCopy.exists()){
             zCopy.delete();
         }
 
         OutputStream os = null;
+        InputStream is  = getContentResolver().openInputStream(zFileURI);
+
         try {
-            InputStream is = getContentResolver().openInputStream(zFileURI);
             os = new FileOutputStream(zCopy);
             byte[] buffer = new byte[16384];
             int length;
@@ -392,7 +405,40 @@ public class FilesActivity extends AppCompatActivity {
                 os.write(buffer, 0, length);
             }
         } finally {
+            is.close();
             os.close();
+        }
+    }
+
+    public static void copyFileFromPrivate(File zOrig, OutputStream zOut) throws IOException {
+
+        FileInputStream fis = new FileInputStream(zOrig);
+
+        try {
+            byte[] buffer = new byte[16384];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                zOut.write(buffer, 0, length);
+            }
+        } finally {
+            zOut.close();
+            fis.close();
+        }
+    }
+
+    public static void copyDataFromPrivate(String zFilename, MiniData zOrig, OutputStream zOut) throws IOException {
+
+        ByteArrayInputStream fis = new ByteArrayInputStream(zOrig.getBytes());
+
+        try {
+            byte[] buffer = new byte[16384];
+            int length;
+            while ((length = fis.read(buffer)) > 0) {
+                zOut.write(buffer, 0, length);
+            }
+        } finally {
+            zOut.close();
+            fis.close();
         }
     }
 

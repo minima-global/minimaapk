@@ -46,44 +46,7 @@ public class MiniBrowserJSInterface {
         //Create a MiniData object
         MiniData data = new MiniData(zHexData);
 
-        //Save to Downloads..
-        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File mindownloads = new File(downloads, "Minima");
-
-        //And save..
-        String filename = null;
-        try {
-            //Create the file..
-            filename = Paths.get(new URI(zFilename).getPath()).getFileName().toString();
-
-            //Now create the full file..
-            File fullfile = new File(mindownloads, filename);
-
-            //Write data to file..
-            MiniFile.writeDataToFile(fullfile, data.getBytes());
-
-        } catch (Exception e) {
-            MinimaLogger.log(e);
-
-            //Small message
-            mMiniBrowser.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(mMiniBrowser, "Error saving file..", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            return;
-        }
-
-        //Small message
-        final String finalfile = filename;
-        mMiniBrowser.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mMiniBrowser, "File saved : " + finalfile, Toast.LENGTH_SHORT).show();
-            }
-        });
+        mMiniBrowser.saveHexData(zFilename,data.getBytes());
     }
 
     @JavascriptInterface
@@ -93,59 +56,15 @@ public class MiniBrowserJSInterface {
             MinimaLogger.log("JS FILEDOWNLOAD "+zMdsfile+" "+zSessionID);
         }
 
-//        if(true){
-//            return;
-//        }
+        //Now get the MDS file..
+        String minidappid = Main.getInstance().getMDSManager().convertSessionID(zSessionID);
 
-        //Save to Downloads..
-        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File mindownloads = new File(downloads, "Minima");
+        //Get the filepath..
+        File root   = Main.getInstance().getMDSManager().getMiniDAPPFileFolder(minidappid);
+        File actual = new File(root,zMdsfile);
 
         //And save..
-        String filename = null;
-        try {
-            //Create the file..
-            filename = Paths.get(new URI(zMdsfile).getPath()).getFileName().toString();
-
-            //Now create the full file..
-            File fullfile = new File(mindownloads, filename);
-
-            //Now get the MDS file..
-            String minidappid = Main.getInstance().getMDSManager().convertSessionID(zSessionID);
-
-            //Get the filepath..
-            File root   = Main.getInstance().getMDSManager().getMiniDAPPFileFolder(minidappid);
-            File actual = new File(root,zMdsfile);
-
-            //Copy one to the other
-//            FileCopy fc = new FileCopy(actual,fullfile);
-//            Thread tt = new Thread(fc);
-//            tt.start();
-
-            MiniFile.copyFile(actual,fullfile);
-
-        } catch (Exception e) {
-            MinimaLogger.log(e);
-
-            //Small message
-            mMiniBrowser.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(mMiniBrowser, "Error saving file..", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            return;
-        }
-
-        //Small message
-        final String finalfile = filename;
-        mMiniBrowser.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(mMiniBrowser, "File saved : " + finalfile, Toast.LENGTH_SHORT).show();
-            }
-        });
+        mMiniBrowser.saveFile("*/*",actual);
     }
 
     @JavascriptInterface

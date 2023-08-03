@@ -352,6 +352,7 @@ public class MinimaService extends Service {
                     , NotificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         }
 
+
         return pending;
     }
 
@@ -359,6 +360,7 @@ public class MinimaService extends Service {
         mNotification = new NotificationCompat.Builder(this, CHANNEL_ID)
                 .setContentTitle(zText)
                 .setContentText("Minima Status Channel")
+                .setSilent(true)
                 .setSmallIcon(com.minima.android.R.drawable.ic_minima)
                 .setContentIntent(createDynamicPendingIntent("0x00"))
                 .build();

@@ -32,6 +32,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.minima.android.PeersActivity;
 import com.minima.android.R;
 import com.minima.android.StartMinimaActivity;
 import com.minima.android.files.FilesActivity;
@@ -46,6 +47,7 @@ import org.minima.utils.MinimaLogger;
 import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.security.cert.Certificate;
@@ -83,6 +85,11 @@ public class MiniBrowser extends AppCompatActivity {
 
     //Static ref to the SSL Cert
     static private Certificate mMinimaSSLCert = null;
+
+    //The file we are trying to copy
+    File mCopyFile          = null;
+    String mCopyFileName    = "";
+    MiniData mCopyData      = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -193,6 +200,9 @@ public class MiniBrowser extends AppCompatActivity {
             }
         });
 
+        //By default this is on..
+        registerDefaultContextMenu();
+
         //And load the page
         mWebView.loadUrl(mBaseURL);
 
@@ -294,7 +304,7 @@ public class MiniBrowser extends AppCompatActivity {
             }
 
             //And finally save the data
-            saveFile(filename,hexdata);
+            saveHexData(filename,hexdata);
 
         }catch(Exception exc){
             MinimaLogger.log(exc);
@@ -453,6 +463,13 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
+//            case R.id.action_peers:
+//
+//                Intent peers = new Intent(this, PeersActivity.class);
+//                startActivity(peers);
+//
+//                return true;
+
             case R.id.action_mdsopen:
 
                 Intent browser = new Intent(Intent.ACTION_VIEW);
@@ -588,69 +605,75 @@ public class MiniBrowser extends AppCompatActivity {
         }
 
         try {
-            startActivityForResult(chooserIntent, 98);
+            startActivityForResult(chooserIntent, FilesActivity.OPEN_FILE_REQUEST);
         } catch (android.content.ActivityNotFoundException ex) {
             Toast.makeText(getApplicationContext(), "No suitable File Manager was found.", Toast.LENGTH_SHORT).show();
         }
     }
 
-    @Override
+    public void saveFile(String mimeType, File zFile) {
+
+        //Store for later
+        mCopyFile       = zFile;
+        mCopyData       = null;
+        mCopyFileName   = null;
+
+        //Start a save intent
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType(mimeType);
+        intent.putExtra(Intent.EXTRA_TITLE, zFile.getName());
+        startActivityForResult(intent, FilesActivity.CREATE_FILE_REQUEST);
+    }
+
+    public void saveHexData(String zFilename, byte[] zHexData) {
+
+        //Store for later
+        mCopyFile       = null;
+        mCopyData       = new MiniData(zHexData);
+        mCopyFileName   = zFilename;
+
+        //Start a save intent
+        Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("*/*");
+        intent.putExtra(Intent.EXTRA_TITLE, zFilename);
+        startActivityForResult(intent, FilesActivity.CREATE_FILE_REQUEST);
+    }
+
+        @Override
     protected void onActivityResult (int requestCode,
                                      int resultCode,
                                      Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(resultCode == RESULT_CANCELED){
-            mFileCheckPath.onReceiveValue(null);
-        }else if(resultCode == RESULT_OK){
-            mFileCheckPath.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
-        }
-
-        //Was anything returned
-        if(data == null){
-            return;
-        }
-    }
-
-    //Save HEX data to a file..
-    public void saveFile(String zFilename, byte[] zHexData){
-
-        //Create a MiniData object
-        MiniData data = new MiniData(zHexData);
-
-        //Save to Downloads..
-        File downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        File mindownloads = new File(downloads, "Minima");
-
-        //And save..
-        try {
-
-            //Now create the full file..
-            File fullfile = new File(mindownloads, zFilename);
-
-            //Write data to file..
-            MiniFile.writeDataToFile(fullfile, data.getBytes());
-
-        } catch (Exception e) {
-            MinimaLogger.log(e);
-
-            //Small message
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(MiniBrowser.this, "Error saving file..", Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            return;
-        }
-
-        //Small message
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(MiniBrowser.this, "File saved to Minima folder : " + zFilename, Toast.LENGTH_SHORT).show();
+            if(requestCode == FilesActivity.OPEN_FILE_REQUEST){
+                mFileCheckPath.onReceiveValue(null);
             }
-        });
+
+        }else if(resultCode == RESULT_OK){
+            if(requestCode == FilesActivity.OPEN_FILE_REQUEST){
+                mFileCheckPath.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+
+            }else if(requestCode == FilesActivity.CREATE_FILE_REQUEST){
+
+                try {
+                    //Get the file URI
+                    Uri fileuri = data.getData();
+
+                    OutputStream fileOutupStream = getContentResolver().openOutputStream(fileuri);
+
+                    if(mCopyData == null && mCopyFile!=null) {
+                        FilesActivity.copyFileFromPrivate(mCopyFile, fileOutupStream);
+                    }else if(mCopyData != null){
+                        FilesActivity.copyDataFromPrivate(mCopyFileName,mCopyData,fileOutupStream);
+                    }
+
+                } catch (Exception e) {
+                    MinimaLogger.log(e);
+                }
+            }
+        }
     }
 }
