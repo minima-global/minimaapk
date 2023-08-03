@@ -118,13 +118,11 @@ public class MiniBrowserJSInterface {
             File actual = new File(root,zMdsfile);
 
             //Copy one to the other
-            FileCopy fc = new FileCopy(actual,fullfile);
-            Thread tt = new Thread(fc);
-            tt.start();
+//            FileCopy fc = new FileCopy(actual,fullfile);
+//            Thread tt = new Thread(fc);
+//            tt.start();
 
-//            MinimaLogger.log("Start Copy..");
-//            MiniFile.copyFile(actual,fullfile);
-//            MinimaLogger.log("End Copy..");
+            MiniFile.copyFile(actual,fullfile);
 
         } catch (Exception e) {
             MinimaLogger.log(e);
