@@ -463,12 +463,12 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
-//            case R.id.action_peers:
-//
-//                Intent peers = new Intent(this, PeersActivity.class);
-//                startActivity(peers);
-//
-//                return true;
+            case R.id.action_peers:
+
+                Intent peers = new Intent(this, PeersActivity.class);
+                startActivity(peers);
+
+                return true;
 
             case R.id.action_mdsopen:
 

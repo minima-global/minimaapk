@@ -28,7 +28,7 @@ import java.util.List;
 
 public class MiniBrowserJSInterface {
 
-    public boolean DEBUG_LOGS = true;
+    public boolean DEBUG_LOGS = false;
 
     private MiniBrowser mMiniBrowser;
 

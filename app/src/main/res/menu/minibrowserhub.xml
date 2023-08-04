@@ -57,12 +57,12 @@
             android:icon="@android:drawable/ic_dialog_info"
             app:showAsAction="never" />
 
-<!--        <item-->
-<!--            android:id="@+id/action_peers"-->
-<!--            android:orderInCategory="100"-->
-<!--            android:title="Peers"-->
-<!--            android:icon="@android:drawable/ic_input_add"-->
-<!--            app:showAsAction="never" />-->
+        <item
+            android:id="@+id/action_peers"
+            android:orderInCategory="100"
+            android:title="Peers"
+            android:icon="@android:drawable/ic_input_add"
+            app:showAsAction="never" />
 
         <item
             android:id="@+id/action_mdsparams"

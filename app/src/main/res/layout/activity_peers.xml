@@ -4,21 +4,74 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/main_background">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/minidapp_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@style/MinimaActionBar"
-            tools:title="Console Logs"/>
+            tools:title="Minima Peers"/>
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:layout_gravity="center"
             android:padding="4dp"
             android:background="@drawable/white_box"
+            android:text="Here is a list of your peers which you can share"
+            android:textSize="16dp"/>
+
+        <TextView
+            android:id="@+id/peers_mypeers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:padding="4dp"
+            android:background="@drawable/simple_border"
+            android:textIsSelectable="true"
+            android:text="No peers yet.."
+            android:textSize="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:padding="4dp"
+            android:background="@drawable/white_box"
+            android:text="Add peers to your node here"
+            android:textSize="16dp"/>
+
+        <EditText
+            android:id="@+id/peers_editpeers"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
             android:textSize="14dp"
-            android:layout_weight="1.0"/>
+            android:gravity="top"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:padding="4dp"
+            android:background="@drawable/simple_border"/>
+
+        <Button
+            android:id="@+id/peers_addpeers"
+            android:layout_marginTop="20dp"
+            android:text="Add Peers"
+            android:layout_gravity="center"
+            android:textSize="14sp"
+            android:textAllCaps="false"
+            android:fontFamily="@font/manrope_bold"
+            android:textColor="@android:color/white"
+            android:background="@android:color/black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
 </LinearLayout>

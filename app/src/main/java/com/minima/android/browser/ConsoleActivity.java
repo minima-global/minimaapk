@@ -39,6 +39,7 @@ public class ConsoleActivity extends AppCompatActivity {
         tv.setText(Html.fromHtml(mConsoleText,Html.FROM_HTML_MODE_COMPACT));
         tv.setTextIsSelectable(true);
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.consolemenu, menu);
