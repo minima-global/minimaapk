@@ -295,6 +295,7 @@ public class FilesActivity extends AppCompatActivity {
         filejson.put("name", zFile.getName());
         if(zFile.isFile()){
             filejson.put("size", zFile.length());
+            filejson.put("time", zFile.lastModified());
         }else{
             filejson.put("size", 0);
         }

@@ -38,6 +38,14 @@
             android:gravity="right"
             android:layout_height="wrap_content"/>
 
+        <TextView
+            android:id="@+id/mds_time"
+            android:textSize="12dp"
+            android:layout_marginRight="16dp"
+            android:layout_width="match_parent"
+            android:gravity="right"
+            android:layout_height="wrap_content"/>
+
     </LinearLayout>
 
 </LinearLayout>
