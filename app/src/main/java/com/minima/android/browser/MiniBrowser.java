@@ -125,15 +125,15 @@ public class MiniBrowser extends AppCompatActivity {
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
 
-        mWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
-            @Override
-            public void onScrollChange(View view, int scrollX, int scrolly, int oldScrollX, int oldScrollY) {
-                //Show toolbar on scroll
-                if(scrolly<oldScrollY){
-                    showToolbar();
-                }
-            }
-        });
+//        mWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+//            @Override
+//            public void onScrollChange(View view, int scrollX, int scrolly, int oldScrollX, int oldScrollY) {
+//                //Show toolbar on scroll
+//                if(scrolly<oldScrollY){
+//                    showToolbar();
+//                }
+//            }
+//        });
 
         //Browser Web Settings..
         WebSettings settings = mWebView.getSettings();

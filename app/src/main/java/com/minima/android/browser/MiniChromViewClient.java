@@ -58,7 +58,7 @@ public class MiniChromViewClient extends WebChromeClient {
                 @Override
                 public void run() {
                     if(title.equalsIgnoreCase("minihub")){
-                        mMiniBrowser.setTitle("Minima");
+                        mMiniBrowser.setTitle("MinimaOS");
                     }else{
                         mMiniBrowser.setTitle(title);
                     }

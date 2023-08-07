@@ -7,7 +7,9 @@ import android.net.http.SslCertificate;
 import android.net.http.SslError;
 import android.os.Build;
 import android.webkit.SslErrorHandler;
+import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -63,7 +65,22 @@ public class MiniWebViewClient extends WebViewClient  {
 
     @Override
     public void onReceivedError(WebView view, int errorCode, String description,String failingUrl){
-        MinimaLogger.log("WEB ERROR : "+description);
+        showMainErrorPage(view);
+    }
+
+    @Override
+    public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
+        showMainErrorPage(view);
+    }
+
+    @Override
+    public void onReceivedHttpError (WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
+        showMainErrorPage(view);
+    }
+
+    private void showMainErrorPage(WebView zView){
+        mMainContext.showToolbar();
+        zView.loadUrl("https://127.0.0.1:9003/httperror.html");
     }
 
     @Override

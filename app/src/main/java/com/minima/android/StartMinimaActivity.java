@@ -187,6 +187,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
         String sessionid = mds.convertMiniDAPPID(minihubid);
 
         String minihub = "https://127.0.0.1:9003/"+minihubid+"/index.html?uid="+sessionid;
+        //String minihub = "https://127.0.0.1:9003/myerrorpage.html";
 
         //Set shutdown mode.. to FALSE
         MiniBrowser.mShutDownMode = false;
