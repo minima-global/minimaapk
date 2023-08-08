@@ -28,7 +28,8 @@ public class SliderAdapter extends PagerAdapter {
             R.drawable.ic_dapps,
             R.drawable.ic_node,
             R.drawable.ic_freedom,
-            R.drawable.ic_transfer,
+            R.drawable.ic_minima,
+            R.drawable.ic_transfer
     };
 
     int descriptions[] = {
@@ -38,6 +39,7 @@ public class SliderAdapter extends PagerAdapter {
             R.string.onboarding_slide_description_four,
             R.string.onboarding_slide_description_five,
             R.string.onboarding_slide_description_six,
+            R.string.onboarding_slide_description_seven
     };
 
     @Override

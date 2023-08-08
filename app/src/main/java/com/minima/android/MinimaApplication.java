@@ -5,6 +5,9 @@ import android.app.Application;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+/***
+ * The main entry point for the Minima Application
+ */
 public class MinimaApplication extends Application {
     @Override
     public void onCreate() {

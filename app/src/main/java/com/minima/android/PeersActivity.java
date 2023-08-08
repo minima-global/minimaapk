@@ -36,6 +36,8 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
 
     EditText mEditPeers;
 
+    boolean mHideMyPeers = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +49,15 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
 
         setTitle("Minima Peers");
 
+        mHideMyPeers = getIntent().getBooleanExtra("hidemypeers",false);
+
+        TextView mpt = findViewById(R.id.peers_mypeerstext);
         mMyPeers = findViewById(R.id.peers_mypeers);
+
+        if(mHideMyPeers){
+            mpt.setVisibility(View.GONE);
+            mMyPeers.setVisibility(View.GONE);
+        }
 
         mEditPeers = findViewById(R.id.peers_editpeers);
 
@@ -67,7 +77,12 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.consolemenu, menu);
+        if(!mHideMyPeers){
+            getMenuInflater().inflate(R.menu.consolemenu, menu);
+            return true;
+        }
+
+        getMenuInflater().inflate(R.menu.closemenu, menu);
         return true;
     }
 
@@ -81,12 +96,20 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
                 Intent sendIntent = new Intent();
                 sendIntent.setAction(Intent.ACTION_SEND);
                 sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Minima Peers");
-                sendIntent.putExtra(Intent.EXTRA_TEXT, mMyPeers.getText());
+                if(mHideMyPeers){
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,"");
+                }else{
+                    sendIntent.putExtra(Intent.EXTRA_TEXT, mMyPeers.getText());
+                }
                 sendIntent.setType("text/plain");
 
                 Intent shareIntent = Intent.createChooser(sendIntent, null);
                 startActivity(shareIntent);
 
+                return true;
+
+            case R.id.menu_close:
+                finish();
                 return true;
 
             default:
@@ -100,7 +123,9 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
         mMinima = binder.getService();
 
         //Set the peers list
-        setPeersList();
+        if(!mHideMyPeers) {
+            setPeersList();
+        }
     }
 
     @Override
@@ -125,9 +150,13 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
         try {
             JSONObject json     = (JSONObject) new JSONParser().parse(peersfunc);
             JSONObject resp     = (JSONObject) json.get("response");
-            String peerslist   = resp.getString("peerslist");
+            String peerslist   = resp.getString("peerslist").trim();
 
-            mMyPeers.setText(peerslist);
+            if(peerslist.equals("")){
+                mMyPeers.setText("No peers found..");
+            }else{
+                mMyPeers.setText(peerslist);
+            }
 
         } catch (Exception e) {
             MinimaLogger.log(e);
@@ -136,6 +165,11 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
 
     public void addPeers(){
         String peers = mEditPeers.getText().toString().trim();
+
+        if(peers.equals("")){
+            Toast.makeText(this, "No peers specified", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         //Run a command to add the peers
         String peersfunc = mMinima.getMinima().runMinimaCMD("peers action:addpeers peerslist:"+peers);
@@ -153,7 +187,7 @@ public class PeersActivity extends AppCompatActivity implements ServiceConnectio
 
             }else{
                 //Shutdown..
-                Toast.makeText(this, json.getString("error"), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, json.getString("Error running command.."), Toast.LENGTH_SHORT).show();
             }
 
         } catch (Exception e) {

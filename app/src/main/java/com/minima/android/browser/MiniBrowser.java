@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.text.InputType;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -211,6 +212,21 @@ public class MiniBrowser extends AppCompatActivity {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
+
+        //Do we show the peers Activity..
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(mIsMiniHUB && sharedPreferences.getBoolean("FIRST_RUN", true)){
+
+            //Only Once..
+            SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+            sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
+            sharedPreferencesEditor.apply();
+
+            //Start Peers activity
+            Intent peers = new Intent(this, PeersActivity.class);
+            peers.putExtra("hidemypeers",true);
+            startActivity(peers);
+        }
     }
 
     public Certificate getMinimaSSLCert(){
@@ -466,6 +482,7 @@ public class MiniBrowser extends AppCompatActivity {
             case R.id.action_peers:
 
                 Intent peers = new Intent(this, PeersActivity.class);
+                peers.putExtra("hidemypeers",false);
                 startActivity(peers);
 
                 return true;

@@ -53,7 +53,7 @@ public class OnboardingOne extends AppCompatActivity {
     }
 
     public void addDots(int position) {
-        dots = new TextView[6];
+        dots = new TextView[7];
         dotsLayout.removeAllViews();
 
         for (int i = 0; i < dots.length; i++) {

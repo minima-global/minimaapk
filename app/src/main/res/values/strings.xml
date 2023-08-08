@@ -135,6 +135,7 @@ The Minima Team</string>
     <string name="onboarding_slide_description_three">MiniDapps are decentralized web apps that run locally via your node. They are the gateway to a censorship-resistant web.</string>
     <string name="onboarding_slide_description_four">Your node is unique to you, only YOU hold your data and funds.\n\nYou are independent and sovereign.</string>
     <string name="onboarding_slide_description_five"> Freedom is not free. You must be responsible. Make a backup regularly and keep your seed phrase safe.</string>
-    <string name="onboarding_slide_description_six">You can do this.\n\nEmbrace it - and never look back.</string>
+    <string name="onboarding_slide_description_six">The first time you use Minima you will be asked for a peer on the network, someone you can connect to.\n\nThat means you need to know someone on the network - and they can share their list with you.</string>
+    <string name="onboarding_slide_description_seven">You can do this.\n\nEmbrace it - and never look back.</string>
 
 </resources>
