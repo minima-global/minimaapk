@@ -63,19 +63,23 @@ public class MiniWebViewClient extends WebViewClient  {
         return false;
     }
 
-    @Override
-    public void onReceivedError(WebView view, int errorCode, String description,String failingUrl){
-        showMainErrorPage(view);
-    }
-
-    @Override
-    public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
-        showMainErrorPage(view);
-    }
+//    @Override
+//    public void onReceivedError(WebView view, int errorCode, String description,String failingUrl){
+//        showMainErrorPage(view);
+//    }
+//
+//    @Override
+//    public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
+//        showMainErrorPage(view);
+//    }
 
     @Override
     public void onReceivedHttpError (WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
-        showMainErrorPage(view);
+        if(request.getUrl()!=null) {
+            if (request.getUrl().toString().toLowerCase().contains(".html")) {
+                showMainErrorPage(view);
+            }
+        }
     }
 
     private void showMainErrorPage(WebView zView){

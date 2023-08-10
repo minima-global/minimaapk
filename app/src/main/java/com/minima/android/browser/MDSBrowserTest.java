@@ -68,6 +68,7 @@ public class MDSBrowserTest extends MiniBrowser {
                         "<br><br>" +
                         "<a href=\"http://hello.com/somepage.html\">OPEN SAME WINDOW</a><br><br>" +
                         "<a href=\"http://hello.com/somepage.html\" target='_blank'>OPEN NEW WINDOW</a><br><br>" +
+                        "<img src=undefined/>"+
                         "</body></html>";
 
         mWebView.loadData(summary, "text/html; charset=utf-8", "utf-8");

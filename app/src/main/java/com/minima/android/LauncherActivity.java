@@ -36,8 +36,8 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
             intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
 
-            //Intent intent = new Intent(this, MDSBrowserTest.class);
-            //startActivity(intent);
+//            Intent intent = new Intent(this, MDSBrowserTest.class);
+//            startActivity(intent);
 
         }else{
 

@@ -149,6 +149,7 @@ public class MiniBrowserJSInterface {
         //Create share Intent
         Intent sendIntent = new Intent();
         sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_SUBJECT, "Minima Text Share");
         sendIntent.putExtra(Intent.EXTRA_TEXT, zText);
         sendIntent.setType("text/plain");
 

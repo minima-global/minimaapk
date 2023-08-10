@@ -36,6 +36,7 @@ import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.StringTokenizer;
 
 import com.minima.android.StartMinimaActivity;
@@ -405,11 +406,14 @@ public class MinimaService extends Service {
         }else{
             JSONObject header = (JSONObject)mTxPowJSON.get("header");
 
-            String block    = (String) header.get("block");
-            String date     = (String) header.get("date");
+            String block    = header.getString("block");
+            long timemilli  = Long.valueOf(header.getString("timemilli"));
+            String date     = MinimaLogger.DATEFORMAT.format(new Date(timemilli));
+
+            //String date     = (String) header.get("date");
 
             //Set block time message
-            startForeground(1, createNotification("Block " + block + " @ " + date));
+            startForeground(1, createNotification(block + " @ " + date));
         }
     }
 
