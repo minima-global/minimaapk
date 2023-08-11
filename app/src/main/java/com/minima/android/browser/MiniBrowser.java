@@ -213,20 +213,20 @@ public class MiniBrowser extends AppCompatActivity {
                 Manifest.permission.WRITE_EXTERNAL_STORAGE};
         checkPermission(perms,99);
 
-        //Do we show the peers Activity..
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(mIsMiniHUB && sharedPreferences.getBoolean("FIRST_RUN", true)){
-
-            //Only Once..
-            SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
-            sharedPreferencesEditor.apply();
-
-            //Start Peers activity
-            Intent peers = new Intent(this, PeersActivity.class);
-            peers.putExtra("hidemypeers",true);
-            startActivity(peers);
-        }
+//        //Do we show the peers Activity..
+//        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+//        if(mIsMiniHUB && sharedPreferences.getBoolean("FIRST_RUN", true)){
+//
+//            //Only Once..
+//            SharedPreferences.Editor sharedPreferencesEditor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+//            sharedPreferencesEditor.putBoolean("FIRST_RUN", false);
+//            sharedPreferencesEditor.apply();
+//
+//            //Start Peers activity
+//            Intent peers = new Intent(this, PeersActivity.class);
+//            peers.putExtra("hidemypeers",true);
+//            startActivity(peers);
+//        }
     }
 
     public Certificate getMinimaSSLCert(){
@@ -354,7 +354,7 @@ public class MiniBrowser extends AppCompatActivity {
 
     private void showShutdownmessage(){
         if(mIsMiniHUB){
-            Toast.makeText(this, "Minima is shutting down..", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Minima is shutting down.. pls wait", Toast.LENGTH_SHORT).show();
         }
 
         //And shutdown..
@@ -479,13 +479,13 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
-            case R.id.action_peers:
-
-                Intent peers = new Intent(this, PeersActivity.class);
-                peers.putExtra("hidemypeers",false);
-                startActivity(peers);
-
-                return true;
+//            case R.id.action_peers:
+//
+//                Intent peers = new Intent(this, PeersActivity.class);
+//                peers.putExtra("hidemypeers",false);
+//                startActivity(peers);
+//
+//                return true;
 
             case R.id.action_mdsopen:
 
