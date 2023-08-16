@@ -24,9 +24,12 @@ import com.minima.android.browser.MDSBrowserTest;
 import com.minima.android.browser.MiniBrowser;
 import com.minima.android.service.MinimaService;
 
+import org.minima.database.minidapps.MiniDAPP;
 import org.minima.system.Main;
 import org.minima.system.mds.MDSManager;
 import org.minima.utils.MinimaLogger;
+
+import java.util.ArrayList;
 
 public class StartMinimaActivity extends AppCompatActivity implements ServiceConnection {
 
@@ -182,6 +185,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //Now start the HUB..
         String minihubid = mds.getDefaultMiniHUB();
+//        String minihubid = mds.getMiniDAPPFromName("terminal").getUID();
 
         //Get the sessionid..
         String sessionid = mds.convertMiniDAPPID(minihubid);

@@ -65,26 +65,35 @@ public class MiniWebViewClient extends WebViewClient  {
 
     @Override
     public void onReceivedError(WebView view, int errorCode, String description,String failingUrl){
-        showMainErrorPage(view);
+        if(errorCode == ERROR_CONNECT){
+            showNoConnectErrorPage(view);
+        }
     }
 
     @Override
     public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
-        showMainErrorPage(view);
+        if(rerr.getErrorCode() == ERROR_CONNECT){
+            showNoConnectErrorPage(view);
+        }
     }
 
     @Override
     public void onReceivedHttpError (WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
         if(request.getUrl()!=null) {
             if (request.getUrl().toString().toLowerCase().contains(".html")) {
-                showMainErrorPage(view);
+                showMainHTTPErrorPage(view);
             }
         }
     }
 
-    private void showMainErrorPage(WebView zView){
+    private void showMainHTTPErrorPage(WebView zView){
         mMainContext.showToolbar();
         zView.loadUrl("https://127.0.0.1:9003/httperror.html");
+    }
+
+    private void showNoConnectErrorPage(WebView zView){
+        mMainContext.showToolbar();
+        zView.loadUrl("https://127.0.0.1:9003/noconnect.html");
     }
 
     @Override
