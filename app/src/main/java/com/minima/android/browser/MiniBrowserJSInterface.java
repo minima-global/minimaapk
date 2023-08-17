@@ -102,11 +102,17 @@ public class MiniBrowserJSInterface {
 
     @JavascriptInterface
     public void shutdownMinima() {
+        shutdownMinima(false);
+    }
+
+    @JavascriptInterface
+    public void shutdownMinima(boolean zCompact) {
         if(DEBUG_LOGS) {
-            MinimaLogger.log("JS SHUTDOWN MINIMA");
+            MinimaLogger.log("JS SHUTDOWN MINIMA COMPACT:"+zCompact);
         }
 
         //Close this WebView
+        MiniBrowser.mShutDownCompact = zCompact;
         mMiniBrowser.shutdownMinima();
     }
 
