@@ -157,7 +157,7 @@ public class MinimaService extends Service {
                     }else if(event.equals("NEWBALANCE")){
 
                         //Notify the User
-                        createMiniDAPPNotification("0x00","Minima","Your balance has changed");
+                        createMiniDAPPNotification("0xFF","Minima","Your balance has changed");
 
                     }else if(event.equals("NOTIFICATION")){
 
@@ -288,7 +288,7 @@ public class MinimaService extends Service {
         //What is the UID
         String uid = zUID;
 
-        if(zUID.equals("0x00")){
+        if(zUID.equals("0x00") || zUID.equals("0xFF")){
 
             //Jump to MiniHUB
             uid = Main.getInstance().getMDSManager().getDefaultMiniHUB();
@@ -309,7 +309,7 @@ public class MinimaService extends Service {
 
             //Now create the
             Intent NotificationIntent = null;
-            if(zUID.equals("0x00")){
+            if(zUID.equals("0x00") || zUID.equals("0xFF")){
                 //Popup the MAIN window
                 NotificationIntent = new Intent(getBaseContext(), MiniBrowser.class);
                 NotificationIntent.putExtra("ishub",true);
@@ -425,7 +425,14 @@ public class MinimaService extends Service {
 
         //QUIT nicely..
         try{
-            String resp = minima.runMinimaCMD("quit compact:true");
+            String resp = null;
+            MinimaLogger.log("COMPACT DB ON QUIT "+MiniBrowser.mShutDownCompact);
+            if(MiniBrowser.mShutDownCompact){
+                resp = minima.runMinimaCMD("quit compact:true");
+            }else{
+                resp = minima.runMinimaCMD("quit");
+            }
+
         }catch(Exception exc){
             MinimaLogger.log(exc);
         }

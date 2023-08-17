@@ -84,6 +84,9 @@ public class MiniBrowser extends AppCompatActivity {
     //Are we in shutdown mode..
     public static boolean mShutDownMode = false;
 
+    //Are we Compacting the DB
+    public static boolean mShutDownCompact = false;
+
     //Static ref to the SSL Cert
     static private Certificate mMinimaSSLCert = null;
 
@@ -517,8 +520,24 @@ public class MiniBrowser extends AppCompatActivity {
 
             case R.id.action_mdsshutdown:
 
-                //Show the Initial extra params
-                shutdownMinima();
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage("Do you want compact your Databases ?")
+                        .setTitle("Shutdown Minima")
+                        .setCancelable(true);
+
+                builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
+                    mShutDownCompact = true;
+                    shutdownMinima();
+                });
+
+                builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
+                    mShutDownCompact = false;
+                    shutdownMinima();
+                });
+
+                // Create the Alert dialog
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
 
                 return true;
 
