@@ -118,7 +118,6 @@ public class MinimaService extends Service {
         mNotificationManager = getSystemService(NotificationManager.class);
         mNotificationManager.createNotificationChannel(serviceChannel);
 
-
         //Set the Alarm..
         mAlarm = new Alarm();
         mAlarm.cancelAlarm(this);
@@ -155,6 +154,8 @@ public class MinimaService extends Service {
                         });
 
                     }else if(event.equals("NEWBALANCE")){
+
+                        MinimaLogger.log("SERVICE received NEWBALANCE");
 
                         //Notify the User
                         createMiniDAPPNotification("0xFF","Minima","Your balance has changed");
@@ -205,6 +206,10 @@ public class MinimaService extends Service {
 //        vars.add("-noconnect");
 //        vars.add("-mdspassword");
 //        vars.add("123");
+
+//        vars.add("-genesis");
+//        vars.add("-nop2p");
+//        vars.add("-test");
 
         vars.add("-nosyncibd");
 
@@ -379,11 +384,15 @@ public class MinimaService extends Service {
                 .setContentIntent(createDynamicPendingIntent(zMiniDAPPUID))
                 .build();
 
-        mNotificationManager.notify(zMiniDAPPUID, 1, notification);
+        if(zMiniDAPPUID.equals("0xFF")){
+            mNotificationManager.notify(zMiniDAPPUID, 3, notification);
+        }else{
+            mNotificationManager.notify(zMiniDAPPUID, 2, notification);
+        }
     }
 
     public void cancelNotification(String zMiniDAPPUID){
-        mNotificationManager.cancel(zMiniDAPPUID,1);
+        mNotificationManager.cancel(zMiniDAPPUID,2);
     }
 
     @Override
