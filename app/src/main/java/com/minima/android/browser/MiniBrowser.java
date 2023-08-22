@@ -521,7 +521,7 @@ public class MiniBrowser extends AppCompatActivity {
             case R.id.action_mdsshutdown:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Do you want compact your Databases ?")
+                builder.setMessage("Do you want to compact your Databases ?")
                         .setTitle("Shutdown Minima")
                         .setCancelable(true);
 

@@ -8,8 +8,8 @@ android {
     defaultConfig {
         applicationId "com.minima.android"
         minSdk 26
-        targetSdk 32
-        versionCode 240
+        targetSdk 33
+        versionCode 243
         versionName "1.0.37"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
