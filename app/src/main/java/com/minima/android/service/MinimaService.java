@@ -219,6 +219,12 @@ public class MinimaService extends Service {
         SharedPreferences pref  = getSharedPreferences("startup_params",MODE_PRIVATE);
         String prefstring       = pref.getString("extra_params","");
 
+        //Remove -clean..
+        String newprefs = prefstring.replaceAll("-clean","");
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString("extra_params",newprefs);
+        edit.apply();
+
         //Check if Valid!
         boolean validparams = ParamConfigurer.checkParams(prefstring);
 
