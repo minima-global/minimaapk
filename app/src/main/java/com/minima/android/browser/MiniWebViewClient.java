@@ -93,7 +93,7 @@ public class MiniWebViewClient extends WebViewClient  {
 
     private void showNoConnectErrorPage(WebView zView){
         mMainContext.showToolbar();
-        zView.loadUrl("https://127.0.0.1:9003/noconnect.html");
+        zView.loadUrl("file:///android_asset/noconnect.html");
     }
 
     @Override
