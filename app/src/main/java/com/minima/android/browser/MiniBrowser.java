@@ -88,7 +88,7 @@ public class MiniBrowser extends AppCompatActivity {
     public static boolean mShutDownCompact = false;
 
     //Static ref to the SSL Cert
-    static private Certificate mMinimaSSLCert = null;
+    static public Certificate mMinimaSSLCert = null;
 
     //The file we are trying to copy
     File mCopyFile          = null;

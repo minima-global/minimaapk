@@ -190,8 +190,11 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
         //Get the sessionid..
         String sessionid = mds.convertMiniDAPPID(minihubid);
 
+        //Reset the SSL cert
+        MiniBrowser.mMinimaSSLCert = null;
+
+        //Set the correct starting page
         String minihub = "https://127.0.0.1:9003/"+minihubid+"/index.html?uid="+sessionid;
-        //String minihub = "file:///android_asset/noconnect.html";
 
         //Set shutdown mode.. to FALSE
         MiniBrowser.mShutDownMode = false;
