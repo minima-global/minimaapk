@@ -213,7 +213,9 @@ public class MiniBrowser extends AppCompatActivity {
         //Get Files Permission
         String[] perms = new String[]{
                 Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE};
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.POST_NOTIFICATIONS
+        };
         checkPermission(perms,99);
 
 //        //Do we show the peers Activity..

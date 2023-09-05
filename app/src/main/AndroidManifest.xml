@@ -3,6 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.minima.android">
 
+    <!-- Need Notifications -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
     <!-- Foreground Service allowed -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- Internet access -->
