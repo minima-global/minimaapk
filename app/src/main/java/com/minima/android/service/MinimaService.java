@@ -83,11 +83,21 @@ public class MinimaService extends Service {
     PowerManager.WakeLock mWakeLock;
     WifiManager.WifiLock mWifiLock;
 
+    public static MiniBrowser mNotifyShutdown;
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         MinimaLogger.log("Minima Service Started");
+
+        //No Browser subscribed yet..
+        mNotifyShutdown = null;
+
+        //Set some default static vars
+        MiniBrowser.mShutDownMode    = false;
+        MiniBrowser.mShutDownCompact = false;
+        MiniBrowser.mMinimaSSLCert   = null;
 
         //Power
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -468,6 +478,15 @@ public class MinimaService extends Service {
         //Remove the receiver
         if(mBatteryReceiver != null){
             unregisterReceiver(mBatteryReceiver);
+        }
+
+        //Try and close the MiniBrowser Window
+        try{
+            if(mNotifyShutdown!=null){
+                mNotifyShutdown.serviceHasShutDown();
+            }
+        }catch(Exception exc){
+            MinimaLogger.log(exc);
         }
 
         MinimaLogger.log("Minima Service onDestroy end");

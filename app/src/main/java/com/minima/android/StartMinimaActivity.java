@@ -47,6 +47,11 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Set some static vars
+        MiniBrowser.mShutDownMode    = false;
+        MiniBrowser.mShutDownCompact = false;
+        MiniBrowser.mMinimaSSLCert   = null;
+
         //Start the Minima Service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
         startForegroundService(minimaintent);

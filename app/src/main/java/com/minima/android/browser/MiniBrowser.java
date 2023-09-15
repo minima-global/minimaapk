@@ -1,6 +1,7 @@
 package com.minima.android.browser;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -88,12 +90,14 @@ public class MiniBrowser extends AppCompatActivity {
     public static boolean mShutDownCompact = false;
 
     //Static ref to the SSL Cert
-    static public Certificate mMinimaSSLCert = null;
+    public static Certificate mMinimaSSLCert = null;
 
     //The file we are trying to copy
     File mCopyFile          = null;
     String mCopyFileName    = "";
     MiniData mCopyData      = null;
+
+    Dialog mShutdownDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,6 +121,13 @@ public class MiniBrowser extends AppCompatActivity {
 
         //Is this the MiniHUB
         mIsMiniHUB = getIntent().getBooleanExtra("ishub",false);
+
+//        if(mIsMiniHUB){
+//            AlertDialog.Builder builder = new AlertDialog.Builder(MiniBrowser.this);
+//            builder.setView(R.layout.shutdowndialog);
+//            mShutdownDialog = builder.create();
+//            //mShutdownDialog.show();
+//        }
 
         //Set Our Toolbar
         mToolBar = findViewById(R.id.minidapp_toolbar);
@@ -348,18 +359,61 @@ public class MiniBrowser extends AppCompatActivity {
         mShutDownMode = true;
         MinimaLogger.log("MINIBROWSER SHUTDOWN MODE STARTED");
 
-        //Stop the service..
-        Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-        stopService(minimaintent);
+        //Are we the MiniHUB
+        if(mIsMiniHUB){
 
-        //And close all windows
-        showShutdownmessage();
-        //finishAffinity();
+            //Tell thje service Who we are..
+            MinimaService.mNotifyShutdown = this;
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MiniBrowser.this);
+                    builder.setView(R.layout.shutdowndialog);
+                    mShutdownDialog = builder.create();
+                    mShutdownDialog.show();
+                    MinimaLogger.log("Show Dialog");
+                }
+            });
+        }
+
+        //Stop the service..
+        Runnable rr = new Runnable() {
+            @Override
+            public void run() {
+
+                //Small Pause
+                try{Thread.sleep(500);}catch(Exception exc){}
+
+                Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+                stopService(minimaintent);
+            }
+        };
+        Thread tt = new Thread(rr);
+        tt.start();
+
+        //And close windows
+        if(!mIsMiniHUB){
+            finishAffinity();
+        }
     }
 
     private void showShutdownmessage(){
         if(mIsMiniHUB){
             Toast.makeText(this, "Minima is shutting down.. pls wait", Toast.LENGTH_SHORT).show();
+        }
+
+        //And shutdown..
+        finishAffinity();
+    }
+
+    public void serviceHasShutDown(){
+
+        //Hide the window
+        if(mShutdownDialog!=null){
+            if(mShutdownDialog.isShowing()){
+                mShutdownDialog.dismiss();
+            }
         }
 
         //And shutdown..

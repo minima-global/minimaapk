@@ -13,7 +13,7 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:text="Connecting to Minima.."
+        android:text="Starting Minima.."
         android:textAppearance="?android:textAppearanceSmall"
         android:layout_gravity="center_vertical"
         android:id="@+id/loading_msg"
