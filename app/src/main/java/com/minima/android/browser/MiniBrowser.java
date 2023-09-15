@@ -372,7 +372,6 @@ public class MiniBrowser extends AppCompatActivity {
                     builder.setView(R.layout.shutdowndialog);
                     mShutdownDialog = builder.create();
                     mShutdownDialog.show();
-                    MinimaLogger.log("Show Dialog");
                 }
             });
         }
