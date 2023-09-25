@@ -162,7 +162,7 @@ public class MiniWebViewClient extends WebViewClient  {
 
                 builder.setTitle("SSL Certificate Warning");
                 builder.setMessage(message);
-                builder.setPositiveButton("continue", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

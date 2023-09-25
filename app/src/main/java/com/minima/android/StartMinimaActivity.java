@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -42,6 +43,11 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
      * Connecting Dialog
      */
     Dialog mDialog;
+
+    /**
+     * Startup Error Dialog
+     */
+    Dialog mStartErrorDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +94,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
             MDSManager mds = Main.getInstance().getMDSManager();
             if(mds != null && mds.hasStarted()) {
                 //Ready to go!
-                startMiniHUB();
+                checkStartup();
                 return;
             }
         }
@@ -135,7 +141,7 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
                 mDialog.dismiss();
 
                 //Start her up
-                startMiniHUB();
+                checkStartup();
             }
         };
 
@@ -182,8 +188,52 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
         }
     }
 
+    public void checkStartup(){
+
+        boolean sterror = Main.getInstance().isStartupError();
+        String errormsg = Main.getInstance().getStartupErrorMsg();
+
+        if(sterror){
+
+            MinimaLogger.log("Startup Check Error:"+sterror+" "+errormsg);
+
+            Runnable rr = new Runnable() {
+                @Override
+                public void run() {
+                    //Create a Dialog
+                    AlertDialog.Builder builder = new AlertDialog.Builder(StartMinimaActivity.this);
+                    builder.setCancelable(true);
+                    builder.setTitle("Serious Startup Error");
+                    builder.setMessage("There was an error initialising your Minima Database!\n\n" +
+                            "Please perform a chain-resync or restore your node from a backup..\n\n" +
+                            "Full Error Message : "+errormsg);
+
+                    builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+
+                            //Start the hub..
+                            startMiniHUB();
+                        }
+                    });
+
+                    mStartErrorDialog = builder.create();
+                    mStartErrorDialog.show();
+                }
+            };
+
+            runOnUiThread(rr);
+
+        }else{
+
+            //All fine..
+            startMiniHUB();
+        }
+    }
+
     //Start the MiniHUB
-    public void startMiniHUB(){
+    private void startMiniHUB(){
 
         //Get the MDS Manager
         MDSManager mds = Main.getInstance().getMDSManager();
