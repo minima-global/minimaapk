@@ -130,7 +130,7 @@ public class MiniChromViewClient extends WebChromeClient {
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
 
         //Add a line to the Console output
-        mConsoleMessages += "<b>Line "+consoleMessage.lineNumber()+"</b> - "+consoleMessage.message()+"<br><br>";
+        mConsoleMessages += "<b>Source:"+consoleMessage.sourceId()+" Line:"+consoleMessage.lineNumber()+"</b> - "+consoleMessage.message()+"<br><br>";
 
         return true;
     }

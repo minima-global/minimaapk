@@ -1,6 +1,8 @@
 package com.minima.android.intro;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
@@ -9,6 +11,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import com.minima.android.R;
@@ -50,6 +54,32 @@ public class OnboardingOne extends AppCompatActivity {
                 finish();
             }
         });
+
+        //Get Files Permission
+        String[] perms = new String[]{
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.POST_NOTIFICATIONS
+        };
+        checkPermission(perms,99);
+    }
+
+    // Function to check and request permission
+    public void checkPermission(String[] permissions, int requestCode){
+
+        //Check all the requested permissions
+        boolean allok = true;
+        for(String perm : permissions){
+            if(ContextCompat.checkSelfPermission(this, perm) != PackageManager.PERMISSION_GRANTED){
+                allok = false;
+                break;
+            }
+        }
+
+        //Ask for all the permissions
+        if(!allok){
+            ActivityCompat.requestPermissions(this, permissions , requestCode);
+        }
     }
 
     public void addDots(int position) {

@@ -24,9 +24,9 @@ public class LauncherActivity extends AppCompatActivity implements ServiceConnec
         super.onCreate(savedInstanceState);
 
         //Start the Minima Service..
-        Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-        startForegroundService(minimaintent);
-        bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
+//        Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+//        startForegroundService(minimaintent);
+//        bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
