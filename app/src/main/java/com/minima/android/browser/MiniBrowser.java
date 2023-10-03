@@ -576,7 +576,7 @@ public class MiniBrowser extends AppCompatActivity {
             case R.id.action_mdsshutdown:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Do you want to compact your Databases ?")
+                builder.setMessage("Are you sure you want to shutdown Minima ?")
                         .setTitle("Shutdown Minima")
                         .setCancelable(true);
 
@@ -585,9 +585,10 @@ public class MiniBrowser extends AppCompatActivity {
                     shutdownMinima();
                 });
 
-                builder.setNegativeButton("No", (DialogInterface.OnClickListener) (dialog, which) -> {
-                    mShutDownCompact = false;
-                    shutdownMinima();
+                builder.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
+//                    mShutDownCompact = false;
+//                    shutdownMinima();
+                    dialog.dismiss();
                 });
 
                 // Create the Alert dialog
