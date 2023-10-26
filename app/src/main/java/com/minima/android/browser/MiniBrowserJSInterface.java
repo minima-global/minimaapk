@@ -132,6 +132,20 @@ public class MiniBrowserJSInterface {
    }
 
     @JavascriptInterface
+    public void clearCache() {
+        if(DEBUG_LOGS) {
+            MinimaLogger.log("JS CLEAR CACHE");
+        }
+
+        mMiniBrowser.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mMiniBrowser.clearCache();
+            }
+        });
+    }
+
+    @JavascriptInterface
     public void openExternalBrowser(String zUrl, String zTarget) {
         if(DEBUG_LOGS) {
             MinimaLogger.log("JS OPENEXTERNAL "+zUrl);

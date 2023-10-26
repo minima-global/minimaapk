@@ -219,6 +219,8 @@ public class MiniBrowser extends AppCompatActivity {
         registerDefaultContextMenu();
 
         //And load the page
+        //MinimaLogger.log("START MINI-BROWSER : "+mBaseURL);
+        //mWebView.clearCache(true);
         mWebView.loadUrl(mBaseURL);
 
         //Get Files Permission
@@ -341,6 +343,10 @@ public class MiniBrowser extends AppCompatActivity {
         }catch(Exception exc){
             MinimaLogger.log(exc);
         }
+    }
+
+    public void clearCache(){
+        mWebView.clearCache(true);
     }
 
     public void shutWindow(){
@@ -515,6 +521,7 @@ public class MiniBrowser extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_mdsrefresh:
                 //And load the page
+                mWebView.clearCache(true);
                 mWebView.loadUrl(mBaseURL);
                 return true;
 
