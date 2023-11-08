@@ -128,11 +128,14 @@ public class MiniChromViewClient extends WebChromeClient {
 
     @Override
     public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-
         //Add a line to the Console output
         mConsoleMessages += "<b>Source:"+consoleMessage.sourceId()+" Line:"+consoleMessage.lineNumber()+"</b> - "+consoleMessage.message()+"<br><br>";
 
         return true;
+    }
+
+    public void addConsoleMessage(String zMessage){
+        mConsoleMessages += "<b>Connect Error</b> - "+zMessage+"<br><br>";
     }
 
     @Override

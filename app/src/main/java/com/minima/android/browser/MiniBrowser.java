@@ -119,6 +119,8 @@ public class MiniBrowser extends AppCompatActivity {
         //Get the Base URL
         mBaseURL = getIntent().getStringExtra("url");
 
+        //MinimaLogger.log("New MiniBrowser : "+mBaseURL);
+
         //Is this the MiniHUB
         mIsMiniHUB = getIntent().getBooleanExtra("ishub",false);
 
@@ -245,6 +247,10 @@ public class MiniBrowser extends AppCompatActivity {
 //            peers.putExtra("hidemypeers",true);
 //            startActivity(peers);
 //        }
+    }
+
+    public MiniChromViewClient getConsoleClient(){
+        return mChromeClient;
     }
 
     public Certificate getMinimaSSLCert(){

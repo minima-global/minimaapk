@@ -24,6 +24,8 @@ import java.security.cert.X509Certificate;
 
 public class MiniWebViewClient extends WebViewClient  {
 
+    private boolean ERROR_LOGS = false;
+
     //The Minima SSL Certificate
     Certificate mMinimaSSLCert = null;
 
@@ -64,22 +66,28 @@ public class MiniWebViewClient extends WebViewClient  {
     }
 
     @Override
-    public void onReceivedError(WebView view, int errorCode, String description,String failingUrl){
-        if(errorCode == ERROR_CONNECT){
-            showNoConnectErrorPage(view);
-        }
-    }
-
-    @Override
     public void onReceivedError(WebView view, WebResourceRequest req, WebResourceError rerr) {
         if(rerr.getErrorCode() == ERROR_CONNECT){
-            showNoConnectErrorPage(view);
+            if(ERROR_LOGS){
+                MinimaLogger.log("onReceivedError :"+req.getUrl().toString());
+            }
+
+            //Only show no connect if it's an HTML page..
+            if (req.getUrl().toString().toLowerCase().contains(".html")) {
+                showNoConnectErrorPage(view);
+            }else{
+                mMainContext.getConsoleClient().addConsoleMessage(req.getUrl().toString());
+            }
         }
     }
 
     @Override
     public void onReceivedHttpError (WebView view, WebResourceRequest request, WebResourceResponse errorResponse) {
         if(request.getUrl()!=null) {
+            if(ERROR_LOGS){
+                MinimaLogger.log("onReceivedHttpError :"+request.getUrl().toString());
+            }
+
             if (request.getUrl().toString().toLowerCase().contains(".html")) {
                 showMainHTTPErrorPage(view);
             }
@@ -88,7 +96,7 @@ public class MiniWebViewClient extends WebViewClient  {
 
     private void showMainHTTPErrorPage(WebView zView){
         mMainContext.showToolbar();
-        zView.loadUrl("https://127.0.0.1:9003/httperror.html");
+        zView.loadUrl("file:///android_asset/httperror.html");
     }
 
     private void showNoConnectErrorPage(WebView zView){
