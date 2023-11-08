@@ -465,6 +465,9 @@ public class MinimaService extends Service {
         //Not listening anymore..
         Main.setMinimaListener(null);
 
+        //NULL the main Instance..
+        Main.ClearMainInstance();
+
         //Shut the channel..
         mNotificationManager.deleteNotificationChannel(CHANNEL_ID);
 

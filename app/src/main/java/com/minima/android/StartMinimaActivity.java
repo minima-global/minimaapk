@@ -90,8 +90,17 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
     public void waitForMinimaToStartUp(){
 
         //Fast check..
+        boolean minst = (Main.getInstance() != null);
+        MinimaLogger.log("Wait for Startup.. Main.getInstance = "+minst);
         if(Main.getInstance() != null){
             MDSManager mds = Main.getInstance().getMDSManager();
+
+            boolean mdsinst = (Main.getInstance().getMDSManager() != null);
+            MinimaLogger.log("Wait for Startup.. MDSManager = "+mdsinst);
+            if(mdsinst){
+                MinimaLogger.log("Wait for Startup.. MDSManager started = "+mds.hasStarted());
+            }
+
             if(mds != null && mds.hasStarted()) {
                 //Ready to go!
                 checkStartup();
