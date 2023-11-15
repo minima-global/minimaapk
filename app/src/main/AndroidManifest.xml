@@ -128,14 +128,6 @@
         </activity>
 
         <activity
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:name=".PeersActivity"
-            android:exported="false"
-            android:label="Peers"
-            android:theme="@style/Theme.MinimaAndroid.NoActionBar">
-        </activity>
-
-        <activity
             android:name=".browser.NotifyBrowser"
             android:launchMode="singleTask"
             android:taskAffinity=""

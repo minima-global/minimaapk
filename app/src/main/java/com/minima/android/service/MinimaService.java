@@ -51,6 +51,8 @@ import com.minima.android.browser.NotifyBrowser;
  * */
 public class MinimaService extends Service {
 
+    public static boolean mHaveStartedShutdown = false;
+
     //Currently Binding doesn't work as we run in a separate process..
     public class MyBinder extends Binder {
         public MinimaService getService() {
@@ -61,6 +63,7 @@ public class MinimaService extends Service {
     MinimaService mService;
 
     //The alarm to ensure Minima doesn't stop
+    static boolean mCancelAlarmOnShutdown = false;
     Alarm mAlarm;
 
     //The Battery receiver
@@ -93,6 +96,10 @@ public class MinimaService extends Service {
 
         //No Browser subscribed yet..
         mNotifyShutdown = null;
+
+        //Have not started shutdown
+        mHaveStartedShutdown    = false;
+        mCancelAlarmOnShutdown  = false;
 
         //Set some default static vars
         MiniBrowser.mShutDownMode    = false;
@@ -187,8 +194,11 @@ public class MinimaService extends Service {
                     }else if(event.equals("SHUTDOWN")){
 
                         MinimaLogger.log("SERVICE Received SHUTDOWN!");
-
-                        stopSelf();
+                        if(!haveStartedShutdown()){
+                            stopSelf();
+                        }else{
+                            MinimaLogger.log("SERVICE allready SHUTDOWN");
+                        }
                     }
                 }
             }
@@ -442,10 +452,20 @@ public class MinimaService extends Service {
         }
     }
 
+    public static boolean haveStartedShutdown(){
+        return mHaveStartedShutdown;
+    }
+
+    public static void cancelAlarm(){
+        mCancelAlarmOnShutdown = true;
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
 
+        //Have started shutdown
+        mHaveStartedShutdown = true;
         MinimaLogger.log("Minima Service onDestroy start");
 
         //QUIT nicely..
@@ -458,15 +478,18 @@ public class MinimaService extends Service {
                 resp = minima.runMinimaCMD("quit");
             }
 
+            //Do we cancel the alarm
+            if(mCancelAlarmOnShutdown){
+                MinimaLogger.log("SERVICE Cancel Restart Alarm");
+                mAlarm.cancelAlarm(this);
+            }
+
         }catch(Exception exc){
             MinimaLogger.log(exc);
         }
 
         //Not listening anymore..
         Main.setMinimaListener(null);
-
-        //NULL the main Instance..
-        Main.ClearMainInstance();
 
         //Shut the channel..
         mNotificationManager.deleteNotificationChannel(CHANNEL_ID);
@@ -486,11 +509,22 @@ public class MinimaService extends Service {
         //Try and close the MiniBrowser Window
         try{
             if(mNotifyShutdown!=null){
+
+                int counter = 0;
+                while(counter<5000 && Main.getInstance() != null){
+                    counter += 100;
+                    Thread.sleep(100);
+                }
+
+                MinimaLogger.log("MiniService : Shutting down last MiniBrowser window.. ");
                 mNotifyShutdown.serviceHasShutDown();
             }
         }catch(Exception exc){
             MinimaLogger.log(exc);
         }
+
+        //NULL the main Instance..
+        Main.ClearMainInstance();
 
         MinimaLogger.log("Minima Service onDestroy end");
     }

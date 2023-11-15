@@ -35,7 +35,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.minima.android.PeersActivity;
 import com.minima.android.R;
 import com.minima.android.StartMinimaActivity;
 import com.minima.android.files.FilesActivity;
@@ -58,6 +57,8 @@ import java.util.Arrays;
 import java.util.Base64;
 
 public class MiniBrowser extends AppCompatActivity {
+
+    boolean DEBUG_LOGS = false;
 
     //Have we asked if the SSL is ok
     boolean mHaveCheckedSSL;
@@ -371,22 +372,25 @@ public class MiniBrowser extends AppCompatActivity {
         mShutDownMode = true;
         MinimaLogger.log("MINIBROWSER SHUTDOWN MODE STARTED");
 
-        //Are we the MiniHUB
-        if(mIsMiniHUB){
-
-            //Tell thje service Who we are..
-            MinimaService.mNotifyShutdown = this;
-
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MiniBrowser.this);
-                    builder.setView(R.layout.shutdowndialog);
-                    mShutdownDialog = builder.create();
-                    mShutdownDialog.show();
-                }
-            });
+        //Has the service shutdown
+        if(MinimaService.haveStartedShutdown()){
+            showShutdownmessage();
+            return;
         }
+
+        //Tell the service Who we are..
+        MinimaService.mNotifyShutdown = this;
+
+        //Show a shutdown spinning dialog
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MiniBrowser.this);
+                builder.setView(R.layout.shutdowndialog);
+                mShutdownDialog = builder.create();
+                mShutdownDialog.show();
+            }
+        });
 
         //Stop the service..
         Runnable rr = new Runnable() {
@@ -402,17 +406,11 @@ public class MiniBrowser extends AppCompatActivity {
         };
         Thread tt = new Thread(rr);
         tt.start();
-
-        //And close windows
-        if(!mIsMiniHUB){
-            finishAffinity();
-        }
     }
 
     private void showShutdownmessage(){
-        if(mIsMiniHUB){
-            Toast.makeText(this, "Minima is shutting down.. pls wait", Toast.LENGTH_SHORT).show();
-        }
+        //Show simple message
+        Toast.makeText(this, "Minima is shutting down..", Toast.LENGTH_SHORT).show();
 
         //And shutdown..
         finishAffinity();
@@ -434,6 +432,10 @@ public class MiniBrowser extends AppCompatActivity {
     @Override
     public void onResume(){
         super.onResume();
+
+        if(DEBUG_LOGS){
+            MinimaLogger.log("MINIBROWSER ONRESUME SHUTDOWN MODE "+mShutDownMode+" from:"+mBaseURL);
+        }
 
         //Are we in shutdown mode..
         if(mShutDownMode){
@@ -550,14 +552,6 @@ public class MiniBrowser extends AppCompatActivity {
 
                 return true;
 
-//            case R.id.action_peers:
-//
-//                Intent peers = new Intent(this, PeersActivity.class);
-//                peers.putExtra("hidemypeers",false);
-//                startActivity(peers);
-//
-//                return true;
-
             case R.id.action_mdsopen:
 
                 Intent browser = new Intent(Intent.ACTION_VIEW);
@@ -589,18 +583,19 @@ public class MiniBrowser extends AppCompatActivity {
             case R.id.action_mdsshutdown:
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage("Are you sure you want to shutdown Minima ?\n\nThis will also compact your database..")
+                builder.setMessage("Are you sure you want to shutdown Minima ?\n\n" +
+                                "Minima will not start automatically until you restart your phone\n\n" +
+                                "You can of course restart it manually")
                         .setTitle("Shutdown Minima")
                         .setCancelable(true);
 
                 builder.setPositiveButton("Yes", (DialogInterface.OnClickListener) (dialog, which) -> {
                     mShutDownCompact = true;
+                    MinimaService.cancelAlarm();
                     shutdownMinima();
                 });
 
                 builder.setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, which) -> {
-//                    mShutDownCompact = false;
-//                    shutdownMinima();
                     dialog.dismiss();
                 });
 
