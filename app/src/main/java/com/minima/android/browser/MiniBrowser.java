@@ -142,7 +142,7 @@ public class MiniBrowser extends AppCompatActivity {
 
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
-
+        
 //        mWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
 //            @Override
 //            public void onScrollChange(View view, int scrollX, int scrolly, int oldScrollX, int oldScrollY) {
