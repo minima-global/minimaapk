@@ -555,7 +555,10 @@ public class MinimaService extends Service {
                 }
 
                 //What Happened..
-                if (plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB) {
+                if (    plugged == BatteryManager.BATTERY_PLUGGED_AC ||
+                        plugged == BatteryManager.BATTERY_PLUGGED_WIRELESS ||
+                        plugged == BatteryManager.BATTERY_PLUGGED_DOCK ||
+                        plugged == BatteryManager.BATTERY_PLUGGED_USB) {
                     // on AC power
                     //MinimaLogger.log("BATTERY PLUGGED IN");
 
@@ -573,7 +576,7 @@ public class MinimaService extends Service {
 
                 } else {
                     // intent didnt include extra info
-                    MinimaLogger.log("BATTERY NO EXTRA INFO");
+                    MinimaLogger.log("BATTERY PLUGGED INFO "+plugged);
                 }
             }
         };
