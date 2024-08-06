@@ -20,6 +20,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ServiceCompat;
 
 import com.minima.android.browser.MDSBrowserTest;
 import com.minima.android.browser.MiniBrowser;
@@ -60,7 +61,10 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //Start the Minima Service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
+
         startForegroundService(minimaintent);
+
+        //startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
         //Create a Dialog
