@@ -64,7 +64,6 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         startForegroundService(minimaintent);
 
-        //startForegroundService(minimaintent);
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
 
         //Create a Dialog
