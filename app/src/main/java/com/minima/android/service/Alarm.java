@@ -16,8 +16,12 @@ public class Alarm extends BroadcastReceiver
         //MinimaLogger.log("MINIMA ALARM RECEIVED : Start Service");
 
         //Create the Minima Service Intent
-        Intent serviceintent = new Intent(context, MinimaService.class);
-        context.startForegroundService(serviceintent);
+        try{
+            Intent serviceintent = new Intent(context, MinimaService.class);
+            context.startForegroundService(serviceintent);
+        }catch(Exception exc){
+            MinimaLogger.log("Cannot start foreground service : "+exc);
+        }
 
         //Send a start service JOB
         //ServiceStarterJobService.enqueueWork(context, new Intent());
