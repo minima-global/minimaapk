@@ -46,6 +46,7 @@ import org.minima.system.mds.MDSManager;
 import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MiniFile;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.MinimaUncaughtException;
 import org.minima.utils.ssl.SSLManager;
 
 import java.io.File;
@@ -105,6 +106,9 @@ public class MiniBrowser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_browser);
+
+        //Catch ALL Uncaught Exceptions..
+        Thread.setDefaultUncaughtExceptionHandler(new MinimaUncaughtException());
 
         //Is the Cert NULL
         if(mMinimaSSLCert == null){

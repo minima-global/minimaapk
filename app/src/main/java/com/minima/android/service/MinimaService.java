@@ -31,6 +31,7 @@ import org.minima.system.mds.MDSManager;
 import org.minima.system.network.webhooks.NotifyManager;
 import org.minima.system.params.ParamConfigurer;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.MinimaUncaughtException;
 import org.minima.utils.json.JSONObject;
 import org.minima.utils.messages.Message;
 import org.minima.utils.messages.MessageListener;
@@ -93,6 +94,9 @@ public class MinimaService extends Service {
         super.onCreate();
 
         MinimaLogger.log("Minima Service Started");
+
+        //Catch ALL Uncaught Exceptions..
+        Thread.setDefaultUncaughtExceptionHandler(new MinimaUncaughtException());
 
         //No Browser subscribed yet..
         mNotifyShutdown = null;

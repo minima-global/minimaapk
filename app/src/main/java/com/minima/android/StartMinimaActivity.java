@@ -30,6 +30,7 @@ import org.minima.database.minidapps.MiniDAPP;
 import org.minima.system.Main;
 import org.minima.system.mds.MDSManager;
 import org.minima.utils.MinimaLogger;
+import org.minima.utils.MinimaUncaughtException;
 
 import java.util.ArrayList;
 
@@ -58,6 +59,9 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
         MiniBrowser.mShutDownMode    = false;
         MiniBrowser.mShutDownCompact = false;
         MiniBrowser.mMinimaSSLCert   = null;
+
+        //Catch ALL Uncaught Exceptions..
+        Thread.setDefaultUncaughtExceptionHandler(new MinimaUncaughtException());
 
         //Start the Minima Service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
