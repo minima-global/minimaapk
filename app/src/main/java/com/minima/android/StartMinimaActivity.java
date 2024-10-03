@@ -65,7 +65,6 @@ public class StartMinimaActivity extends AppCompatActivity implements ServiceCon
 
         //Start the Minima Service..
         Intent minimaintent = new Intent(getBaseContext(), MinimaService.class);
-
         startForegroundService(minimaintent);
 
         bindService(minimaintent, this, Context.BIND_AUTO_CREATE);
