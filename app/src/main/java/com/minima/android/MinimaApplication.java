@@ -5,6 +5,8 @@ import android.app.Application;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import org.minima.utils.MinimaUncaughtException;
+
 /***
  * The main entry point for the Minima Application
  */
@@ -12,6 +14,9 @@ public class MinimaApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        //Catch ALL Uncaught Exceptions..
+        Thread.setDefaultUncaughtExceptionHandler(new MinimaUncaughtException());
 
         //Make all activities no screenshot
         setupActivityListener();
