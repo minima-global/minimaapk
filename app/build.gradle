@@ -9,8 +9,8 @@ android {
         applicationId "com.minima.android"
         minSdk 26
         targetSdk 34
-        versionCode 380
-        versionName "1.0.44"
+        versionCode 382
+        versionName "1.0.45"
         //testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
