@@ -12,6 +12,7 @@
             android:id="@+id/minidapp_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingTop="32dip"
             style="@style/MinimaActionBar"
             tools:title="This is the title">
 
