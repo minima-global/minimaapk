@@ -1,6 +1,7 @@
 package com.minima.android.browser;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.app.Dialog;
 import android.app.DownloadManager;
 import android.content.DialogInterface;
@@ -26,6 +27,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -66,6 +68,10 @@ public class MiniBrowser extends AppCompatActivity {
 
     //Main WebView
     protected WebView mWebView;
+
+    //The padding..
+    protected LinearLayout mPadding;
+    int mPaddingTop = 0;
 
     //The BASE URL
     String mBaseURL;
@@ -144,9 +150,13 @@ public class MiniBrowser extends AppCompatActivity {
         //Blank the title
         setTitle("");
 
+        //Get the padding layout
+        mPadding    = (LinearLayout)findViewById(R.id.mds_webview_padding);
+        mPaddingTop = mPadding.getPaddingTop();
+
         //Get the WebView
         mWebView = (WebView) findViewById(R.id.mds_webview);
-        
+
 //        mWebView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
 //            @Override
 //            public void onScrollChange(View view, int scrollX, int scrolly, int oldScrollX, int oldScrollY) {
@@ -453,11 +463,32 @@ public class MiniBrowser extends AppCompatActivity {
     public void showToolbar(){
         //Only if hidden
         if(!getSupportActionBar().isShowing() && !mHidingBar) {
+            //Reset the padding
+            animatePadding(false);
+
             getSupportActionBar().show();
 
             //And hide it after a delay
             hideToolBar();
         }
+    }
+
+    public void animatePadding(boolean zShow){
+        ValueAnimator animator = null;
+        if(zShow){
+            animator = ValueAnimator.ofInt(0, mPaddingTop);
+        }else{
+            animator = ValueAnimator.ofInt(mPaddingTop, 0);
+        }
+
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator){
+                mPadding.setPadding(0,(Integer) valueAnimator.getAnimatedValue(), 0,0);
+            }
+        });
+        animator.setDuration(750);
+        animator.start();
     }
 
     private void hideToolBar(){
@@ -477,6 +508,9 @@ public class MiniBrowser extends AppCompatActivity {
                 MiniBrowser.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
+                        //Reset the padding
+                        animatePadding(true);
+
                         mHidingBar = false;
                         MiniBrowser.this.getSupportActionBar().hide();
                     }
