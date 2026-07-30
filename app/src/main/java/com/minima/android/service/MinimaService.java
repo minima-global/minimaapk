@@ -224,8 +224,6 @@ public class MinimaService extends Service {
         vars.add("-mobile");
         vars.add("-limitbandwidth");
 
-        vars.add("-sqlcoindb");
-
         vars.add("-mdsenable");
 
         //TESTER HACK
